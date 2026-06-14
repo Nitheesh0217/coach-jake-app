@@ -7,6 +7,7 @@ import {
   TrendingUp,
   MessageCircle,
   Target,
+  Zap,
 } from "lucide-react";
 import { Workout } from "@/types";
 import TodaysWorkout from "./TodaysWorkout";
@@ -28,6 +29,8 @@ interface AthleteDashboardProps {
   weekLogsCount: number;
   last30DaysCount: number;
   measurements: Measurement[];
+  currentStreak: number;
+  longestStreak: number;
   userName?: string;
 }
 
@@ -52,6 +55,8 @@ export default function AthleteDashboard({
   weekLogsCount,
   last30DaysCount,
   measurements,
+  currentStreak,
+  longestStreak,
   userName = "Athlete",
 }: AthleteDashboardProps) {
   const timeOfDay = getTimeOfDayGreeting();
@@ -181,6 +186,43 @@ export default function AthleteDashboard({
 
           {/* RIGHT COLUMN (hidden on mobile, visible on desktop) */}
           <div className="space-y-6">
+            {/* Streak Widget */}
+            <div className="rounded-2xl border border-amber-500/20 bg-[#0f1623] shadow-lg shadow-amber-500/10 hover:border-amber-400/40 hover:translate-y-[1px] transition-all duration-300 backdrop-blur-sm p-6">
+              <div className="flex items-start justify-between mb-4">
+                <h3 className="text-lg font-semibold text-zinc-50">Streak</h3>
+                <Zap className="w-5 h-5 text-amber-400" />
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold mb-2">
+                    Current Streak
+                  </p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-amber-400">
+                      {currentStreak}
+                    </span>
+                    <span className="text-base text-amber-400">🔥</span>
+                  </div>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    {currentStreak === 0
+                      ? "Start your streak today!"
+                      : currentStreak === 1
+                        ? "day streak"
+                        : "day streak"}
+                  </p>
+                </div>
+                <div className="border-t border-zinc-800 pt-4">
+                  <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold mb-2">
+                    Personal Best
+                  </p>
+                  <p className="text-2xl font-bold text-amber-300">
+                    {longestStreak}
+                  </p>
+                  <p className="text-xs text-zinc-400 mt-1">longest streak</p>
+                </div>
+              </div>
+            </div>
+
             {/* Consistency Widget */}
             <div className="rounded-2xl border border-emerald-500/20 bg-[#0f1623] shadow-lg shadow-emerald-500/10 hover:border-emerald-400/40 hover:translate-y-[1px] transition-all duration-300 backdrop-blur-sm overflow-hidden">
               <ConsistencyWidget />

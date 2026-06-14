@@ -7,6 +7,79 @@ import CoachDashboard from "@/components/dashboard/CoachDashboard";
 import { getMeasurements } from "./measurements-actions";
 import type { Profile, Workout, Measurement, AthleteProfile } from "@/types";
 
+/**
+ * Calculate workout streaks from an array of workout log timestamps
+ */
+function calculateStreaks(logs: { created_at: string }[]): {
+  currentStreak: number;
+  longestStreak: number;
+} {
+  if (!logs || logs.length === 0) {
+    return { currentStreak: 0, longestStreak: 0 };
+  }
+
+  // Extract unique dates (YYYY-MM-DD format) from logs
+  const uniqueDates = new Set<string>();
+  logs.forEach((log) => {
+    const date = new Date(log.created_at).toISOString().split("T")[0];
+    uniqueDates.add(date);
+  });
+
+  if (uniqueDates.size === 0) {
+    return { currentStreak: 0, longestStreak: 0 };
+  }
+
+  // Sort dates in descending order
+  const sortedDates = Array.from(uniqueDates).sort().reverse();
+
+  // Calculate current streak
+  let currentStreak = 0;
+  const today = new Date().toISOString().split("T")[0];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+
+  let streakStartDate = sortedDates[0];
+  if (streakStartDate !== today && streakStartDate !== yesterday) {
+    // No recent activity, current streak is 0
+    currentStreak = 0;
+  } else {
+    // Count consecutive days from the most recent date backwards
+    let currentDate = streakStartDate;
+    currentStreak = 1;
+
+    for (let i = 1; i < sortedDates.length; i++) {
+      const prevDate = new Date(currentDate);
+      prevDate.setDate(prevDate.getDate() - 1);
+      const prevDateStr = prevDate.toISOString().split("T")[0];
+
+      if (sortedDates[i] === prevDateStr) {
+        currentStreak++;
+        currentDate = prevDateStr;
+      } else {
+        break;
+      }
+    }
+  }
+
+  // Calculate longest streak
+  let longestStreak = 1;
+  let tempStreak = 1;
+
+  for (let i = 1; i < sortedDates.length; i++) {
+    const prevDate = new Date(sortedDates[i - 1]);
+    prevDate.setDate(prevDate.getDate() - 1);
+    const prevDateStr = prevDate.toISOString().split("T")[0];
+
+    if (sortedDates[i] === prevDateStr) {
+      tempStreak++;
+      longestStreak = Math.max(longestStreak, tempStreak);
+    } else {
+      tempStreak = 1;
+    }
+  }
+
+  return { currentStreak, longestStreak };
+}
+
 type DashboardResponse = {
   profile: Profile | null;
   error: string | null;
@@ -15,6 +88,8 @@ type DashboardResponse = {
     weekLogsCount: number;
     last30DaysCount: number;
     measurements: Measurement[];
+    currentStreak: number;
+    longestStreak: number;
   };
   coachData?: {
     athletes: (AthleteProfile & { is_fully_scouted?: boolean })[];
@@ -100,6 +175,19 @@ async function getDashboardData(): Promise<DashboardResponse> {
         .eq("user_id", user.id)
         .gte("created_at", thirtyDaysAgo.toISOString());
 
+      // Fetch workout logs for last 60 days (for streak calculation)
+      const sixtyDaysAgo = new Date();
+      sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
+      const { data: logs60d } = await supabase
+        .from("workout_logs")
+        .select("created_at")
+        .eq("user_id", user.id)
+        .gte("created_at", sixtyDaysAgo.toISOString())
+        .order("created_at", { ascending: false });
+
+      const { currentStreak, longestStreak } = calculateStreaks(logs60d ?? []);
+
       // Fetch recent measurements
       const measurementsResult = await getMeasurements();
 
@@ -111,6 +199,8 @@ async function getDashboardData(): Promise<DashboardResponse> {
           weekLogsCount: logs7d?.length ?? 0,
           last30DaysCount: logs30d?.length ?? 0,
           measurements: measurementsResult.measurements ?? [],
+          currentStreak,
+          longestStreak,
         },
       };
     } else if (profile.role === "coach") {
@@ -284,6 +374,8 @@ export default async function DashboardPage() {
           weekLogsCount={athleteData.weekLogsCount}
           last30DaysCount={athleteData.last30DaysCount}
           measurements={athleteData.measurements}
+          currentStreak={athleteData.currentStreak}
+          longestStreak={athleteData.longestStreak}
           userName={profile.full_name || "Athlete"}
         />
       </TrainerDashboardLayout>
