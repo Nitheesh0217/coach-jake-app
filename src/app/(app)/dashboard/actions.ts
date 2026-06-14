@@ -20,7 +20,7 @@ export interface MarkWorkoutCompleteResult {
  * Revalidates the dashboard to refresh KPIs.
  */
 export async function markWorkoutComplete(
-  data: MarkWorkoutCompleteData
+  data: MarkWorkoutCompleteData,
 ): Promise<MarkWorkoutCompleteResult> {
   try {
     const cookieStore = await cookies();
@@ -85,6 +85,12 @@ export async function markWorkoutComplete(
 
     if (error) {
       console.error("Workout log insertion error:", error);
+
+      // Handle unique constraint violation (backup safety net for duplicate logs)
+      if (error.code === "23505") {
+        return { success: false, error: "Already logged today" };
+      }
+
       return {
         success: false,
         error: `Failed to log workout: ${error.message}`,
