@@ -1,18 +1,21 @@
-import { cookies } from "next/headers";
 import { supabaseServer } from "@/lib/supabaseClient";
-import { Trophy, Medal, Zap } from "lucide-react";
+import { cookies } from "next/headers";
+import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
 
 export const dynamic = "force-dynamic";
 
-interface LeaderboardEntry {
+type LeaderboardEntry = {
   user_id: string;
-  user_name: string;
-  total_workouts: number;
+  full_name: string;
+  sessions_7d: number;
+  sessions_30d: number;
   rank: number;
-}
+};
 
-async function getLeaderboardData(): Promise<{
+async function getLeaderboard(): Promise<{
   entries: LeaderboardEntry[];
+  currentUserId: string | null;
+  userName: string;
   error: string | null;
 }> {
   try {
@@ -22,199 +25,175 @@ async function getLeaderboardData(): Promise<{
         const val = cookieStore.get(name);
         return val ? { value: val.value } : undefined;
       },
-      set: (name, value, options) => {
-        // Read-only in Server Components - no-op
-      },
-      remove: (name, options) => {
-        // Read-only in Server Components - no-op
-      },
+      set: () => {},
+      remove: () => {},
     });
 
-    // Get current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return { entries: [], error: "Unable to fetch leaderboard data" };
-    }
+    const { data: auth } = await supabase.auth.getUser();
+    const user = auth.user;
+    if (!user)
+      return {
+        entries: [],
+        currentUserId: null,
+        userName: "Athlete",
+        error: "Not authenticated",
+      };
 
-    // Calculate date from 7 days ago
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const sevenDaysAgoISO = sevenDaysAgo.toISOString();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // Query workout_logs for the last 7 days, grouped by user
-    const { data: workoutLogs, error: logsError } = await supabase
-      .from("workout_logs")
-      .select("user_id")
-      .gte("created_at", sevenDaysAgoISO)
-      .order("created_at", { ascending: false });
+    const [profileRes, logs7dRes, logs30dRes] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("user_id,full_name")
+        .eq("role", "athlete"),
+      supabase
+        .from("workout_logs")
+        .select("user_id")
+        .gte("created_at", sevenDaysAgo.toISOString()),
+      supabase
+        .from("workout_logs")
+        .select("user_id")
+        .gte("created_at", thirtyDaysAgo.toISOString()),
+    ]);
 
-    if (logsError) {
-      return { entries: [], error: "Failed to fetch workout logs" };
-    }
+    const currentProfile = (profileRes.data ?? []).find(
+      (p) => p.user_id === user.id,
+    );
 
-    // Get all user profiles
-    const { data: profiles, error: profilesError } = await supabase
-      .from("profiles")
-      .select("id, full_name")
-      .order("id");
+    const count7d = (logs7dRes.data ?? []).reduce<Record<string, number>>(
+      (acc, l) => {
+        acc[l.user_id] = (acc[l.user_id] ?? 0) + 1;
+        return acc;
+      },
+      {},
+    );
+    const count30d = (logs30dRes.data ?? []).reduce<Record<string, number>>(
+      (acc, l) => {
+        acc[l.user_id] = (acc[l.user_id] ?? 0) + 1;
+        return acc;
+      },
+      {},
+    );
 
-    if (profilesError || !profiles) {
-      return { entries: [], error: "Failed to fetch user profiles" };
-    }
-
-    // Create a map of user_id to full_name
-    const userMap = new Map(profiles.map((p: any) => [p.id, p.full_name]));
-
-    // Count workouts per user
-    const workoutsByUser = new Map<string, number>();
-    for (const log of workoutLogs) {
-      const count = workoutsByUser.get(log.user_id) || 0;
-      workoutsByUser.set(log.user_id, count + 1);
-    }
-
-    // Create leaderboard entries with rankings
-    const entries: LeaderboardEntry[] = Array.from(workoutsByUser.entries())
-      .map(([userId, count], index) => ({
-        user_id: userId,
-        user_name: userMap.get(userId) || "Unknown User",
-        total_workouts: count,
-        rank: index + 1,
+    const entries: LeaderboardEntry[] = (profileRes.data ?? [])
+      .map((p) => ({
+        user_id: p.user_id,
+        full_name: p.full_name ?? "Anonymous",
+        sessions_7d: count7d[p.user_id] ?? 0,
+        sessions_30d: count30d[p.user_id] ?? 0,
+        rank: 0,
       }))
-      .sort((a, b) => b.total_workouts - a.total_workouts)
-      .map((entry, index) => ({
-        ...entry,
-        rank: index + 1,
-      }));
+      .sort(
+        (a, b) =>
+          b.sessions_7d - a.sessions_7d || b.sessions_30d - a.sessions_30d,
+      )
+      .map((e, i) => ({ ...e, rank: i + 1 }));
 
-    return { entries, error: null };
+    return {
+      entries,
+      currentUserId: user.id,
+      userName: currentProfile?.full_name?.split(" ")[0] ?? "Athlete",
+      error: null,
+    };
   } catch (err) {
-    console.error("Leaderboard error:", err);
     return {
       entries: [],
-      error: "An error occurred while fetching leaderboard",
+      currentUserId: null,
+      userName: "Athlete",
+      error: String(err),
     };
   }
 }
 
 export default async function LeaderboardPage() {
-  const { entries, error } = await getLeaderboardData();
-
-  const getMedalIcon = (rank: number) => {
-    if (rank === 1) return <Trophy className="w-5 h-5 text-amber-400" />;
-    if (rank === 2) return <Medal className="w-5 h-5 text-slate-400" />;
-    if (rank === 3) return <Medal className="w-5 h-5 text-orange-600" />;
-    return null;
-  };
-
-  const getRankBadgeClass = (rank: number) => {
-    if (rank === 1)
-      return "bg-gradient-to-r from-amber-500 to-amber-600 text-black";
-    if (rank === 2)
-      return "bg-gradient-to-r from-slate-400 to-slate-500 text-black";
-    if (rank === 3)
-      return "bg-gradient-to-r from-orange-500 to-orange-600 text-white";
-    return "bg-zinc-700/50 text-zinc-300 border border-zinc-600";
-  };
+  const { entries, currentUserId, userName, error } = await getLeaderboard();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#050816] via-zinc-900 to-[#0b1220] px-4 py-12">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <div className="inline-flex items-center justify-center gap-3 mb-4">
-            <Trophy className="w-8 h-8 text-amber-400" />
-            <h1 className="text-5xl font-black text-white">Leaderboard</h1>
-            <Trophy className="w-8 h-8 text-amber-400" />
-          </div>
-          <p className="text-zinc-400 text-lg">
-            Most workouts completed in the last 7 days
+    <TrainerDashboardLayout coachName={userName}>
+      <div className="max-w-4xl mx-auto px-4 py-6 lg:py-8">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-zinc-50 mb-2">
+            🏆 Leaderboard
+          </h2>
+          <p className="text-base text-zinc-400">
+            Top athletes ranked by sessions completed this week.
           </p>
         </div>
 
-        {/* Error State */}
         {error && (
-          <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-4">
-            <p className="text-red-200">{error}</p>
+          <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-200">
+            <p className="font-medium">{error}</p>
           </div>
         )}
 
-        {/* Leaderboard */}
-        {entries.length > 0 ? (
-          <div className="space-y-3">
-            {entries.map((entry) => (
-              <div
-                key={entry.user_id}
-                className={`group rounded-2xl p-6 border transition-all duration-300 ${
-                  entry.rank <= 3
-                    ? "bg-gradient-to-r from-white/10 to-transparent border-white/20 shadow-lg shadow-white/10 hover:shadow-white/20"
-                    : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  {/* Rank */}
-                  <div className="flex items-center gap-4 flex-1">
-                    <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg ${getRankBadgeClass(
-                        entry.rank,
-                      )}`}
-                    >
-                      {entry.rank <= 3 ? (
-                        getMedalIcon(entry.rank)
-                      ) : (
-                        <span>#{entry.rank}</span>
-                      )}
-                    </div>
-
-                    {/* User Name */}
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white">
-                        {entry.user_name}
-                      </h3>
-                      <p className="text-sm text-zinc-400">
-                        {entry.rank <= 3 ? "Top Performer" : "Athlete"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Workout Count */}
-                  <div className="text-right">
-                    <div className="flex items-center justify-end gap-2 mb-2">
-                      <Zap className="w-5 h-5 text-emerald-400" />
-                      <p className="text-3xl font-black text-emerald-400">
-                        {entry.total_workouts}
-                      </p>
-                    </div>
-                    <p className="text-xs text-zinc-500 font-medium uppercase tracking-wide">
-                      Workouts
-                    </p>
-                  </div>
-                </div>
-
-                {/* Rank Badge */}
-                {entry.rank <= 3 && (
-                  <div className="mt-4 pt-4 border-t border-white/10">
-                    <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                      🏆 Rank #{entry.rank}
-                    </span>
-                  </div>
-                )}
-              </div>
-            ))}
+        {entries.length === 0 ? (
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-12 text-center">
+            <p className="text-zinc-400">
+              No athletes ranked yet. Complete workouts to appear here.
+            </p>
           </div>
         ) : (
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-12 text-center">
-            <p className="text-zinc-400 text-lg">
-              No workout data available yet.
-            </p>
-            <p className="text-zinc-500 text-sm mt-2">
-              Start logging workouts to appear on the leaderboard!
-            </p>
+          <div className="space-y-3">
+            {entries.map((entry) => {
+              const isMe = entry.user_id === currentUserId;
+              const medals: Record<number, string> = {
+                1: "🥇",
+                2: "🥈",
+                3: "🥉",
+              };
+              return (
+                <div
+                  key={entry.user_id}
+                  className={`rounded-2xl border p-5 flex items-center justify-between transition ${
+                    isMe
+                      ? "border-emerald-500/50 bg-emerald-500/10 shadow-lg shadow-emerald-500/10"
+                      : "border-zinc-800 bg-zinc-900/80"
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="text-2xl w-8 text-center">
+                      {medals[entry.rank] ?? (
+                        <span className="text-zinc-500 text-lg font-bold">
+                          #{entry.rank}
+                        </span>
+                      )}
+                    </span>
+                    {!medals[entry.rank] && (
+                      <span className="text-zinc-500 text-lg font-bold w-8 text-center">
+                        #{entry.rank}
+                      </span>
+                    )}
+                    <div>
+                      <p
+                        className={`font-semibold ${isMe ? "text-emerald-300" : "text-zinc-100"}`}
+                      >
+                        {entry.full_name}{" "}
+                        {isMe && (
+                          <span className="text-xs font-normal text-emerald-400 ml-1">
+                            (You)
+                          </span>
+                        )}
+                      </p>
+                      <p className="text-xs text-zinc-500 mt-0.5">
+                        {entry.sessions_30d} sessions last 30 days
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-emerald-400">
+                      {entry.sessions_7d}
+                    </p>
+                    <p className="text-xs text-zinc-500">this week</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
-    </div>
+    </TrainerDashboardLayout>
   );
 }
