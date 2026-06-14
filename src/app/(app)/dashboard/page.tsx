@@ -5,7 +5,6 @@ import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
 import AthleteDashboard from "@/components/dashboard/AthleteDashboard";
 import CoachDashboard from "@/components/dashboard/CoachDashboard";
 import { getMeasurements } from "./measurements-actions";
-import { isFullyScouted } from "@/lib/profileUtils";
 import type { Profile, Workout, Measurement, AthleteProfile } from "@/types";
 
 type DashboardResponse = {
@@ -65,9 +64,9 @@ async function getDashboardData(): Promise<DashboardResponse> {
 
     const profile = profileData as Profile;
 
-    // Check if profile is fully scouted (has all Player Card fields)
-    // If not, redirect to finish-profile
-    if (!isFullyScouted(profile) && profile.role === "athlete") {
+    // Gate athletes behind onboarding: redirect if not fully scouted
+    // Do NOT redirect coaches
+    if (profile.is_fully_scouted === false && profile.role === "athlete") {
       redirect("/finish-profile");
     }
 
@@ -168,12 +167,13 @@ async function getDashboardData(): Promise<DashboardResponse> {
           const totalLogs = allLogs?.length ?? 0;
           const expectedWorkouts = activeWorkouts?.length ?? 1;
           const completionPercent = Math.round(
-            (totalLogs / (expectedWorkouts * 4)) * 100
+            (totalLogs / (expectedWorkouts * 4)) * 100,
           );
 
-          const lastLog = allLogs && allLogs.length > 0 
-            ? allLogs[allLogs.length - 1].created_at 
-            : null;
+          const lastLog =
+            allLogs && allLogs.length > 0
+              ? allLogs[allLogs.length - 1].created_at
+              : null;
 
           return {
             user_id: athlete.user_id,
@@ -188,21 +188,25 @@ async function getDashboardData(): Promise<DashboardResponse> {
             last_workout_date: lastLog,
             is_fully_scouted: athlete.is_fully_scouted ?? false,
           };
-        })
+        }),
       );
 
       // Calculate averages
-      const avgCompletion = athletesWithData.length > 0
-        ? athletesWithData.reduce((sum, a) => sum + (a.completion_percentage || 0), 0) / athletesWithData.length
-        : 0;
+      const avgCompletion =
+        athletesWithData.length > 0
+          ? athletesWithData.reduce(
+              (sum, a) => sum + (a.completion_percentage || 0),
+              0,
+            ) / athletesWithData.length
+          : 0;
 
       const activeAthletesCount = athletesWithData.filter(
-        (a) => (a.sessions_this_week ?? 0) > 0
+        (a) => (a.sessions_this_week ?? 0) > 0,
       ).length;
 
       const totalSessions = athletesWithData.reduce(
         (sum, a) => sum + (a.sessions_this_week ?? 0),
-        0
+        0,
       );
 
       return {
@@ -238,9 +242,13 @@ export default async function DashboardPage() {
       <TrainerDashboardLayout coachName="Coach">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-8">
-            <h2 className="text-lg font-semibold text-red-200 mb-2">Dashboard Error</h2>
+            <h2 className="text-lg font-semibold text-red-200 mb-2">
+              Dashboard Error
+            </h2>
             <p className="text-red-200">{error}</p>
-            <p className="text-red-300 text-sm mt-4">Please try refreshing the page or logging out and back in.</p>
+            <p className="text-red-300 text-sm mt-4">
+              Please try refreshing the page or logging out and back in.
+            </p>
           </div>
         </div>
       </TrainerDashboardLayout>
@@ -256,8 +264,13 @@ export default async function DashboardPage() {
         <TrainerDashboardLayout coachName={coachName}>
           <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-8">
-              <h2 className="text-lg font-semibold text-red-200 mb-2">Failed to Load Athlete Data</h2>
-              <p className="text-red-200">Unable to fetch your workouts and measurements. Please try refreshing the page.</p>
+              <h2 className="text-lg font-semibold text-red-200 mb-2">
+                Failed to Load Athlete Data
+              </h2>
+              <p className="text-red-200">
+                Unable to fetch your workouts and measurements. Please try
+                refreshing the page.
+              </p>
             </div>
           </div>
         </TrainerDashboardLayout>
@@ -284,8 +297,12 @@ export default async function DashboardPage() {
         <TrainerDashboardLayout coachName={coachName}>
           <div className="max-w-6xl mx-auto px-4 py-8">
             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-8">
-              <h2 className="text-lg font-semibold text-red-200 mb-2">Failed to Load Coach Data</h2>
-              <p className="text-red-200">Unable to fetch athlete data. Please try refreshing the page.</p>
+              <h2 className="text-lg font-semibold text-red-200 mb-2">
+                Failed to Load Coach Data
+              </h2>
+              <p className="text-red-200">
+                Unable to fetch athlete data. Please try refreshing the page.
+              </p>
             </div>
           </div>
         </TrainerDashboardLayout>
@@ -310,8 +327,12 @@ export default async function DashboardPage() {
     <TrainerDashboardLayout coachName={coachName}>
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-8">
-          <h2 className="text-lg font-semibold text-red-200 mb-2">Unknown User Role</h2>
-          <p className="text-red-200">Your account role is not recognized. Please contact support.</p>
+          <h2 className="text-lg font-semibold text-red-200 mb-2">
+            Unknown User Role
+          </h2>
+          <p className="text-red-200">
+            Your account role is not recognized. Please contact support.
+          </p>
         </div>
       </div>
     </TrainerDashboardLayout>
