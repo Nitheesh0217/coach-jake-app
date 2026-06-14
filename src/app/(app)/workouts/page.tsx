@@ -13,6 +13,7 @@ type Workout = {
 
 async function getWorkoutsWithStatus(): Promise<{
   workouts: Workout[];
+  assignedWorkouts: Workout[];
   completedTodayIds: Set<string>;
   userName: string;
   error: string | null;
@@ -33,35 +34,58 @@ async function getWorkoutsWithStatus(): Promise<{
     if (!user)
       return {
         workouts: [],
+        assignedWorkouts: [],
         completedTodayIds: new Set(),
         userName: "Athlete",
         error: "Not authenticated",
       };
 
-    const [workoutsRes, profileRes, logsRes] = await Promise.all([
-      supabase
-        .from("workouts")
-        .select("id,title,description,is_active,created_at")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("profiles")
-        .select("full_name")
-        .eq("user_id", user.id)
-        .maybeSingle(),
-      supabase
-        .from("workout_logs")
-        .select("workout_id")
-        .eq("user_id", user.id)
-        .gte("created_at", new Date().toISOString().split("T")[0]),
-    ]);
+    const [workoutsRes, profileRes, logsRes, assignmentsRes] =
+      await Promise.all([
+        supabase
+          .from("workouts")
+          .select("id,title,description,is_active,created_at")
+          .eq("is_active", true)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("user_id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("workout_logs")
+          .select("workout_id")
+          .eq("user_id", user.id)
+          .gte("created_at", new Date().toISOString().split("T")[0]),
+        supabase
+          .from("workout_assignments")
+          .select("workout_id")
+          .eq("athlete_id", user.id),
+      ]);
 
     const completedTodayIds = new Set<string>(
       (logsRes.data ?? []).map((l: { workout_id: string }) => l.workout_id),
     );
 
+    const assignedWorkoutIds = new Set<string>(
+      (assignmentsRes.data ?? []).map(
+        (a: { workout_id: string }) => a.workout_id,
+      ),
+    );
+
+    // Get assigned workouts with full details
+    const assignedWorkouts: Workout[] = (workoutsRes.data ?? []).filter(
+      (w: Workout) => assignedWorkoutIds.has(w.id),
+    );
+
+    // Get general library workouts (excluding assigned ones)
+    const generalWorkouts: Workout[] = (workoutsRes.data ?? []).filter(
+      (w: Workout) => !assignedWorkoutIds.has(w.id),
+    );
+
     return {
-      workouts: workoutsRes.data ?? [],
+      workouts: generalWorkouts,
+      assignedWorkouts,
       completedTodayIds,
       userName: profileRes.data?.full_name?.split(" ")[0] ?? "Athlete",
       error: workoutsRes.error?.message ?? null,
@@ -69,6 +93,7 @@ async function getWorkoutsWithStatus(): Promise<{
   } catch (err) {
     return {
       workouts: [],
+      assignedWorkouts: [],
       completedTodayIds: new Set(),
       userName: "Athlete",
       error: String(err),
@@ -77,7 +102,7 @@ async function getWorkoutsWithStatus(): Promise<{
 }
 
 export default async function WorkoutsPage() {
-  const { workouts, completedTodayIds, userName, error } =
+  const { workouts, assignedWorkouts, completedTodayIds, userName, error } =
     await getWorkoutsWithStatus();
 
   return (
@@ -98,26 +123,73 @@ export default async function WorkoutsPage() {
           </div>
         )}
 
-        {workouts.length === 0 ? (
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-12 text-center">
-            <p className="text-zinc-400 mb-4">
-              No active workouts available yet.
-            </p>
-            <p className="text-sm text-zinc-500">
-              Check back soon — your coach will assign programs here.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-6">
-            {workouts.map((workout) => (
-              <WorkoutCard
-                key={workout.id}
-                workout={workout}
-                alreadyCompletedToday={completedTodayIds.has(workout.id)}
-              />
-            ))}
+        {/* ASSIGNED WORKOUTS SECTION */}
+        {assignedWorkouts.length > 0 && (
+          <div className="mb-12">
+            <h3 className="text-xl font-semibold text-emerald-400 mb-4">
+              ✓ Assigned to You
+            </h3>
+            <div className="grid grid-cols-1 gap-6">
+              {assignedWorkouts.map((workout) => (
+                <div
+                  key={workout.id}
+                  className="relative rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-6"
+                >
+                  <div className="mb-3">
+                    <p className="text-xs font-medium text-emerald-400 mb-1">
+                      Assigned by your coach
+                    </p>
+                    <h4 className="text-lg font-semibold text-zinc-50">
+                      {workout.title}
+                    </h4>
+                    {workout.description && (
+                      <p className="text-sm text-zinc-400 mt-2">
+                        {workout.description}
+                      </p>
+                    )}
+                  </div>
+                  <WorkoutCard
+                    workout={workout}
+                    alreadyCompletedToday={completedTodayIds.has(workout.id)}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
+
+        {/* GENERAL LIBRARY SECTION */}
+        <div>
+          <h3 className="text-xl font-semibold text-zinc-200 mb-4">
+            Workout Library
+          </h3>
+          {workouts.length === 0 && assignedWorkouts.length === 0 ? (
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-12 text-center">
+              <p className="text-zinc-400 mb-4">
+                No active workouts available yet.
+              </p>
+              <p className="text-sm text-zinc-500">
+                Check back soon — your coach will assign programs here.
+              </p>
+            </div>
+          ) : workouts.length === 0 ? (
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-8 text-center">
+              <p className="text-zinc-400 text-sm">
+                You've completed all available workouts!
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6">
+              {workouts.map((workout) => (
+                <WorkoutCard
+                  key={workout.id}
+                  workout={workout}
+                  alreadyCompletedToday={completedTodayIds.has(workout.id)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </TrainerDashboardLayout>
   );

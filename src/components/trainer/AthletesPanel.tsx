@@ -1,4 +1,8 @@
-import { CheckCircle2, Circle, Clock } from "lucide-react";
+"use client";
+
+import { CheckCircle2, Circle, Clock, Plus } from "lucide-react";
+import { useState } from "react";
+import { assignWorkout } from "@/app/(app)/trainer-dashboard/actions";
 
 type AthleteRow = {
   user_id: string;
@@ -10,14 +14,75 @@ type AthleteRow = {
   last_workout_date: string | null;
 };
 
+type Workout = {
+  id: string;
+  title: string;
+};
+
+type Assignment = {
+  id: string;
+  athlete_id: string;
+  workout_id: string;
+};
+
 interface AthletesPanelProps {
   athletes: AthleteRow[];
+  workouts: Workout[];
+  assignments: Assignment[];
 }
 
-export default function AthletesPanel({ athletes }: AthletesPanelProps) {
+export default function AthletesPanel({
+  athletes,
+  workouts,
+  assignments,
+}: AthletesPanelProps) {
   const sorted = [...athletes].sort(
     (a, b) => b.sessions_this_week - a.sessions_this_week,
   );
+
+  const [expandedAthlete, setExpandedAthlete] = useState<string | null>(null);
+  const [assigningWorkout, setAssigningWorkout] = useState<string | null>(null);
+  const [assignmentStatus, setAssignmentStatus] = useState<
+    Record<string, { success?: boolean; message: string }>
+  >({});
+
+  const getAssignedWorkouts = (athleteId: string): string[] => {
+    return assignments
+      .filter((a) => a.athlete_id === athleteId)
+      .map((a) => a.workout_id);
+  };
+
+  const handleAssignWorkout = async (
+    athleteId: string,
+    workoutId: string,
+    workoutTitle: string,
+  ) => {
+    const result = await assignWorkout(athleteId, workoutId);
+    const key = `${athleteId}-${workoutId}`;
+
+    if (result.success) {
+      setAssignmentStatus({
+        ...assignmentStatus,
+        [key]: { success: true, message: "✓ Assigned" },
+      });
+      setTimeout(() => {
+        setExpandedAthlete(null);
+        setAssignmentStatus((prev) => {
+          const updated = { ...prev };
+          delete updated[key];
+          return updated;
+        });
+      }, 2000);
+    } else {
+      setAssignmentStatus({
+        ...assignmentStatus,
+        [key]: {
+          success: false,
+          message: result.error || "Failed to assign",
+        },
+      });
+    }
+  };
 
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-6">
@@ -55,43 +120,125 @@ export default function AthletesPanel({ athletes }: AthletesPanelProps) {
                 )
               : null;
 
+            const isExpanded = expandedAthlete === athlete.user_id;
+            const assignedWorkoutIds = getAssignedWorkouts(athlete.user_id);
+
             return (
-              <div
-                key={athlete.user_id}
-                className="flex items-center justify-between p-4 rounded-xl border border-zinc-800 hover:border-zinc-700 transition"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-200">
-                    {initials}
+              <div key={athlete.user_id}>
+                <div className="flex items-center justify-between p-4 rounded-xl border border-zinc-800 hover:border-zinc-700 transition">
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="w-9 h-9 rounded-full bg-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-200">
+                      {initials}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-zinc-100">
+                        {athlete.full_name ?? athlete.email}
+                      </p>
+                      <p className="text-xs text-zinc-500">
+                        {lastDate ? (
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> Last active {lastDate}
+                          </span>
+                        ) : (
+                          "No activity yet"
+                        )}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-zinc-100">
-                      {athlete.full_name ?? athlete.email}
-                    </p>
-                    <p className="text-xs text-zinc-500">
-                      {lastDate ? (
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> Last active {lastDate}
-                        </span>
-                      ) : (
-                        "No activity yet"
-                      )}
-                    </p>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-zinc-100">
+                        {athlete.sessions_this_week}
+                      </p>
+                      <p className="text-xs text-zinc-500">this week</p>
+                    </div>
+                    {activeToday ? (
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    ) : (
+                      <Circle className="w-4 h-4 text-zinc-600" />
+                    )}
+                    <button
+                      onClick={() =>
+                        setExpandedAthlete(isExpanded ? null : athlete.user_id)
+                      }
+                      className="ml-2 p-2 hover:bg-zinc-800 rounded-lg transition text-zinc-400 hover:text-zinc-200"
+                      title="Assign workout"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-zinc-100">
-                      {athlete.sessions_this_week}
+
+                {/* Assignment Dropdown */}
+                {isExpanded && (
+                  <div className="mt-2 ml-4 p-4 rounded-xl border border-zinc-700 bg-zinc-800/50 space-y-2">
+                    <p className="text-xs font-semibold text-zinc-400 mb-3">
+                      Assign Workout
                     </p>
-                    <p className="text-xs text-zinc-500">this week</p>
+                    {workouts.length === 0 ? (
+                      <p className="text-xs text-zinc-500">
+                        No active workouts available
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {workouts.map((workout) => {
+                          const isAssigned = assignedWorkoutIds.includes(
+                            workout.id,
+                          );
+                          const key = `${athlete.user_id}-${workout.id}`;
+                          const status = assignmentStatus[key];
+
+                          if (status?.success) {
+                            return (
+                              <div
+                                key={workout.id}
+                                className="flex items-center justify-between p-2 rounded text-xs text-emerald-400"
+                              >
+                                <span>{workout.title}</span>
+                                <span>{status.message}</span>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <button
+                              key={workout.id}
+                              onClick={() =>
+                                handleAssignWorkout(
+                                  athlete.user_id,
+                                  workout.id,
+                                  workout.title,
+                                )
+                              }
+                              disabled={
+                                isAssigned ||
+                                assigningWorkout ===
+                                  `${athlete.user_id}-${workout.id}`
+                              }
+                              className={`w-full text-left p-2 rounded text-xs transition ${
+                                isAssigned
+                                  ? "bg-zinc-700/50 text-zinc-400 cursor-not-allowed"
+                                  : "hover:bg-emerald-500/20 text-zinc-300 hover:text-emerald-400"
+                              }`}
+                            >
+                              {isAssigned && (
+                                <span className="text-emerald-400">
+                                  ✓ {workout.title}
+                                </span>
+                              )}
+                              {!isAssigned && workout.title}
+                              {status && !status.success && (
+                                <div className="text-red-400 text-xs mt-1">
+                                  {status.message}
+                                </div>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
-                  {activeToday ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  ) : (
-                    <Circle className="w-4 h-4 text-zinc-600" />
-                  )}
-                </div>
+                )}
               </div>
             );
           })}

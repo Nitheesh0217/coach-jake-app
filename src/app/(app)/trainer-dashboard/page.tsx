@@ -18,10 +18,23 @@ type AthleteRow = {
   last_workout_date: string | null;
 };
 
+type SimpleWorkout = {
+  id: string;
+  title: string;
+};
+
+type Assignment = {
+  id: string;
+  athlete_id: string;
+  workout_id: string;
+};
+
 async function getCoachData(): Promise<{
   coachName: string;
   athletes: AthleteRow[];
   totalSessions7d: number;
+  workouts: SimpleWorkout[];
+  assignments: Assignment[];
   error: string | null;
 }> {
   try {
@@ -42,6 +55,8 @@ async function getCoachData(): Promise<{
         coachName: "Coach",
         athletes: [],
         totalSessions7d: 0,
+        workouts: [],
+        assignments: [],
         error: "Not authenticated",
       };
 
@@ -57,6 +72,8 @@ async function getCoachData(): Promise<{
         coachName: "Coach",
         athletes: [],
         totalSessions7d: 0,
+        workouts: [],
+        assignments: [],
         error: "coach_only",
       };
     }
@@ -66,20 +83,25 @@ async function getCoachData(): Promise<{
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const [athletesRes, logs7dRes, logs30dRes] = await Promise.all([
-      supabase
-        .from("profiles")
-        .select("user_id, email, full_name, age")
-        .eq("role", "athlete"),
-      supabase
-        .from("workout_logs")
-        .select("user_id, created_at")
-        .gte("created_at", sevenDaysAgo.toISOString()),
-      supabase
-        .from("workout_logs")
-        .select("user_id, created_at")
-        .gte("created_at", thirtyDaysAgo.toISOString()),
-    ]);
+    const [athletesRes, logs7dRes, logs30dRes, workoutsRes, assignmentsRes] =
+      await Promise.all([
+        supabase
+          .from("profiles")
+          .select("user_id, email, full_name, age")
+          .eq("role", "athlete"),
+        supabase
+          .from("workout_logs")
+          .select("user_id, created_at")
+          .gte("created_at", sevenDaysAgo.toISOString()),
+        supabase
+          .from("workout_logs")
+          .select("user_id, created_at")
+          .gte("created_at", thirtyDaysAgo.toISOString()),
+        supabase.from("workouts").select("id, title").eq("is_active", true),
+        supabase
+          .from("workout_assignments")
+          .select("id, athlete_id, workout_id"),
+      ]);
 
     const count7d = (logs7dRes.data ?? []).reduce<Record<string, number>>(
       (acc, l) => {
@@ -122,6 +144,8 @@ async function getCoachData(): Promise<{
       coachName: coachProfile?.full_name?.split(" ")[0] ?? "Coach",
       athletes,
       totalSessions7d,
+      workouts: workoutsRes.data ?? [],
+      assignments: assignmentsRes.data ?? [],
       error: null,
     };
   } catch (err) {
@@ -129,13 +153,16 @@ async function getCoachData(): Promise<{
       coachName: "Coach",
       athletes: [],
       totalSessions7d: 0,
+      workouts: [],
+      assignments: [],
       error: String(err),
     };
   }
 }
 
 export default async function TrainerDashboardPage() {
-  const { coachName, athletes, totalSessions7d, error } = await getCoachData();
+  const { coachName, athletes, totalSessions7d, workouts, assignments, error } =
+    await getCoachData();
 
   if (error === "coach_only") redirect("/dashboard");
 
@@ -154,7 +181,11 @@ export default async function TrainerDashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2">
-            <AthletesPanel athletes={athletes} />
+            <AthletesPanel
+              athletes={athletes}
+              workouts={workouts}
+              assignments={assignments}
+            />
           </div>
           <div className="lg:col-span-1">
             <CalendarPanel />

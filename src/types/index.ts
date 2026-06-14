@@ -24,7 +24,7 @@ export interface Profile {
   weight_kg: number | null;
   role: Role;
   created_at?: string;
-  
+
   // Player Card Fields
   player_archetype?: string | null;
   playstyle_team_vs_iso?: number | null; // 0-100: Team-First to ISO Scorer
@@ -66,9 +66,17 @@ export interface AthleteProfile {
 export interface Workout {
   id: string;
   title: string;
-  description: string | null;
-  is_active: boolean;
-  created_at: string;
+  description: string;
+  type: "strength" | "skill" | "conditioning";
+  difficulty: "beginner" | "intermediate" | "advanced";
+  status: "active" | "completed" | "history";
+  assignedDate: string;
+  completionDate?: string;
+  duration?: number; // minutes
+  rating?: number; // 1-5 stars
+  notes?: string;
+  is_active?: boolean;
+  created_at?: string;
 }
 
 /**
@@ -79,4 +87,16 @@ export interface Measurement {
   date: string;
   weight_kg: number;
   created_at?: string;
+}
+
+/**
+ * Workout Assignment - coach assigns workouts to athletes
+ */
+export interface WorkoutAssignment {
+  id: string;
+  coach_id: string;
+  athlete_id: string;
+  workout_id: string;
+  assigned_at: string;
+  notes?: string | null;
 }
