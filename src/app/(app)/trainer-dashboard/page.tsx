@@ -1,7 +1,6 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { supabaseBrowser } from "@/lib/supabaseClient";
+import { supabaseServer } from "@/lib/supabaseClient";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
 import KPICards from "@/components/trainer/KPICards";
 import AthletesPanel from "@/components/trainer/AthletesPanel";
@@ -9,112 +8,165 @@ import CalendarPanel from "@/components/trainer/CalendarPanel";
 import CoachInsightsWidget from "@/components/trainer/CoachInsightsWidget";
 import RecentActivityWidget from "@/components/trainer/RecentActivityWidget";
 
-type Profile = {
-  id: string;
+type AthleteRow = {
+  user_id: string;
   email: string;
-  role: "athlete" | "coach";
   full_name: string | null;
+  age: number | null;
+  sessions_this_week: number;
+  sessions_30d: number;
+  last_workout_date: string | null;
 };
 
-export default function TrainerDashboardPage() {
-  const supabase = supabaseBrowser();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+async function getCoachData(): Promise<{
+  coachName: string;
+  athletes: AthleteRow[];
+  totalSessions7d: number;
+  error: string | null;
+}> {
+  try {
+    const cookieStore = await cookies();
+    const supabase = supabaseServer({
+      get: (name) => {
+        const val = cookieStore.get(name);
+        return val ? { value: val.value } : undefined;
+      },
+      set: () => {},
+      remove: () => {},
+    });
 
-  useEffect(() => {
-    async function load() {
-      const { data: auth } = await supabase.auth.getUser();
-      const user = auth.user;
+    const { data: auth } = await supabase.auth.getUser();
+    const user = auth.user;
+    if (!user)
+      return {
+        coachName: "Coach",
+        athletes: [],
+        totalSessions7d: 0,
+        error: "Not authenticated",
+      };
 
-      if (!user) {
-        setError("Not logged in.");
-        setLoading(false);
-        return;
-      }
+    // ✅ Fix: use user_id not id
+    const { data: coachProfile } = await supabase
+      .from("profiles")
+      .select("full_name, role")
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id,email,role,full_name")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (error) {
-        setError(error.message);
-        setLoading(false);
-        return;
-      }
-
-      if (!data) {
-        setError("Profile not found.");
-        setLoading(false);
-        return;
-      }
-
-      // Check if user is a coach
-      if (data.role !== "coach") {
-        setError("This view is only for coaches. Contact support if you need access.");
-        setLoading(false);
-        return;
-      }
-
-      setProfile(data as Profile);
-      setLoading(false);
+    if (coachProfile?.role !== "coach") {
+      return {
+        coachName: "Coach",
+        athletes: [],
+        totalSessions7d: 0,
+        error: "coach_only",
+      };
     }
 
-    load();
-  }, [supabase]);
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  if (loading) {
-    return (
-      <TrainerDashboardLayout coachName="Coach">
-        <div className="flex items-center justify-center min-h-screen">
-          <p className="text-zinc-400">Loading dashboard…</p>
-        </div>
-      </TrainerDashboardLayout>
+    const [athletesRes, logs7dRes, logs30dRes] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("user_id, email, full_name, age")
+        .eq("role", "athlete"),
+      supabase
+        .from("workout_logs")
+        .select("user_id, created_at")
+        .gte("created_at", sevenDaysAgo.toISOString()),
+      supabase
+        .from("workout_logs")
+        .select("user_id, created_at")
+        .gte("created_at", thirtyDaysAgo.toISOString()),
+    ]);
+
+    const count7d = (logs7dRes.data ?? []).reduce<Record<string, number>>(
+      (acc, l) => {
+        acc[l.user_id] = (acc[l.user_id] ?? 0) + 1;
+        return acc;
+      },
+      {},
     );
-  }
 
-  if (error) {
-    return (
-      <TrainerDashboardLayout coachName="Coach">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-200">
-            <p className="font-medium">{error}</p>
-          </div>
-        </div>
-      </TrainerDashboardLayout>
+    const count30d = (logs30dRes.data ?? []).reduce<Record<string, number>>(
+      (acc, l) => {
+        acc[l.user_id] = (acc[l.user_id] ?? 0) + 1;
+        return acc;
+      },
+      {},
     );
-  }
 
-  const coachName = profile?.full_name?.split(" ")[0] ?? "Coach";
+    const lastWorkout = (logs7dRes.data ?? []).reduce<Record<string, string>>(
+      (acc, l) => {
+        if (!acc[l.user_id] || l.created_at > acc[l.user_id])
+          acc[l.user_id] = l.created_at;
+        return acc;
+      },
+      {},
+    );
+
+    const athletes: AthleteRow[] = (athletesRes.data ?? []).map((a) => ({
+      user_id: a.user_id,
+      email: a.email,
+      full_name: a.full_name,
+      age: a.age,
+      sessions_this_week: count7d[a.user_id] ?? 0,
+      sessions_30d: count30d[a.user_id] ?? 0,
+      last_workout_date: lastWorkout[a.user_id] ?? null,
+    }));
+
+    const totalSessions7d = (logs7dRes.data ?? []).length;
+
+    return {
+      coachName: coachProfile?.full_name?.split(" ")[0] ?? "Coach",
+      athletes,
+      totalSessions7d,
+      error: null,
+    };
+  } catch (err) {
+    return {
+      coachName: "Coach",
+      athletes: [],
+      totalSessions7d: 0,
+      error: String(err),
+    };
+  }
+}
+
+export default async function TrainerDashboardPage() {
+  const { coachName, athletes, totalSessions7d, error } = await getCoachData();
+
+  if (error === "coach_only") redirect("/dashboard");
 
   return (
     <TrainerDashboardLayout coachName={coachName}>
       <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8 space-y-8">
-        {/* Page title for SEO */}
         <h1 className="sr-only">Trainer Dashboard</h1>
 
-        {/* KPI Cards */}
-        <KPICards athletes={[]} />
+        {error && error !== "coach_only" && (
+          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-200">
+            <p className="font-medium">{error}</p>
+          </div>
+        )}
 
-        {/* Athletes & Calendar Grid */}
+        <KPICards athletes={athletes} totalSessions7d={totalSessions7d} />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2">
-            <AthletesPanel athletes={[]} />
+            <AthletesPanel athletes={athletes} />
           </div>
           <div className="lg:col-span-1">
             <CalendarPanel />
           </div>
         </div>
 
-        {/* Insights & Activity Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2">
-            <CoachInsightsWidget />
+            <CoachInsightsWidget athletes={athletes} />
           </div>
           <div className="lg:col-span-1">
-            <RecentActivityWidget />
+            <RecentActivityWidget athletes={athletes} />
           </div>
         </div>
       </div>

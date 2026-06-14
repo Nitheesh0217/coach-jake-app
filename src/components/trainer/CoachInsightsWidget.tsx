@@ -1,6 +1,19 @@
 import { AlertCircle, TrendingUp, Zap } from "lucide-react";
 
-export default function CoachInsightsWidget() {
+type AthleteRow = {
+  user_id: string;
+  sessions_this_week: number;
+  sessions_30d: number;
+  last_workout_date: string | null;
+};
+
+interface CoachInsightsWidgetProps {
+  athletes: AthleteRow[];
+}
+
+export default function CoachInsightsWidget({
+  athletes,
+}: CoachInsightsWidgetProps) {
   const insights = [
     {
       icon: AlertCircle,
@@ -56,7 +69,9 @@ export default function CoachInsightsWidget() {
               className={`rounded-lg border ${colors.border} ${colors.bg} p-4 flex items-start gap-3`}
             >
               <Icon className={`w-5 h-5 flex-shrink-0 mt-0.5 ${colors.icon}`} />
-              <p className="text-sm text-zinc-100 leading-relaxed">{insight.text}</p>
+              <p className="text-sm text-zinc-100 leading-relaxed">
+                {insight.text}
+              </p>
             </div>
           );
         })}
