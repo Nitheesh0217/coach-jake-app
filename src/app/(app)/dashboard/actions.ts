@@ -45,13 +45,40 @@ export async function markWorkoutComplete(
       return { success: false, error: "Not authenticated" };
     }
 
+    // Check if a workout log already exists for this workout today
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+
+    const { data: existingLog, error: checkError } = await supabase
+      .from("workout_logs")
+      .select("id", { count: "exact" })
+      .eq("user_id", user.id)
+      .eq("workout_id", data.workoutId)
+      .gte("created_at", today.toISOString())
+      .lt("created_at", tomorrow.toISOString())
+      .maybeSingle();
+
+    if (checkError) {
+      console.error("Error checking for existing log:", checkError);
+      return {
+        success: false,
+        error: `Failed to check workout logs: ${checkError.message}`,
+      };
+    }
+
+    if (existingLog) {
+      return { success: false, error: "Already logged today" };
+    }
+
     // Insert workout log
-    const today = new Date().toISOString().split("T")[0];
+    const todayStr = today.toISOString().split("T")[0];
 
     const { error } = await supabase.from("workout_logs").insert({
       user_id: user.id,
       workout_id: data.workoutId,
-      date: today,
+      date: todayStr,
       completed: true,
       notes: data.notes || null,
     });
