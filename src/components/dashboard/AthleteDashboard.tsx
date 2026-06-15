@@ -305,7 +305,7 @@ export default function AthleteDashboard({
                           {log.workouts?.title || "Unknown"}
                         </p>
                         <p className="text-xs text-zinc-500">
-                          {new Date(log.logged_at).toLocaleDateString("en-US", {
+                          {new Date(log.date).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
                           })}

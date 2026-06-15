@@ -56,7 +56,7 @@ export default function LogWorkoutModal({
         .insert({
           user_id: user.id,
           workout_id: workoutId,
-          logged_at: date,
+          date: date,
           notes: notes || null,
           completed: true,
         });

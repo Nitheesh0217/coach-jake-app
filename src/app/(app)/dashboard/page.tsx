@@ -10,7 +10,7 @@ import type { Profile, Workout, Measurement, AthleteProfile } from "@/types";
 /**
  * Calculate workout streaks from an array of workout log timestamps
  */
-function calculateStreaks(logs: { created_at: string }[]): {
+function calculateStreaks(logs: { date: string }[]): {
   currentStreak: number;
   longestStreak: number;
 } {
@@ -21,8 +21,12 @@ function calculateStreaks(logs: { created_at: string }[]): {
   // Extract unique dates (YYYY-MM-DD format) from logs
   const uniqueDates = new Set<string>();
   logs.forEach((log) => {
-    const date = new Date(log.created_at).toISOString().split("T")[0];
-    uniqueDates.add(date);
+    // If it's already a date string (YYYY-MM-DD), use it directly
+    const dateStr =
+      typeof log.date === "string" && log.date.length === 10
+        ? log.date
+        : new Date(log.date).toISOString().split("T")[0];
+    uniqueDates.add(dateStr);
   });
 
   if (uniqueDates.size === 0) {
@@ -193,9 +197,9 @@ async function getDashboardData(): Promise<DashboardResponse> {
 
       const { data: logs60d } = await supabase
         .from("workout_logs")
-        .select("created_at")
+        .select("date")
         .eq("user_id", user.id)
-        .gte("created_at", sixtyDaysAgo.toISOString())
+        .gte("date", sixtyDaysAgo.toISOString())
         .order("created_at", { ascending: false });
 
       const { currentStreak, longestStreak } = calculateStreaks(logs60d ?? []);
@@ -203,9 +207,9 @@ async function getDashboardData(): Promise<DashboardResponse> {
       // Fetch recent sessions (last 3)
       const { data: recentSessions } = await supabase
         .from("workout_logs")
-        .select("id, logged_at, notes, workouts(title)")
+        .select("id, date, notes, workouts(title)")
         .eq("user_id", user.id)
-        .order("logged_at", { ascending: false })
+        .order("date", { ascending: false })
         .limit(3);
 
       // Check if logged today
@@ -214,7 +218,7 @@ async function getDashboardData(): Promise<DashboardResponse> {
         .from("workout_logs")
         .select("id")
         .eq("user_id", user.id)
-        .gte("logged_at", today)
+        .gte("date", today)
         .limit(1)
         .maybeSingle();
 

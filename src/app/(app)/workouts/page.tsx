@@ -12,7 +12,7 @@ type AssignedWorkout = {
 
 type WorkoutLog = {
   id: string;
-  logged_at: string;
+  date: string;
   notes: string | null;
   workout_id: string;
   workouts: {
@@ -63,14 +63,14 @@ async function getWorkoutsData() {
     // Fetch workout history (last 20)
     const { data: logsData, error: logsError } = await supabase
       .from("workout_logs")
-      .select("id, logged_at, notes, workout_id, workouts(title)")
+      .select("id, date, notes, workout_id, workouts(title)")
       .eq("user_id", user.id)
-      .order("logged_at", { ascending: false })
+      .order("date", { ascending: false })
       .limit(20);
 
     const workoutLogs: WorkoutLog[] = (logsData || []).map((log: any) => ({
       id: log.id,
-      logged_at: log.logged_at,
+      date: log.date,
       notes: log.notes,
       workout_id: log.workout_id,
       workouts:
@@ -187,7 +187,7 @@ export default async function WorkoutsPage() {
                         {log.workouts?.title || "Unknown Workout"}
                       </p>
                       <p className="text-xs text-zinc-500">
-                        {formatDate(log.logged_at)}
+                        {formatDate(log.date)}
                       </p>
                     </div>
                     <span className="text-emerald-400 text-lg">✅</span>
