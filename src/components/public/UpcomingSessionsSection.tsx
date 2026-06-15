@@ -32,7 +32,7 @@ export default function UpcomingSessionsSection() {
   ];
 
   return (
-    <section className="mx-auto mt-8 max-w-5xl px-4">
+    <section className="mx-auto mt-8 max-w-5xl px-4 bg-[#050816]">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-zinc-50">
           Upcoming sessions

@@ -18,7 +18,7 @@ export default function InsideAppSection() {
   ];
 
   return (
-    <section className="mx-auto mt-16 max-w-5xl px-4">
+    <section className="mx-auto mt-16 max-w-5xl px-4 bg-[#050816]">
       <h2 className="text-xl sm:text-2xl font-semibold bg-gradient-to-r from-white via-zinc-100 to-zinc-300 bg-clip-text text-transparent">
         Inside the app
       </h2>
@@ -51,8 +51,7 @@ export default function InsideAppSection() {
                 <div className="flex items-center gap-3">
                   <div className="h-3 w-full bg-zinc-800/50 rounded overflow-hidden">
                     <div
-                      className="h-3 bg-emerald-500/70 rounded"
-                      style={{ width: "70%" }}
+                      className="h-3 w-[70%] bg-emerald-500/70 rounded"
                     />
                   </div>
                   <div className="text-xs text-zinc-300">+7</div>

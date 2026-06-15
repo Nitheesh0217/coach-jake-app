@@ -19,7 +19,7 @@ export default function BenefitsSection() {
   ];
 
   return (
-    <section className="mx-auto mt-16 max-w-5xl px-4">
+    <section className="mx-auto mt-16 max-w-5xl px-4 bg-[#050816]">
       <h2 className="text-xl sm:text-2xl font-semibold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
         What you get
       </h2>

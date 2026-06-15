@@ -1,8 +1,7 @@
 export default function CoachCredibilityBand() {
   return (
-    <section className="mx-auto mt-16 max-w-5xl px-4">
+    <section className="mx-auto mt-16 max-w-5xl px-4 bg-[#050816]">
       <div className="relative rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl p-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/30 hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] group">
-
         {/* Left: Coach identity */}
         <div className="flex items-start gap-4">
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-bold text-sm">
@@ -42,7 +41,6 @@ export default function CoachCredibilityBand() {
             Built for athletes who want more minutes, not just bigger lifts.
           </div>
         </div>
-
       </div>
     </section>
   );

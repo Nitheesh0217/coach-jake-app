@@ -46,7 +46,7 @@ const STATS = [
 
 export default function HeroSection() {
   return (
-    <section className="grid lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_520px] gap-10 xl:gap-16 items-start min-h-[calc(100vh-64px)]">
+    <section className="grid lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_520px] gap-10 xl:gap-16 items-start min-h-[calc(100vh-64px)] bg-[#050816]">
       {/* ── LEFT COLUMN ── */}
       <motion.div
         variants={container}

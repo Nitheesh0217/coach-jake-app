@@ -33,13 +33,16 @@ export default function Hero() {
   return (
     <section
       ref={heroRef}
-      className="relative text-white min-h-screen"
+      className="relative text-white min-h-screen bg-[#050816]"
       aria-label="Hero"
     >
       {/* Background image layer - using Pexels free image */}
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
-        style={{ backgroundImage: "url('https://images.pexels.com/photos/3808517/pexels-photo-3808517.jpeg?auto=compress&cs=tinysrgb&w=1600')" }}
+        style={{
+          backgroundImage:
+            "url('https://images.pexels.com/photos/3808517/pexels-photo-3808517.jpeg?auto=compress&cs=tinysrgb&w=1600')",
+        }}
         aria-hidden
       />
 

@@ -53,7 +53,7 @@ export default function GamificationSection() {
   ];
 
   return (
-    <section className="mx-auto mt-16 max-w-5xl px-4">
+    <section className="mx-auto mt-16 max-w-5xl px-4 bg-[#050816]">
       <h2 className="text-xl sm:text-2xl font-semibold text-zinc-50">
         Gamification & consistency
       </h2>
@@ -80,8 +80,7 @@ export default function GamificationSection() {
           <div className="mt-4">
             <div className="h-3 rounded-full bg-gradient-to-r from-red-500/30 via-amber-400/30 to-emerald-500/30 overflow-hidden">
               <div
-                className="h-3 rounded-full bg-gradient-to-r from-red-500 to-emerald-500"
-                style={{ width: "70%" }}
+                className="h-3 w-[70%] rounded-full bg-gradient-to-r from-red-500 to-emerald-500"
               />
             </div>
             <div className="mt-2 text-xs text-zinc-400">
