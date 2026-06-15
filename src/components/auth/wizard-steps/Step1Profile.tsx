@@ -6,9 +6,10 @@ import { WizardData } from "../OnboardingWizard";
 interface Step1ProfileProps {
   data: WizardData;
   setData: (data: WizardData) => void;
+  onNext: () => void;
 }
 
-export default function Step1Profile({ data, setData }: Step1ProfileProps) {
+export default function Step1Profile({ data, setData, onNext }: Step1ProfileProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
@@ -52,7 +53,7 @@ export default function Step1Profile({ data, setData }: Step1ProfileProps) {
       initial={{ opacity: 0, y: 32 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="rounded-3xl border border-emerald-500/20 bg-gradient-to-b from-zinc-900/80 to-zinc-950/80 backdrop-blur-xl p-8 md:p-10 shadow-2xl shadow-emerald-500/10"
+      className="rounded-[2rem] border border-zinc-600/60 bg-gradient-to-b from-zinc-900/80 to-zinc-950/90 backdrop-blur-xl p-8 md:p-10 shadow-2xl shadow-emerald-500/10"
     >
       {/* Header */}
       <motion.div
@@ -61,10 +62,10 @@ export default function Step1Profile({ data, setData }: Step1ProfileProps) {
         transition={{ duration: 0.4, delay: 0.1 }}
         className="mb-8"
       >
-        <h2 className="text-sm font-bold text-emerald-400 uppercase tracking-widest mb-3">
+        <h2 className="text-sm font-bold text-emerald-400 uppercase tracking-[0.24em] mb-3">
           Step 1 of 4 · Tell us about you
         </h2>
-        <h1 className="text-4xl md:text-5xl font-black text-white mb-3">
+        <h1 className="text-4xl md:text-5xl font-black text-white mb-3 leading-[1.05]">
           Build your player profile
         </h1>
         <p className="text-zinc-400 text-base">
@@ -74,15 +75,15 @@ export default function Step1Profile({ data, setData }: Step1ProfileProps) {
 
       {/* Form Fields */}
       <div className="space-y-6">
-        {fields.map((field, idx) => (
+        {fields.map((field) => (
           <motion.div
             key={field.name}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: field.delay }}
-            className="space-y-2.5"
+            className={`space-y-2.5 ${field.name === "age" ? "max-w-[270px]" : ""}`}
           >
-            <label className="text-sm font-bold text-zinc-300 uppercase tracking-widest block">
+            <label className="text-sm font-semibold text-zinc-200 block">
               {field.label}
             </label>
             <div className="relative">
@@ -92,10 +93,10 @@ export default function Step1Profile({ data, setData }: Step1ProfileProps) {
                 value={data[field.name as keyof WizardData] as string}
                 onChange={handleChange}
                 placeholder={field.placeholder}
-                className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3.5 text-white placeholder-zinc-600 text-base focus:border-emerald-400 focus:outline-none focus:ring-[3px] focus:ring-emerald-500/30 transition-all duration-300"
+                className="w-full bg-zinc-800/45 border border-zinc-600/80 rounded-xl px-4 py-3.5 text-white placeholder-zinc-500 text-base focus:border-emerald-400 focus:outline-none focus:ring-[3px] focus:ring-emerald-500/30 transition-all duration-300"
               />
               {field.suffix && (
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 font-semibold">
+                <span className="absolute right-6 top-1/2 -translate-y-1/2 text-zinc-300 font-semibold text-xl">
                   {field.suffix}
                 </span>
               )}
@@ -104,15 +105,20 @@ export default function Step1Profile({ data, setData }: Step1ProfileProps) {
         ))}
       </div>
 
-      {/* Help Text */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, delay: 0.54 }}
-        className="text-xs text-zinc-500 mt-8 italic"
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.56 }}
+        className="mt-10 flex justify-end"
       >
-        Your data is secure and never shared.
-      </motion.p>
+        <button
+          type="button"
+          onClick={onNext}
+          className="px-10 py-3.5 rounded-full bg-emerald-400 text-black font-bold text-2xl transition-all duration-300 shadow-[0_0_24px_rgba(16,185,129,0.5)] hover:-translate-y-1 hover:shadow-[0_0_38px_rgba(16,185,129,0.8)] active:translate-y-0 flex items-center gap-3"
+        >
+          Next <span>→</span>
+        </button>
+      </motion.div>
     </motion.div>
   );
 }
