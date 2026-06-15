@@ -50,9 +50,7 @@ export default function InsideAppSection() {
               {c.type === "streak" && (
                 <div className="flex items-center gap-3">
                   <div className="h-3 w-full bg-zinc-800/50 rounded overflow-hidden">
-                    <div
-                      className="h-3 w-[70%] bg-emerald-500/70 rounded"
-                    />
+                    <div className="h-3 w-[70%] bg-emerald-500/70 rounded" />
                   </div>
                   <div className="text-xs text-zinc-300">+7</div>
                 </div>
