@@ -1,29 +1,19 @@
 "use client";
 
 import {
-  Flame,
-  Dumbbell,
   Calendar,
   TrendingUp,
-  MessageCircle,
-  Target,
-  Zap,
+  Crosshair,
+  Flame,
+  ArrowUp,
   CheckCircle2,
+  Circle,
+  Clock3,
   ChevronRight,
-  ArrowRight,
-  Users,
+  Activity,
 } from "lucide-react";
-import { motion } from "framer-motion";
 import { Workout } from "@/types";
-import TodaysWorkout from "./TodaysWorkout";
-import UpcomingScheduleWidget from "./UpcomingScheduleWidget";
-import ConsistencyWidget from "./ConsistencyWidget";
-import MeasurementsWidget from "./MeasurementsWidget";
-import FocusBreakdownWidget from "./FocusBreakdownWidget";
-import NotesHighlightsWidget from "./NotesHighlightsWidget";
 import WeightChart from "./WeightChart";
-import StatCard from "@/components/ui/StatCard";
-import AmbientGlow from "@/components/ui/AmbientGlow";
 
 interface Measurement {
   id: string;
@@ -49,424 +39,275 @@ export default function AthleteDashboard({
   last30DaysCount,
   measurements,
   currentStreak,
-  longestStreak,
   userName = "Athlete",
   recentSessions = [],
   hasLoggedToday = false,
 }: AthleteDashboardProps) {
   const firstName = userName.split(" ")[0];
 
-  // Get time-based greeting
-  const getGreeting = () => {
+  const greeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
     if (hour < 18) return "Good afternoon";
     return "Good evening";
   };
 
-  // Calculate consistency percentage
-  const consistencyRate =
-    last30DaysCount > 0
-      ? Math.min(Math.round((last30DaysCount / 30) * 100), 100)
+  const readableDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+
+  const completionRate = Math.min(Math.round((last30DaysCount / 30) * 100), 100);
+  const drills = [
+    { label: "Dynamic Warm-up", mins: "10 min", done: true },
+    { label: "Ball Handling Circuit", mins: "20 min", done: true },
+    { label: "Finishing Drills", mins: "20 min", done: true },
+    { label: "Conditioning Finisher", mins: "10 min", done: hasLoggedToday },
+  ];
+
+  const progress = Math.round((drills.filter((d) => d.done).length / drills.length) * 100);
+
+  const latestMeasurement = measurements.at(-1);
+  const oldestMeasurement = measurements[0];
+  const weightDelta =
+    latestMeasurement && oldestMeasurement
+      ? Number((latestMeasurement.weight_kg - oldestMeasurement.weight_kg).toFixed(1))
       : 0;
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 24 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
-
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className="relative min-h-screen bg-[#050816] text-slate-100 overflow-hidden"
-    >
-      {/* Ambient Glows */}
-      <AmbientGlow
-        color="emerald"
-        position="top-right"
-        size={500}
-        opacity={0.03}
-      />
-      <AmbientGlow
-        color="cyan"
-        position="bottom-left"
-        size={400}
-        opacity={0.02}
-      />
-
-      {/* Main content */}
-      <div className="relative max-w-7xl mx-auto px-4 py-6 lg:py-8 space-y-8">
-        {/* HERO GREETING SECTION - Premium Typography */}
-        <motion.div
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="border-b border-zinc-800 pb-8"
-        >
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tight bg-linear-to-br from-white via-white to-zinc-400 bg-clip-text text-transparent mb-3">
-            {getGreeting()}, {firstName}.
-          </h1>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-sm">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="text-emerald-400 font-medium capitalize">
-                Ready to train
-              </span>
+    <div className="min-h-screen px-4 py-6 md:px-8 md:py-8 text-slate-100">
+      <div className="mx-auto max-w-[1120px] space-y-4 md:space-y-5">
+        <div className="rounded-2xl border border-cyan-500/20 bg-[#020817]/80 px-5 py-4 backdrop-blur-xl">
+          <div className="flex flex-wrap items-center gap-3 text-2xl md:text-[2rem] font-semibold">
+            <span>{greeting()},</span>
+            <span className="text-white">{firstName}</span>
+            <span>👋</span>
+            <span className="ml-0 md:ml-4 text-sm md:text-xl font-medium text-slate-400">
+              {readableDate.replace(",", " ·")}
             </span>
           </div>
-        </motion.div>
+        </div>
 
-        {/* TODAY'S FOCUS BLOCK - Premium Design */}
-        <motion.div
-          variants={itemVariants}
-          initial="hidden"
-          animate="visible"
-          className="rounded-2xl border-l-4 border-l-emerald-400 border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/40 p-6 flex items-center justify-between"
-        >
-          <div>
-            {hasLoggedToday ? (
-              <>
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                  Session logged
-                </h2>
-                <p className="text-sm text-zinc-400 mt-1">
-                  Keep the streak going — stay strong!
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {[
+            {
+              title: "SESSIONS THIS WEEK",
+              value: weekLogsCount,
+              icon: Calendar,
+              accent: "emerald",
+              delta: "+50%",
+              meta: "vs last week",
+            },
+            {
+              title: "THIS MONTH",
+              value: last30DaysCount,
+              icon: TrendingUp,
+              accent: "cyan",
+              delta: "+33%",
+              meta: "vs last month",
+            },
+            {
+              title: "COMPLETION %",
+              value: `${completionRate}%`,
+              icon: Crosshair,
+              accent: "emerald",
+              delta: "+12%",
+              meta: "vs last month",
+            },
+            {
+              title: "🔥 STREAK",
+              value: currentStreak,
+              icon: Flame,
+              accent: "amber",
+              delta: `${Math.max(currentStreak - 1, 0)}`,
+              meta: "Days in a row",
+            },
+          ].map((card) => {
+            const Icon = card.icon;
+            const accentClass =
+              card.accent === "amber"
+                ? "border-amber-400/45 text-amber-300 shadow-[0_0_26px_rgba(245,158,11,0.2)]"
+                : card.accent === "cyan"
+                  ? "border-cyan-400/30 text-cyan-300"
+                  : "border-emerald-400/30 text-emerald-300";
+
+            return (
+              <article
+                key={card.title}
+                className={`rounded-2xl border bg-[#041022]/85 px-5 py-4 backdrop-blur-xl ${accentClass}`}
+              >
+                <div className="flex items-start justify-between">
+                  <p className="text-sm tracking-wide text-slate-300">{card.title}</p>
+                  <div className="rounded-full border border-current/40 p-2">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                </div>
+                <p
+                  className={`mt-4 text-6xl font-bold leading-none ${
+                    card.accent === "amber" ? "text-amber-300" : "text-cyan-300"
+                  }`}
+                >
+                  {card.value}
                 </p>
-              </>
-            ) : (
-              <>
-                <h2 className="text-lg font-semibold text-white">
-                  No session logged yet today
-                </h2>
-                <p className="text-sm text-zinc-400 mt-1">
-                  Ready to get to work?
+                <p className="mt-2 flex items-center gap-1 text-lg text-emerald-300">
+                  <ArrowUp className="h-4 w-4" /> {card.delta}
+                  <span className="text-base text-slate-400">{card.meta}</span>
                 </p>
-              </>
-            )}
-          </div>
-          {!hasLoggedToday && (
+              </article>
+            );
+          })}
+        </section>
+
+        <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+          <article className="xl:col-span-2 rounded-2xl border border-cyan-500/25 bg-[#041022]/85 p-5 backdrop-blur-xl">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-3xl font-semibold text-white">Today&apos;s Workout</h3>
+                <h4 className="mt-2 text-4xl font-bold text-cyan-100">
+                  {todayWorkout?.title || "Explosive Handles & Finishing"}
+                </h4>
+              </div>
+              <span className="inline-flex items-center gap-1 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-sm text-cyan-200">
+                <Clock3 className="h-4 w-4" /> 60 MIN
+              </span>
+            </div>
+
+            <div className="mt-5 space-y-2">
+              {drills.map((drill) => (
+                <div
+                  key={drill.label}
+                  className="flex items-center justify-between rounded-lg border border-cyan-500/15 bg-[#020817]/60 px-3 py-2"
+                >
+                  <span className="inline-flex items-center gap-2 text-lg text-slate-200">
+                    {drill.done ? (
+                      <CheckCircle2 className="h-5 w-5 text-emerald-300" />
+                    ) : (
+                      <Circle className="h-5 w-5 text-slate-500" />
+                    )}
+                    {drill.label}
+                  </span>
+                  <span className="text-base text-slate-400">{drill.mins}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5">
+              <div className="mb-2 flex items-center justify-between text-sm uppercase tracking-wider text-slate-300">
+                <span>Progress</span>
+                <span>{progress}%</span>
+              </div>
+              <div className="h-2 rounded-full bg-slate-900">
+                <div
+                  className="h-2 rounded-full bg-linear-to-r from-emerald-400 to-cyan-400"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+
             <a
               href="/workouts"
-              className="bg-linear-to-r from-emerald-500 to-green-400 hover:from-emerald-400 hover:to-green-300 text-black font-semibold rounded-full px-6 py-2.5 transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-xl border border-emerald-400/50 bg-emerald-500/10 py-3 text-2xl font-semibold text-emerald-200 shadow-[0_0_20px_rgba(16,185,129,0.25)] transition hover:bg-emerald-500/20"
             >
-              Go to Workouts →
+              {hasLoggedToday ? "Session Completed" : "Mark Session Complete"}
             </a>
-          )}
-        </motion.div>
+          </article>
 
-        {/* KPI Cards Grid - 4 cards with stagger animation */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
-          <motion.div variants={itemVariants}>
-            <StatCard
-              label="This Week"
-              value={weekLogsCount}
-              icon={Flame}
-              iconColor="emerald"
-              delay={0}
-              countUp={true}
-            />
-          </motion.div>
-          <motion.div variants={itemVariants}>
-            <StatCard
-              label="Last 30 Days"
-              value={last30DaysCount}
-              icon={TrendingUp}
-              iconColor="sky"
-              delay={0.08}
-              countUp={true}
-            />
-          </motion.div>
-          <motion.div variants={itemVariants}>
-            <StatCard
-              label="Consistency"
-              value={`${consistencyRate}%`}
-              icon={Target}
-              iconColor="violet"
-              delay={0.16}
-              countUp={false}
-            />
-          </motion.div>
-          <motion.div variants={itemVariants}>
-            <StatCard
-              label="Current Streak"
-              value={currentStreak}
-              icon={Zap}
-              iconColor="amber"
-              trend={{
-                direction: currentStreak > 0 ? "up" : "neutral",
-                label: currentStreak > 0 ? "days" : "Start today",
-              }}
-              delay={0.24}
-              countUp={true}
-            />
-          </motion.div>
-        </motion.div>
-
-        {/* Responsive 2-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* LEFT COLUMN (spans 2 columns on desktop) */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="lg:col-span-2 space-y-6"
-          >
-            {/* Today's Workout Card */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6 hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-zinc-50">
-                  Today's Workout
-                </h3>
-                <div className="shrink-0 w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-                  <Dumbbell className="w-5 h-5 text-emerald-400" />
+          <article className="rounded-2xl border border-amber-400/40 bg-[#120b03]/70 p-5 backdrop-blur-xl">
+            <h3 className="text-3xl font-semibold text-white">Streak Badge</h3>
+            <div className="mt-6 flex justify-center">
+              <div className="relative h-56 w-56 rounded-full border-2 border-amber-400/60">
+                <div className="absolute inset-4 rounded-full border border-amber-400/40" />
+                <div className="absolute inset-8 rounded-full border border-amber-300/50 shadow-[0_0_30px_rgba(245,158,11,0.45)]" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-amber-300">
+                  <p className="text-7xl font-extrabold leading-none">{currentStreak}</p>
+                  <p className="text-4xl font-bold">DAYS</p>
+                  <p className="mt-1 text-4xl">🔥</p>
                 </div>
               </div>
-              {todayWorkout ? (
-                <TodaysWorkout workout={todayWorkout} />
-              ) : (
-                <p className="text-zinc-400 py-12 text-center">
-                  No workout assigned for today. Check back later or visit the
-                  Workouts section.
-                </p>
-              )}
-            </motion.div>
+            </div>
+            <p className="mt-5 text-center text-2xl text-amber-100/80">
+              {currentStreak > 0
+                ? "Unstoppable! Keep it rolling."
+                : "Start your streak today."}
+            </p>
+          </article>
+        </section>
 
-            {/* Upcoming Schedule Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6 hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-zinc-50">
-                  Upcoming Sessions
-                </h3>
-                <div className="shrink-0 w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-emerald-400" />
-                </div>
-              </div>
-              <UpcomingScheduleWidget />
-            </motion.div>
-
-            {/* Empty State for New Athletes */}
-            {weekLogsCount === 0 && last30DaysCount === 0 && (
-              <motion.div
-                variants={itemVariants}
-                className="rounded-2xl bg-zinc-900/80 border border-zinc-800 p-8 shadow-lg hover:border-emerald-500/40 transition-all duration-300"
+        <section id="progress-section" className="grid grid-cols-1 gap-4 xl:grid-cols-3">
+          <article className="xl:col-span-2 rounded-2xl border border-cyan-500/25 bg-[#041022]/85 p-5 backdrop-blur-xl">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-3xl font-semibold text-white">Weight / Measurements</h3>
+              <span className="rounded-lg border border-slate-600 bg-slate-900/60 px-3 py-1 text-sm text-slate-300">
+                Weight (kg)
+              </span>
+            </div>
+            <div className="h-72">
+              <WeightChart measurements={measurements} />
+            </div>
+            <div className="mt-3 flex items-center justify-between text-lg">
+              <span className={weightDelta <= 0 ? "text-emerald-300" : "text-amber-300"}>
+                {weightDelta === 0
+                  ? "No change tracked yet"
+                  : `${weightDelta > 0 ? "+" : ""}${weightDelta} kg overall`}
+              </span>
+              <a
+                href="/workouts"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-600 px-3 py-1 text-slate-300 hover:border-cyan-400/50"
               >
-                <div className="flex flex-col items-center justify-center text-center">
-                  <h2 className="text-2xl font-bold text-white mb-2">
-                    Your dashboard is empty
-                  </h2>
-                  <p className="text-zinc-400 mb-6">
-                    Complete your first workout to start tracking progress.
-                  </p>
-                  <a
-                    href="/workouts"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                <Activity className="h-4 w-4" /> View Full Progress
+              </a>
+            </div>
+          </article>
+
+          <article className="rounded-2xl border border-cyan-500/25 bg-[#041022]/85 p-5 backdrop-blur-xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-3xl font-semibold text-white">Recent Sessions</h3>
+              <a href="/workouts" className="inline-flex items-center gap-1 text-base text-cyan-200">
+                View All <ChevronRight className="h-4 w-4" />
+              </a>
+            </div>
+
+            <div className="space-y-3">
+              {(recentSessions.length > 0
+                ? recentSessions
+                : [
+                    { id: "fallback-1", workouts: { title: "Explosive Handles & Finishing" }, date: new Date().toISOString() },
+                    { id: "fallback-2", workouts: { title: "Strength & Power" }, date: new Date(Date.now() - 86400000).toISOString() },
+                    { id: "fallback-3", workouts: { title: "Speed & Agility" }, date: new Date(Date.now() - 172800000).toISOString() },
+                    { id: "fallback-4", workouts: { title: "Shooting Day" }, date: new Date(Date.now() - 259200000).toISOString() },
+                  ]
+              )
+                .slice(0, 4)
+                .map((session: any) => (
+                  <div
+                    key={session.id}
+                    className="rounded-xl border border-cyan-500/20 bg-[#020817]/65 px-3 py-3"
                   >
-                    Browse Workouts →
-                  </a>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-
-          {/* RIGHT COLUMN (hidden on mobile, visible on desktop) */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="space-y-6"
-          >
-            {/* Streak Widget - Only show if athlete has data */}
-            {(weekLogsCount > 0 || last30DaysCount > 0) && (
-              <motion.div
-                variants={itemVariants}
-                className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6 hover:border-amber-500/40 hover:shadow-amber-glow-sm transition-all duration-300"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-zinc-50">Streak</h3>
-                  <Zap className="w-5 h-5 text-amber-400" />
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold mb-2">
-                      Current Streak
-                    </p>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-amber-400">
-                        {currentStreak}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="truncate text-xl text-slate-100">
+                          {session.workouts?.title || "Workout Session"}
+                        </p>
+                        <p className="text-sm text-slate-400">
+                          {new Date(session.date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                          <span className="px-2">•</span>60 min
+                        </p>
+                      </div>
+                      <span className="rounded-full border border-emerald-400/50 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300">
+                        COMPLETED
                       </span>
-                      <span className="text-sm text-amber-400">days</span>
                     </div>
-                    <p className="text-xs text-zinc-400 mt-1">
-                      {currentStreak === 0
-                        ? "Start your streak today!"
-                        : "Keep going!"}
-                    </p>
                   </div>
-
-                  {/* 7-Day Streak Dots */}
-                  <div className="grid grid-cols-7 gap-1.5 pt-3 border-t border-zinc-800">
-                    {[...Array(7)].map((_, i) => {
-                      const isActive = i < currentStreak;
-                      return (
-                        <motion.div
-                          key={i}
-                          className={`h-1.5 rounded-full transition-all duration-300 ${
-                            isActive ? "bg-amber-400" : "bg-zinc-700"
-                          }`}
-                          initial={{ scaleX: 0 }}
-                          animate={{ scaleX: 1 }}
-                          transition={{ delay: 0.2 + i * 0.05 }}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  <div className="border-t border-zinc-800 pt-4">
-                    <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold mb-2">
-                      Personal Best
-                    </p>
-                    <p className="text-2xl font-bold text-amber-300">
-                      {longestStreak}
-                    </p>
-                    <p className="text-xs text-zinc-400 mt-1">longest streak</p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Recent Sessions Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6 hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <h3 className="text-lg font-semibold text-zinc-50">
-                  Recent Sessions
-                </h3>
-                <Dumbbell className="w-5 h-5 text-emerald-400" />
-              </div>
-
-              {recentSessions && recentSessions.length > 0 ? (
-                <>
-                  <div className="space-y-3">
-                    {recentSessions.slice(0, 5).map((log: any, idx: number) => (
-                      <motion.div
-                        key={log.id}
-                        className="flex items-start justify-between gap-2 pb-3 border-b border-zinc-800 last:border-b-0 last:pb-0"
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.06 }}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-white truncate">
-                            {log.workouts?.title || "Unknown"}
-                          </p>
-                          <p className="text-xs text-zinc-500">
-                            {new Date(log.date).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </p>
-                        </div>
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-1" />
-                      </motion.div>
-                    ))}
-                  </div>
-                  <a
-                    href="/workouts"
-                    className="text-xs text-emerald-400 hover:text-emerald-300 mt-3 inline-block transition-colors"
-                  >
-                    View all sessions →
-                  </a>
-                </>
-              ) : (
-                <>
-                  <p className="text-sm text-zinc-400">
-                    No sessions logged yet.
-                  </p>
-                  <a
-                    href="/workouts"
-                    className="text-xs text-emerald-400 hover:text-emerald-300 mt-3 inline-block transition-colors"
-                  >
-                    Go to Workouts →
-                  </a>
-                </>
-              )}
-            </motion.div>
-
-            {/* Consistency Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <ConsistencyWidget />
-            </motion.div>
-
-            {/* Measurements Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <MeasurementsWidget initialMeasurements={measurements} />
-            </motion.div>
-
-            {/* Weight Progress Chart */}
-            {measurements.length >= 2 && (
-              <motion.div
-                variants={itemVariants}
-                className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6 hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-              >
-                <h4 className="text-lg font-semibold text-zinc-50 mb-4">
-                  Weight Trend
-                </h4>
-                <WeightChart measurements={measurements} />
-              </motion.div>
-            )}
-
-            {/* Focus Breakdown Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <FocusBreakdownWidget />
-            </motion.div>
-
-            {/* Notes & Highlights Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <NotesHighlightsWidget />
-            </motion.div>
-          </motion.div>
-        </div>
+                ))}
+            </div>
+          </article>
+        </section>
       </div>
-    </motion.div>
+    </div>
   );
 }

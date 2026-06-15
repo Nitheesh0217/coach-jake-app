@@ -4,7 +4,6 @@ import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import BottomTabBar from "./BottomTabBar";
-import { Menu, X } from "lucide-react";
 
 interface TrainerDashboardLayoutProps {
   children: React.ReactNode;
@@ -18,49 +17,38 @@ export default function TrainerDashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-transparent text-[#f9fafb]">
-      {/* Background image layer */}
+    <div className="min-h-screen bg-[#010510] text-[#f9fafb]">
       <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
-        style={{ backgroundImage: "url('/hero.jpg')" }}
+        className="fixed inset-0 -z-20"
+        style={{
+          background:
+            "radial-gradient(circle at 20% 15%, rgba(16,185,129,0.14), transparent 35%), radial-gradient(circle at 80% 10%, rgba(56,189,248,0.14), transparent 34%), radial-gradient(circle at 70% 75%, rgba(59,130,246,0.12), transparent 40%), #010510",
+        }}
         aria-hidden
       />
+      <div className="fixed inset-0 -z-10 bg-[url('/file.svg')] opacity-[0.04]" aria-hidden />
 
-      {/* Dark overlay */}
-      <div
-        className="fixed inset-0 bg-black pointer-events-none -z-10"
-        style={{ opacity: 0.25 }}
-        aria-hidden
-      />
-
-      {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          className="fixed inset-0 bg-black/70 z-30 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      {/* Main content */}
-      <div className="md:ml-60 flex flex-col min-h-screen">
-        {/* Topbar */}
+      <div className="md:ml-60 flex min-h-screen flex-col border-l border-cyan-500/20">
         <Topbar
           coachName={coachName}
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
         />
 
-        {/* Content */}
         <main className="flex-1 pb-16 md:pb-0">{children}</main>
 
-        {/* Bottom Tab Bar - Mobile Only */}
         <BottomTabBar />
 
-        {/* Footer */}
-        <footer className="border-t border-zinc-800 bg-black/40 px-4 py-4 text-center text-xs text-zinc-500">
-          <p>Coach Jake © 2026. All rights reserved.</p>
+        <footer className="border-t border-cyan-500/20 bg-[#020817]/70 px-4 py-3 text-center text-xs text-cyan-100/55 md:ml-0">
+          <p>Coach Jake © 2026</p>
         </footer>
       </div>
     </div>
