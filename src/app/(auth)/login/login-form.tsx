@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { getCurrentUserProfile } from "@/app/(app)/finish-profile/actions";
@@ -133,50 +133,76 @@ export default function LoginForm() {
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.5, delay: 0 }}
             className="w-full"
           >
-            <div className="glass-card border-emerald-500/20 shadow-emerald-glow-md p-8 md:p-10">
-              {/* Card header */}
-              <div className="mb-8">
-                <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 mb-5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-sm font-bold text-emerald-300 tracking-wide">
-                    Coach Jake
-                  </span>
+            <div className="glass-card border-emerald-500/30 shadow-emerald-glow-md p-8 md:p-10 relative">
+              {/* Lightning Bolt Icon - Top Center */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="absolute -top-6 left-1/2 transform -translate-x-1/2"
+              >
+                <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-emerald-400 fill-emerald-400" />
                 </div>
-                <h2 className="text-3xl font-black text-zinc-50 mb-2">
+              </motion.div>
+
+              {/* Card header */}
+              <div className="mb-8 text-center">
+                <motion.h2
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.15 }}
+                  className="text-3xl font-black bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent mb-3"
+                >
+                  Coach Jake
+                </motion.h2>
+                <motion.h3
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.2 }}
+                  className="text-2xl font-bold text-zinc-50 mb-2"
+                >
                   Sign in to your account
-                </h2>
-                <p className="text-zinc-500 text-sm">
-                  Access your personalized coaching program
-                </p>
+                </motion.h3>
               </div>
 
               {/* Form */}
-              <form onSubmit={onSubmit} className="space-y-6">
+              <form onSubmit={onSubmit} className="space-y-5">
                 {/* Email field */}
-                <div className="space-y-2.5">
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.25 }}
+                  className="space-y-2.5"
+                >
                   <label
                     htmlFor="email"
                     className="text-xs uppercase text-zinc-400 tracking-widest font-bold block"
                   >
-                    Email Address
+                    Email
                   </label>
                   <input
                     id="email"
                     type="email"
                     autoComplete="email"
-                    placeholder="you@example.com"
+                    placeholder="jake@hooplab.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3.5 text-zinc-50 placeholder-zinc-600 text-sm focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-500/25 focus:shadow-emerald-glow-sm transition-all duration-300"
+                    className="w-full bg-zinc-800/40 border border-emerald-500/30 rounded-xl px-4 py-3.5 text-zinc-50 placeholder-zinc-600 text-sm focus:border-emerald-400 focus:outline-none focus:ring-[4px] focus:ring-emerald-500/30 focus:shadow-emerald-glow-md transition-all duration-300"
                   />
-                </div>
+                </motion.div>
 
                 {/* Password field */}
-                <div className="space-y-2.5">
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.3 }}
+                  className="space-y-2.5"
+                >
                   <div className="flex items-center justify-between">
                     <label
                       htmlFor="password"
@@ -186,9 +212,9 @@ export default function LoginForm() {
                     </label>
                     <a
                       href="#"
-                      className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
+                      className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors font-medium"
                     >
-                      Forgot?
+                      Forgot password?
                     </a>
                   </div>
                   <input
@@ -199,9 +225,9 @@ export default function LoginForm() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3.5 text-zinc-50 placeholder-zinc-600 text-sm focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-500/25 focus:shadow-emerald-glow-sm transition-all duration-300"
+                    className="w-full bg-zinc-800/40 border border-emerald-500/30 rounded-xl px-4 py-3.5 text-zinc-50 placeholder-zinc-600 text-sm focus:border-emerald-400 focus:outline-none focus:ring-[4px] focus:ring-emerald-500/30 focus:shadow-emerald-glow-md transition-all duration-300"
                   />
-                </div>
+                </motion.div>
 
                 {/* Error message */}
                 {error && (
@@ -215,10 +241,13 @@ export default function LoginForm() {
                 )}
 
                 {/* Submit button */}
-                <button
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 0.35 }}
                   type="submit"
                   disabled={loading}
-                  className="btn-primary w-full mt-6 py-3.5 font-bold uppercase tracking-wide text-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 transition-all duration-300 hover:shadow-emerald-glow-md"
+                  className="btn-primary w-full mt-6 py-3.5 font-bold text-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-emerald-glow-md rounded-xl"
                 >
                   {loading ? (
                     <>
@@ -226,16 +255,13 @@ export default function LoginForm() {
                       <span>Signing in...</span>
                     </>
                   ) : (
-                    <>
-                      <span>Sign in</span>
-                      <span className="text-base">→</span>
-                    </>
+                    <span>Sign in</span>
                   )}
-                </button>
+                </motion.button>
               </form>
 
               {/* Divider */}
-              <div className="mt-8 flex items-center gap-3">
+              <div className="mt-7 flex items-center gap-3">
                 <div className="flex-1 h-px bg-gradient-to-r from-zinc-700 to-transparent" />
                 <span className="text-xs text-zinc-600 uppercase tracking-wide font-semibold px-2">
                   or
@@ -244,15 +270,20 @@ export default function LoginForm() {
               </div>
 
               {/* Signup link */}
-              <p className="text-center text-zinc-400 text-sm mt-8">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3, delay: 0.4 }}
+                className="text-center text-zinc-400 text-sm mt-7"
+              >
                 Don't have an account?{" "}
                 <Link
                   href="/signup"
                   className="font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
                 >
-                  Create one →
+                  Sign up →
                 </Link>
-              </p>
+              </motion.p>
             </div>
           </motion.div>
         </div>

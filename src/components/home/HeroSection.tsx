@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { CheckCircle2, ArrowRight } from "lucide-react";
+import { CheckCircle2, ArrowRight, Zap, Dumbbell, Target } from "lucide-react";
 import CursorGlow from "@/components/ui/CursorGlow";
 import GradientText from "@/components/ui/GradientText";
 
@@ -36,21 +36,26 @@ export default function HeroSection() {
           {/* Badge */}
           <motion.div
             variants={item}
-            className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-3 py-1 text-xs uppercase tracking-widest text-emerald-300"
+            className="inline-flex items-center gap-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-3.5 py-1.5 text-xs uppercase tracking-widest text-emerald-300 font-bold"
           >
-            <span>⚡</span>
+            <div className="w-2 h-2 rounded-full bg-emerald-400" />
             Basketball Performance Coaching
           </motion.div>
 
-          {/* Headline */}
+          {/* Headline - Bright Emerald/Cyan */}
           <motion.h1
             variants={item}
-            className="font-black text-5xl md:text-7xl tracking-tight leading-[1.05] text-zinc-50"
+            className="font-black text-5xl md:text-7xl tracking-tight leading-[1.05]"
           >
-            Explosive Basketball Performance for{" "}
-            <GradientText as="span" from="emerald-400" to="cyan-400">
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-cyan-300 to-emerald-400 drop-shadow-[0_0_30px_rgba(16,185,129,0.4)]">
+              Explosive Basketball
+            </span>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-emerald-300 to-cyan-400 drop-shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+              Performance for
+            </span>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-300 drop-shadow-[0_0_30px_rgba(16,185,129,0.4)]">
               Serious Hoopers
-            </GradientText>
+            </span>
           </motion.h1>
 
           {/* Subtext */}
@@ -58,71 +63,131 @@ export default function HeroSection() {
             variants={item}
             className="text-zinc-300 text-base max-w-xl leading-relaxed"
           >
-            Mobile-first strength, conditioning, and on-court skill work to get
-            you stronger, quicker, and game-ready — in the gym or at home.
+            Elite training programs designed to increase your vertical, build
+            strength, and elevate your game on every level.
           </motion.p>
 
           {/* CTA Buttons */}
           <motion.div
             variants={item}
-            className="flex flex-col sm:flex-row gap-3 pt-4"
+            className="flex flex-col sm:flex-row gap-4 pt-4"
           >
             <motion.a
               href="/signup"
-              className="btn-primary px-8 py-3 text-sm font-bold"
+              className="btn-primary px-8 py-3.5 text-sm font-bold rounded-full inline-flex items-center justify-center gap-2"
               animate={{ scale: [1, 1.02, 1] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
-              Get Started
+              Start training free
               <ArrowRight className="w-4 h-4" />
             </motion.a>
             <a
               href="#overview"
-              className="rounded-full border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10 px-8 py-3 text-sm font-semibold transition-all duration-300"
+              className="rounded-full border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/10 px-8 py-3.5 text-sm font-semibold transition-all duration-300 inline-flex items-center justify-center gap-2"
             >
-              Learn More
+              <div className="w-5 h-5 rounded-full border border-emerald-400 flex items-center justify-center text-xs">
+                ⏯
+              </div>
+              Watch 60s overview
             </a>
           </motion.div>
 
           {/* Stats Row */}
-          <motion.div
-            variants={item}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4"
-          >
+          <motion.div variants={item} className="grid grid-cols-3 gap-3 pt-4">
             {[
-              { value: "500+", label: "Athletes Trained" },
-              { value: "92%", label: "Report Improvement" },
-              { value: "3", label: "Texas High Schools" },
-              { value: "10,000+", label: "Workouts Logged" },
+              { value: "120+", label: "athletes trained" },
+              { value: "Average +3", label: "vertical in 12 weeks" },
+              { value: "5+ years", label: "coaching experience" },
             ].map((stat, idx) => (
               <motion.div
                 key={idx}
                 variants={item}
-                className="rounded-2xl border border-white/[0.08] bg-white/[0.03] hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] px-4 py-3 transition-all duration-200"
+                className="rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.04] hover:border-emerald-500/40 hover:bg-emerald-500/[0.08] px-4 py-3.5 transition-all duration-200"
               >
-                <p className="text-2xl font-bold text-emerald-400">
+                <p className="text-lg font-bold text-emerald-300">
                   {stat.value}
                 </p>
-                <p className="text-xs text-zinc-300 mt-1">{stat.label}</p>
+                <p className="text-xs text-zinc-400 mt-1 font-medium">
+                  {stat.label}
+                </p>
               </motion.div>
             ))}
           </motion.div>
         </motion.div>
 
-        {/* Right Column */}
+        {/* Right Column - Image + Benefits Panel */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="rounded-3xl border border-white/[0.08] bg-white/[0.03] shadow-xl backdrop-blur-sm overflow-hidden relative h-[500px] md:h-[600px]"
+          className="relative"
         >
-          <img
-            src="/images/hero-panel.jpg"
-            alt="Basketball coaching"
-            className="w-full h-full object-cover absolute inset-0"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
-          <div className="absolute left-0 top-0 h-full w-1/3 bg-gradient-to-r from-emerald-500/6 to-transparent" />
+          {/* Main Image Panel */}
+          <div className="rounded-3xl border border-emerald-500/30 bg-emerald-950/20 shadow-2xl backdrop-blur-sm overflow-hidden relative h-[500px] md:h-[600px] shadow-emerald-glow-sm">
+            <img
+              src="/images/basketball-hero.jpg"
+              alt="Basketball player jumping"
+              className="w-full h-full object-cover absolute inset-0"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/30" />
+            <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-emerald-500/10 to-transparent" />
+          </div>
+
+          {/* Benefits Card Overlay - Right Side */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="absolute -right-6 bottom-8 w-72 rounded-2xl border border-emerald-500/30 bg-black/80 backdrop-blur-xl p-6 space-y-5 shadow-2xl shadow-emerald-glow-sm"
+          >
+            {[
+              {
+                icon: Zap,
+                title: "EXPLOSIVE POWER",
+                desc: "Increase your vertical and first-step quickness.",
+              },
+              {
+                icon: Dumbbell,
+                title: "STRENGTH & ATHLETICISM",
+                desc: "Build lean muscle and move with control.",
+              },
+              {
+                icon: Target,
+                title: "GAME-READY RESULTS",
+                desc: "Train with purpose. Perform with confidence.",
+              },
+            ].map((benefit, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.5 + idx * 0.08 }}
+                className="flex gap-3"
+              >
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center">
+                  <benefit.icon className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-xs font-bold text-emerald-300 uppercase tracking-wide">
+                    {benefit.title}
+                  </p>
+                  <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+                    {benefit.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+
+            {/* Coach signature */}
+            <div className="pt-4 border-t border-emerald-500/20">
+              <p className="text-xs text-emerald-300 font-bold tracking-widest">
+                Coach Jake
+              </p>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                BASKETBALL PERFORMANCE COACH
+              </p>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </>
