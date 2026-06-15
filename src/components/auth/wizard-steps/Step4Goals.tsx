@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { WizardData } from "../OnboardingWizard";
 import {
   ArrowUp,
-  Basketball,
   Check,
   GraduationCap,
   Dumbbell,
   Zap,
   Brain,
+  Target,
 } from "lucide-react";
 
 interface Step4GoalsProps {
@@ -37,7 +37,7 @@ const GOALS = [
   {
     id: "handles",
     label: "Sharpen Handles",
-    icon: Basketball,
+    icon: Target,
   },
   {
     id: "court-iq",
