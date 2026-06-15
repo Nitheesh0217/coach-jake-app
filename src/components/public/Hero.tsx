@@ -36,10 +36,10 @@ export default function Hero() {
       className="relative text-white min-h-screen"
       aria-label="Hero"
     >
-      {/* Background image layer - place your hero at public/hero.jpg */}
+      {/* Background image layer - using Pexels free image */}
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
-        style={{ backgroundImage: "url('/hero.jpg')" }}
+        style={{ backgroundImage: "url('https://images.pexels.com/photos/3808517/pexels-photo-3808517.jpeg?auto=compress&cs=tinysrgb&w=1600')" }}
         aria-hidden
       />
 
@@ -47,7 +47,7 @@ export default function Hero() {
       <div
         ref={overlayRef}
         className="fixed inset-0 bg-black pointer-events-none -z-10"
-        style={{ opacity: 0.25, transition: "opacity 0.1s linear" }}
+        style={{ opacity: 0.5, transition: "opacity 0.1s linear" }}
         aria-hidden
       />
 
@@ -113,9 +113,9 @@ export default function Hero() {
         <div className="lg:w-1/2 flex justify-center">
           <div className="relative w-full max-w-md rounded-3xl overflow-hidden border border-white/[0.08] bg-white/[0.03] shadow-xl shadow-black/40 backdrop-blur-sm">
             <div className="relative h-64 sm:h-72 md:h-96 lg:h-[420px] w-full">
-              {/* Panel image (in-app preview) */}
+              {/* Panel image (in-app preview) - using Pexels free image */}
               <img
-                src="/images/hero-panel.jpg"
+                src="https://images.pexels.com/photos/3839969/pexels-photo-3839969.jpeg?auto=compress&cs=tinysrgb&w=600"
                 alt="Panel preview"
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover"

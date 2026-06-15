@@ -13,7 +13,7 @@ export default function ProgramsSection() {
       desc: "12-week program to add serious bounce and explosiveness off the floor.",
       duration: "12 Weeks",
       level: "Intermediate",
-      image: "off-season.jpg.png",
+      image: "https://images.pexels.com/photos/5876516/pexels-photo-5876516.jpeg?auto=compress&cs=tinysrgb&w=600",
       popular: true,
     },
     {
@@ -24,7 +24,7 @@ export default function ProgramsSection() {
       desc: "Build foundational strength, explosiveness, and on-court power.",
       duration: "10 Weeks",
       level: "All Levels",
-      image: "in-season.jpg.png",
+      image: "https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?auto=compress&cs=tinysrgb&w=600",
       popular: false,
     },
     {
@@ -35,7 +35,7 @@ export default function ProgramsSection() {
       desc: "Sharpen your skills, decision-making, and overall game.",
       duration: "8 Weeks",
       level: "All Levels",
-      image: "youth.jpg.png",
+      image: "https://images.pexels.com/photos/3808517/pexels-photo-3808517.jpeg?auto=compress&cs=tinysrgb&w=600",
       popular: false,
     },
   ];
@@ -85,7 +85,7 @@ export default function ProgramsSection() {
               {/* Image Container */}
               <div className="flex-shrink-0 w-full md:w-48 h-40 md:h-48 overflow-hidden rounded-xl bg-gradient-to-br from-slate-800 to-slate-900">
                 <img
-                  src={`/programs/${card.image}`}
+                  src={card.image}
                   alt={card.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
