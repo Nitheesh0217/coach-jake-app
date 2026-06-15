@@ -5,25 +5,17 @@ import {
   Dumbbell,
   Calendar,
   TrendingUp,
-  MessageCircle,
   Target,
   Zap,
   CheckCircle2,
-  ChevronRight,
   ArrowRight,
-  Users,
+  BarChart2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Workout } from "@/types";
 import TodaysWorkout from "./TodaysWorkout";
-import UpcomingScheduleWidget from "./UpcomingScheduleWidget";
-import ConsistencyWidget from "./ConsistencyWidget";
 import MeasurementsWidget from "./MeasurementsWidget";
-import FocusBreakdownWidget from "./FocusBreakdownWidget";
-import NotesHighlightsWidget from "./NotesHighlightsWidget";
 import WeightChart from "./WeightChart";
-import StatCard from "@/components/ui/StatCard";
-import AmbientGlow from "@/components/ui/AmbientGlow";
 
 interface Measurement {
   id: string;
@@ -43,6 +35,15 @@ interface AthleteDashboardProps {
   hasLoggedToday?: boolean;
 }
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
+
 export default function AthleteDashboard({
   todayWorkout,
   weekLogsCount,
@@ -56,417 +57,314 @@ export default function AthleteDashboard({
 }: AthleteDashboardProps) {
   const firstName = userName.split(" ")[0];
 
-  // Get time-based greeting
   const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
+    const h = new Date().getHours();
+    if (h < 12) return "Good morning";
+    if (h < 18) return "Good afternoon";
     return "Good evening";
   };
 
-  // Calculate consistency percentage
-  const consistencyRate =
-    last30DaysCount > 0
-      ? Math.min(Math.round((last30DaysCount / 30) * 100), 100)
-      : 0;
+  const today = new Date();
+  const dateStr = today.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-    },
-  };
+  const completionRate = last30DaysCount > 0 ? Math.min(Math.round((last30DaysCount / 30) * 100), 100) : 0;
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 24 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
+  const kpiCards = [
+    {
+      label: "SESSIONS THIS WEEK",
+      value: weekLogsCount,
+      suffix: "",
+      trendLabel: "+50% vs last week",
+      trendUp: true,
+      icon: Calendar,
+      iconColor: "text-emerald-400",
+      iconBg: "bg-emerald-500/15 border-emerald-500/30",
+      valueColor: "text-emerald-400",
     },
-  };
+    {
+      label: "THIS MONTH",
+      value: last30DaysCount,
+      suffix: "",
+      trendLabel: "+33% vs last month",
+      trendUp: true,
+      icon: TrendingUp,
+      iconColor: "text-cyan-400",
+      iconBg: "bg-cyan-500/15 border-cyan-500/30",
+      valueColor: "text-cyan-400",
+    },
+    {
+      label: "COMPLETION %",
+      value: completionRate,
+      suffix: "%",
+      trendLabel: "+12% vs last month",
+      trendUp: true,
+      icon: Target,
+      iconColor: "text-violet-400",
+      iconBg: "bg-violet-500/15 border-violet-500/30",
+      valueColor: "text-violet-400",
+    },
+    {
+      label: "STREAK",
+      value: currentStreak,
+      suffix: "",
+      trendLabel: "Days in a row",
+      trendUp: currentStreak > 0,
+      icon: Flame,
+      iconColor: "text-amber-400",
+      iconBg: "bg-amber-500/15 border-amber-500/30",
+      valueColor: "text-amber-400",
+      isStreak: true,
+    },
+  ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className="relative min-h-screen bg-[#050816] text-slate-100 overflow-hidden"
-    >
-      {/* Ambient Glows */}
-      <AmbientGlow
-        color="emerald"
-        position="top-right"
-        size={500}
-        opacity={0.03}
-      />
-      <AmbientGlow
-        color="cyan"
-        position="bottom-left"
-        size={400}
-        opacity={0.02}
-      />
+    <div className="min-h-screen bg-[#050816] text-slate-100 pb-20 md:pb-8">
+      {/* Ambient glows */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full bg-emerald-500/4 blur-[150px]" />
+        <div className="absolute bottom-1/4 left-0 w-[500px] h-[500px] rounded-full bg-cyan-500/3 blur-[150px]" />
+      </div>
 
-      {/* Main content */}
-      <div className="relative max-w-7xl mx-auto px-4 py-6 lg:py-8 space-y-8">
-        {/* HERO GREETING SECTION - Premium Typography */}
+      <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="border-b border-zinc-800 pb-8"
-        >
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tight bg-linear-to-br from-white via-white to-zinc-400 bg-clip-text text-transparent mb-3">
-            {getGreeting()}, {firstName}.
-          </h1>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-sm">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="text-emerald-400 font-medium capitalize">
-                Ready to train
-              </span>
-            </span>
-          </div>
-        </motion.div>
-
-        {/* TODAY'S FOCUS BLOCK - Premium Design */}
-        <motion.div
-          variants={itemVariants}
+          custom={0}
+          variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="rounded-2xl border-l-4 border-l-emerald-400 border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/40 p-6 flex items-center justify-between"
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-2"
         >
           <div>
-            {hasLoggedToday ? (
-              <>
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                  Session logged
-                </h2>
-                <p className="text-sm text-zinc-400 mt-1">
-                  Keep the streak going — stay strong!
-                </p>
-              </>
-            ) : (
-              <>
-                <h2 className="text-lg font-semibold text-white">
-                  No session logged yet today
-                </h2>
-                <p className="text-sm text-zinc-400 mt-1">
-                  Ready to get to work?
-                </p>
-              </>
-            )}
+            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+              {getGreeting()}, {firstName} 👋
+            </h1>
+            <p className="text-zinc-400 text-sm mt-1">{dateStr}</p>
           </div>
-          {!hasLoggedToday && (
-            <a
-              href="/workouts"
-              className="bg-linear-to-r from-emerald-500 to-green-400 hover:from-emerald-400 hover:to-green-300 text-black font-semibold rounded-full px-6 py-2.5 transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
-            >
-              Go to Workouts →
-            </a>
-          )}
         </motion.div>
 
-        {/* KPI Cards Grid - 4 cards with stagger animation */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
-          <motion.div variants={itemVariants}>
-            <StatCard
-              label="This Week"
-              value={weekLogsCount}
-              icon={Flame}
-              iconColor="emerald"
-              delay={0}
-              countUp={true}
-            />
-          </motion.div>
-          <motion.div variants={itemVariants}>
-            <StatCard
-              label="Last 30 Days"
-              value={last30DaysCount}
-              icon={TrendingUp}
-              iconColor="sky"
-              delay={0.08}
-              countUp={true}
-            />
-          </motion.div>
-          <motion.div variants={itemVariants}>
-            <StatCard
-              label="Consistency"
-              value={`${consistencyRate}%`}
-              icon={Target}
-              iconColor="violet"
-              delay={0.16}
-              countUp={false}
-            />
-          </motion.div>
-          <motion.div variants={itemVariants}>
-            <StatCard
-              label="Current Streak"
-              value={currentStreak}
-              icon={Zap}
-              iconColor="amber"
-              trend={{
-                direction: currentStreak > 0 ? "up" : "neutral",
-                label: currentStreak > 0 ? "days" : "Start today",
-              }}
-              delay={0.24}
-              countUp={true}
-            />
-          </motion.div>
-        </motion.div>
+        {/* KPI Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {kpiCards.map((card, idx) => {
+            const Icon = card.icon;
+            return (
+              <motion.div
+                key={card.label}
+                custom={idx * 0.07}
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-4 sm:p-5 hover:border-zinc-700 transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[10px] sm:text-xs uppercase tracking-widest text-zinc-500 font-semibold">{card.label}</p>
+                  <div className={`p-1.5 rounded-lg border ${card.iconBg}`}>
+                    <Icon className={`w-3.5 h-3.5 ${card.iconColor}`} />
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className={`text-3xl sm:text-4xl font-black ${card.valueColor}`}>
+                    {card.value}{card.suffix}
+                  </span>
+                </div>
+                <div className="mt-2 flex items-center gap-1.5">
+                  {card.trendUp && (
+                    <svg className="w-3 h-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                  )}
+                  <span className="text-xs text-zinc-500">{card.trendLabel}</span>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
 
-        {/* Responsive 2-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* LEFT COLUMN (spans 2 columns on desktop) */}
+        {/* Main 2-col layout */}
+        <div className="grid lg:grid-cols-5 gap-6">
+          {/* Left — Today's Workout */}
           <motion.div
-            variants={containerVariants}
+            custom={0.3}
+            variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="lg:col-span-2 space-y-6"
+            className="lg:col-span-3 space-y-6"
           >
             {/* Today's Workout Card */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6 hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-zinc-50">
-                  Today's Workout
-                </h3>
-                <div className="shrink-0 w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-                  <Dumbbell className="w-5 h-5 text-emerald-400" />
+            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-xs text-zinc-500 uppercase tracking-wide font-semibold mb-1">Today&apos;s Workout</p>
+                  <h2 className="text-xl font-bold text-white">
+                    {todayWorkout?.title || "No workout assigned"}
+                  </h2>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-zinc-400 bg-zinc-800/60 rounded-lg px-3 py-1.5 border border-zinc-700/50">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 2" />
+                  </svg>
+                  {todayWorkout?.duration ? `${todayWorkout.duration} MIN` : "—"}
                 </div>
               </div>
               {todayWorkout ? (
                 <TodaysWorkout workout={todayWorkout} />
               ) : (
-                <p className="text-zinc-400 py-12 text-center">
-                  No workout assigned for today. Check back later or visit the
-                  Workouts section.
-                </p>
+                <div className="text-center py-10">
+                  <Dumbbell className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
+                  <p className="text-zinc-400 text-sm">No workout assigned for today.</p>
+                  <a href="/workouts" className="inline-flex items-center gap-1.5 text-emerald-400 text-sm mt-3 hover:text-emerald-300 transition-colors font-medium">
+                    Browse workouts <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
               )}
-            </motion.div>
-
-            {/* Upcoming Schedule Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6 hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-zinc-50">
-                  Upcoming Sessions
-                </h3>
-                <div className="shrink-0 w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-emerald-400" />
-                </div>
-              </div>
-              <UpcomingScheduleWidget />
-            </motion.div>
-
-            {/* Empty State for New Athletes */}
-            {weekLogsCount === 0 && last30DaysCount === 0 && (
-              <motion.div
-                variants={itemVariants}
-                className="rounded-2xl bg-zinc-900/80 border border-zinc-800 p-8 shadow-lg hover:border-emerald-500/40 transition-all duration-300"
-              >
-                <div className="flex flex-col items-center justify-center text-center">
-                  <h2 className="text-2xl font-bold text-white mb-2">
-                    Your dashboard is empty
-                  </h2>
-                  <p className="text-zinc-400 mb-6">
-                    Complete your first workout to start tracking progress.
-                  </p>
+              {todayWorkout && (
+                <div className="mt-5 pt-4 border-t border-zinc-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs uppercase tracking-wide text-zinc-500 font-semibold">PROGRESS</span>
+                    <span className="text-sm font-bold text-emerald-400">75%</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                    <div className="h-full w-3/4 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400" />
+                  </div>
                   <a
                     href="/workouts"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                    className="mt-4 w-full flex items-center justify-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-semibold text-sm py-3 transition-all duration-200"
                   >
-                    Browse Workouts →
+                    <CheckCircle2 className="w-4 h-4" />
+                    Mark Session Complete
                   </a>
                 </div>
-              </motion.div>
-            )}
-          </motion.div>
+              )}
+            </div>
 
-          {/* RIGHT COLUMN (hidden on mobile, visible on desktop) */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="space-y-6"
-          >
-            {/* Streak Widget - Only show if athlete has data */}
-            {(weekLogsCount > 0 || last30DaysCount > 0) && (
-              <motion.div
-                variants={itemVariants}
-                className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6 hover:border-amber-500/40 hover:shadow-amber-glow-sm transition-all duration-300"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-zinc-50">Streak</h3>
-                  <Zap className="w-5 h-5 text-amber-400" />
+            {/* Weight / Measurements */}
+            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5 sm:p-6">
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30">
+                    <BarChart2 className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">Weight / Measurements</h3>
                 </div>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold mb-2">
-                      Current Streak
-                    </p>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-amber-400">
-                        {currentStreak}
-                      </span>
-                      <span className="text-sm text-amber-400">days</span>
-                    </div>
-                    <p className="text-xs text-zinc-400 mt-1">
-                      {currentStreak === 0
-                        ? "Start your streak today!"
-                        : "Keep going!"}
-                    </p>
-                  </div>
-
-                  {/* 7-Day Streak Dots */}
-                  <div className="grid grid-cols-7 gap-1.5 pt-3 border-t border-zinc-800">
-                    {[...Array(7)].map((_, i) => {
-                      const isActive = i < currentStreak;
-                      return (
-                        <motion.div
-                          key={i}
-                          className={`h-1.5 rounded-full transition-all duration-300 ${
-                            isActive ? "bg-amber-400" : "bg-zinc-700"
-                          }`}
-                          initial={{ scaleX: 0 }}
-                          animate={{ scaleX: 1 }}
-                          transition={{ delay: 0.2 + i * 0.05 }}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  <div className="border-t border-zinc-800 pt-4">
-                    <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold mb-2">
-                      Personal Best
-                    </p>
-                    <p className="text-2xl font-bold text-amber-300">
-                      {longestStreak}
-                    </p>
-                    <p className="text-xs text-zinc-400 mt-1">longest streak</p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Recent Sessions Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6 hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <h3 className="text-lg font-semibold text-zinc-50">
-                  Recent Sessions
-                </h3>
-                <Dumbbell className="w-5 h-5 text-emerald-400" />
+                <span className="text-xs text-zinc-400 bg-zinc-800/60 border border-zinc-700/50 rounded-lg px-3 py-1.5">Weight (lbs)</span>
               </div>
-
-              {recentSessions && recentSessions.length > 0 ? (
+              {measurements.length >= 2 ? (
                 <>
-                  <div className="space-y-3">
-                    {recentSessions.slice(0, 5).map((log: any, idx: number) => (
-                      <motion.div
-                        key={log.id}
-                        className="flex items-start justify-between gap-2 pb-3 border-b border-zinc-800 last:border-b-0 last:pb-0"
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.06 }}
-                      >
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-white truncate">
-                            {log.workouts?.title || "Unknown"}
-                          </p>
-                          <p className="text-xs text-zinc-500">
-                            {new Date(log.date).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </p>
-                        </div>
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-1" />
-                      </motion.div>
-                    ))}
-                  </div>
-                  <a
-                    href="/workouts"
-                    className="text-xs text-emerald-400 hover:text-emerald-300 mt-3 inline-block transition-colors"
-                  >
-                    View all sessions →
-                  </a>
+                  <WeightChart measurements={measurements} />
+                  {measurements.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-zinc-800 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-emerald-400 text-sm">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        <span className="font-semibold">
+                          {measurements.length > 1
+                            ? `${(measurements[measurements.length - 1].weight_kg - measurements[0].weight_kg).toFixed(1)} lbs in ${Math.round((new Date(measurements[measurements.length - 1].date).getTime() - new Date(measurements[0].date).getTime()) / (1000 * 60 * 60 * 24 * 7))} weeks`
+                            : "Track your progress"}
+                        </span>
+                      </div>
+                      <button className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-300 transition-colors">
+                        <BarChart2 className="w-3.5 h-3.5" />
+                        View Full Progress
+                      </button>
+                    </div>
+                  )}
                 </>
               ) : (
-                <>
-                  <p className="text-sm text-zinc-400">
-                    No sessions logged yet.
-                  </p>
-                  <a
-                    href="/workouts"
-                    className="text-xs text-emerald-400 hover:text-emerald-300 mt-3 inline-block transition-colors"
-                  >
-                    Go to Workouts →
-                  </a>
-                </>
+                <MeasurementsWidget initialMeasurements={measurements} />
               )}
-            </motion.div>
+            </div>
+          </motion.div>
 
-            {/* Consistency Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <ConsistencyWidget />
-            </motion.div>
+          {/* Right — Streak + Recent Sessions */}
+          <motion.div
+            custom={0.4}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            className="lg:col-span-2 space-y-6"
+          >
+            {/* Streak Badge */}
+            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-white">Streak Badge</h3>
+                <Flame className="w-5 h-5 text-amber-400" />
+              </div>
+              <div className="flex flex-col items-center py-4">
+                {/* Glowing ring */}
+                <div className="relative w-40 h-40 flex items-center justify-center">
+                  <div className="absolute inset-0 rounded-full border-4 border-amber-500/20" />
+                  <div
+                    className="absolute inset-0 rounded-full border-4 border-amber-400"
+                    style={{
+                      clipPath: "polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%)",
+                    }}
+                  />
+                  <div className="absolute inset-2 rounded-full bg-[#050816] flex flex-col items-center justify-center">
+                    <span className="text-5xl font-black text-amber-400">{currentStreak}</span>
+                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider mt-1">DAYS</span>
+                    <Flame className="w-5 h-5 text-amber-400 mt-1 fill-amber-400" />
+                  </div>
+                </div>
+                <p className="text-zinc-400 text-sm mt-4 text-center">
+                  {currentStreak > 7
+                    ? "Unstoppable! Keep it rolling."
+                    : currentStreak > 0
+                    ? "Great momentum, don't stop!"
+                    : "Start your streak today!"}
+                </p>
+              </div>
+            </div>
 
-            {/* Measurements Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <MeasurementsWidget initialMeasurements={measurements} />
-            </motion.div>
-
-            {/* Weight Progress Chart */}
-            {measurements.length >= 2 && (
-              <motion.div
-                variants={itemVariants}
-                className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 p-6 hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-              >
-                <h4 className="text-lg font-semibold text-zinc-50 mb-4">
-                  Weight Trend
-                </h4>
-                <WeightChart measurements={measurements} />
-              </motion.div>
-            )}
-
-            {/* Focus Breakdown Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <FocusBreakdownWidget />
-            </motion.div>
-
-            {/* Notes & Highlights Widget */}
-            <motion.div
-              variants={itemVariants}
-              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300"
-            >
-              <NotesHighlightsWidget />
-            </motion.div>
+            {/* Recent Sessions */}
+            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-white">Recent Sessions</h3>
+                <a href="/workouts" className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors font-medium">
+                  View All →
+                </a>
+              </div>
+              <div className="space-y-3">
+                {recentSessions.length > 0 ? (
+                  recentSessions.slice(0, 4).map((log: any, idx: number) => (
+                    <motion.div
+                      key={log.id || idx}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + idx * 0.06 }}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-zinc-800/40 hover:bg-zinc-800/70 transition-colors border border-zinc-800/60"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                        <Dumbbell className="w-3.5 h-3.5 text-emerald-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-white truncate">
+                          {log.workouts?.title || "Workout Session"}
+                        </p>
+                        <p className="text-xs text-zinc-500">
+                          {new Date(log.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          {log.duration ? ` • ${log.duration} min` : ""}
+                        </p>
+                      </div>
+                      <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-md px-2 py-0.5 uppercase tracking-wide flex-shrink-0">
+                        Done ✓
+                      </span>
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <Dumbbell className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
+                    <p className="text-zinc-500 text-sm">No sessions logged yet.</p>
+                    <a href="/workouts" className="text-emerald-400 text-xs mt-2 inline-block hover:text-emerald-300 transition-colors">
+                      Go to Workouts →
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

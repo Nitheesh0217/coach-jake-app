@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import AppHeader from "@/components/layout/AppHeader";
+import AppSidebarLayout from "@/components/layout/AppSidebarLayout";
 
 export const metadata: Metadata = {
   title: "Coach Jake — Basketball Performance Platform",
@@ -8,10 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <AppHeader />
-      <main className="py-6 px-4 max-w-7xl mx-auto">{children}</main>
-    </>
-  );
+  return <AppSidebarLayout>{children}</AppSidebarLayout>;
 }

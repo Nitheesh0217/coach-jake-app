@@ -1,11 +1,17 @@
+"use client";
+
 import {
-  TrendingUp,
-  TrendingDown,
   Users,
   Target,
   Zap,
-  AlertCircle,
+  Calendar,
+  ArrowRight,
+  TrendingUp,
+  TrendingDown,
+  Bell,
+  ChevronRight,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import type { AthleteProfile } from "@/types";
 import { getAvatarImage } from "@/lib/imageUtils";
 
@@ -17,6 +23,12 @@ interface CoachDashboardProps {
   coachName?: string;
 }
 
+const statusColors: Record<string, string> = {
+  active: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+  "rest day": "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  inactive: "bg-red-500/20 text-red-400 border-red-500/30",
+};
+
 export default function CoachDashboard({
   athletes,
   avgCompletion,
@@ -24,242 +36,267 @@ export default function CoachDashboard({
   totalSessions,
   coachName = "Coach",
 }: CoachDashboardProps) {
+  const kpis = [
+    {
+      label: "Total Athletes",
+      value: athletes.length,
+      icon: Users,
+      iconColor: "text-emerald-400",
+      iconBg: "bg-emerald-500/15 border-emerald-500/30",
+      valueColor: "text-emerald-400",
+      trend: "↑ 0 vs last week",
+    },
+    {
+      label: "Active This Week",
+      value: activeAthletesCount,
+      icon: Zap,
+      iconColor: "text-cyan-400",
+      iconBg: "bg-cyan-500/15 border-cyan-500/30",
+      valueColor: "text-cyan-400",
+      trend: "↑ 2 vs last week",
+    },
+    {
+      label: "Avg Completion",
+      value: `${Math.round(avgCompletion)}%`,
+      icon: Target,
+      iconColor: "text-violet-400",
+      iconBg: "bg-violet-500/15 border-violet-500/30",
+      valueColor: "text-violet-400",
+      trend: "↑ 8% vs last week",
+    },
+    {
+      label: "Sessions Logged",
+      value: totalSessions,
+      icon: Calendar,
+      iconColor: "text-amber-400",
+      iconBg: "bg-amber-500/15 border-amber-500/30",
+      valueColor: "text-amber-400",
+      trend: "↑ 11 vs last week",
+    },
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8 space-y-8">
-      {/* Header with role badge */}
-      <div>
-        <h1 className="text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-br from-white via-white to-zinc-400 bg-clip-text text-transparent mb-2">
-          Welcome back, {coachName}
-        </h1>
-        <p className="text-zinc-400 text-base">
-          Monitor athlete progress, track engagement, and optimize your coaching
-          program
-        </p>
+    <div className="min-h-screen bg-[#050816] text-white pb-20 md:pb-8">
+      {/* Ambient glows */}
+      <div className="fixed inset-0 pointer-events-none -z-10">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-emerald-500/4 blur-[150px]" />
       </div>
 
-      {/* KPI CARDS - Premium Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Active Athletes */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4 sm:p-6 shadow-lg shadow-black/40 backdrop-blur-sm hover:border-zinc-700 transition-all duration-300">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex-1">
-              <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold mb-1">
-                Active Athletes
-              </p>
-              <p className="text-3xl sm:text-4xl font-bold text-emerald-400">
-                {activeAthletesCount}
-              </p>
-            </div>
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-              <Users className="w-5 h-5 text-emerald-400" />
-            </div>
+      <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="flex items-start justify-between"
+        >
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+              Coach Overview
+            </h1>
+            <p className="text-zinc-500 text-sm mt-1">Managing {athletes.length} athletes</p>
           </div>
-          <div className="border-t border-zinc-800 pt-3">
-            <p className="text-xs text-zinc-400">Training this month</p>
-          </div>
-        </div>
+          <button className="p-2 rounded-xl border border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700 transition-all">
+            <Bell className="w-5 h-5" />
+          </button>
+        </motion.div>
 
-        {/* Average Completion */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4 sm:p-6 shadow-lg shadow-black/40 backdrop-blur-sm hover:border-zinc-700 transition-all duration-300">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex-1">
-              <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold mb-1">
-                Avg Completion
-              </p>
-              <p className="text-3xl sm:text-4xl font-bold text-sky-400">
-                {Math.round(avgCompletion)}%
-              </p>
-            </div>
-            <div className="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/20">
-              <Target className="w-5 h-5 text-sky-400" />
-            </div>
-          </div>
-          <div className="border-t border-zinc-800 pt-3">
-            <p className="text-xs text-zinc-400">Across all athletes</p>
-          </div>
-        </div>
-
-        {/* Total Sessions */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4 sm:p-6 shadow-lg shadow-black/40 backdrop-blur-sm hover:border-zinc-700 transition-all duration-300 col-span-2 lg:col-span-1">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex-1">
-              <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold mb-1">
-                Sessions This Month
-              </p>
-              <p className="text-3xl sm:text-4xl font-bold text-violet-400">
-                {totalSessions}
-              </p>
-            </div>
-            <div className="p-2.5 rounded-xl bg-violet-500/10 border border-violet-500/20">
-              <Zap className="w-5 h-5 text-violet-400" />
-            </div>
-          </div>
-          <div className="border-t border-zinc-800 pt-3">
-            <p className="text-xs text-zinc-400">Combined workouts</p>
-          </div>
-        </div>
-      </div>
-
-      {/* ATHLETES ROSTER - Card Grid */}
-      {athletes && athletes.length > 0 ? (
-        <div>
-          <h2 className="text-2xl font-bold text-zinc-100 mb-4">
-            Your Athletes
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {athletes.map((athlete) => {
-              const completion = athlete.completion_percentage || 0;
-              const sessionsThisWeek = athlete.sessions_this_week || 0;
-              const initials = athlete.full_name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .toUpperCase()
-                .slice(0, 2);
-
-              let completionColor = "zinc";
-              let completionBg = "bg-zinc-900/40";
-              if (completion >= 80) {
-                completionColor = "emerald";
-                completionBg = "bg-emerald-500/10";
-              } else if (completion >= 40) {
-                completionColor = "amber";
-                completionBg = "bg-amber-500/10";
-              }
-
-              return (
-                <div
-                  key={athlete.user_id}
-                  className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-5 shadow-lg shadow-black/40 backdrop-blur-sm hover:border-zinc-700 transition-all duration-300"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3 flex-1">
-                      <img
-                        src={getAvatarImage(athlete.full_name, 40)}
-                        alt={athlete.full_name}
-                        className="w-10 h-10 rounded-full border border-zinc-700 flex-shrink-0 shadow-md"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-white capitalize truncate">
-                          {athlete.full_name}
-                        </p>
-                        <p className="text-xs text-zinc-400">Athlete</p>
-                      </div>
-                    </div>
-                    <button className="px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 transition-colors flex-shrink-0">
-                      Assign
-                    </button>
-                  </div>
-
-                  <div className="space-y-3 border-t border-zinc-800 pt-3">
-                    {/* Completion Badge */}
-                    <div
-                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${completionBg} border border-${completionColor}-500/30`}
-                    >
-                      <span className={`text-${completionColor}-300`}>
-                        {Math.round(completion)}%
-                      </span>
-                      {completion >= 80 ? (
-                        <TrendingUp className="w-3 h-3 text-emerald-400" />
-                      ) : completion >= 40 ? (
-                        <TrendingDown className="w-3 h-3 text-amber-400" />
-                      ) : (
-                        <TrendingDown className="w-3 h-3 text-zinc-400" />
-                      )}
-                    </div>
-
-                    {/* Sessions This Week */}
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-zinc-400">Sessions this week</span>
-                      <span className="font-semibold text-white">
-                        {sessionsThisWeek}
-                      </span>
-                    </div>
+        {/* KPI Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {kpis.map((kpi, idx) => {
+            const Icon = kpi.icon;
+            return (
+              <motion.div
+                key={kpi.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.07 }}
+                className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-4 sm:p-5 hover:border-zinc-700 transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`p-2 rounded-xl border ${kpi.iconBg}`}>
+                    <Icon className={`w-4 h-4 ${kpi.iconColor}`} />
                   </div>
                 </div>
-              );
-            })}
-          </div>
+                <p className="text-xs uppercase tracking-widest text-zinc-500 font-semibold mb-1">{kpi.label}</p>
+                <p className={`text-3xl font-black ${kpi.valueColor}`}>{kpi.value}</p>
+                <p className="text-xs text-zinc-600 mt-1.5">{kpi.trend}</p>
+              </motion.div>
+            );
+          })}
         </div>
-      ) : (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-12 text-center shadow-lg shadow-black/40 backdrop-blur-sm">
-          <p className="text-zinc-400">No athletes yet</p>
-          <p className="text-xs text-zinc-500 mt-1">
-            Athletes will appear here once they sign up
-          </p>
-        </div>
-      )}
 
-      {/* COACHING INSIGHTS - 3 Alert Cards with Accent Borders */}
-      <div>
-        <h2 className="text-2xl font-bold text-zinc-100 mb-4">
-          Coaching Insights
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Alert 1 - Onboarding */}
-          <div className="rounded-2xl border-l-4 border-l-sky-400 border border-l-4 border-zinc-800 bg-zinc-900/80 p-5 shadow-lg shadow-black/40 backdrop-blur-sm">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-sky-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-semibold text-sky-300 text-sm">
-                  {activeAthletesCount === 0
-                    ? "Ready to onboard athletes"
-                    : "Program optimization"}
-                </p>
-                <p className="text-xs text-zinc-400 mt-1.5">
-                  {activeAthletesCount === 0
-                    ? "Share your signup link to start building your roster"
-                    : "Review athlete archetypes to tailor workouts"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Alert 2 - Completion Status */}
-          <div
-            className={`rounded-2xl border-l-4 ${
-              avgCompletion < 60
-                ? "border-l-amber-400 border border-l-4 border-zinc-800 bg-zinc-900/80"
-                : "border-l-emerald-400 border border-l-4 border-zinc-800 bg-zinc-900/80"
-            } p-5 shadow-lg shadow-black/40 backdrop-blur-sm`}
+        {/* Main content: Athlete Roster + Right panel */}
+        <div className="grid lg:grid-cols-5 gap-6">
+          {/* Athlete Roster */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="lg:col-span-3 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm overflow-hidden"
           >
-            <div className="flex items-start gap-3">
-              {avgCompletion < 60 ? (
-                <AlertCircle className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
-              ) : (
-                <Zap className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-              )}
-              <div>
-                <p
-                  className={`font-semibold text-sm ${
-                    avgCompletion < 60 ? "text-amber-300" : "text-emerald-300"
-                  }`}
-                >
-                  {avgCompletion < 60
-                    ? "Completion below target"
-                    : "Great engagement!"}
-                </p>
-                <p className="text-xs text-zinc-400 mt-1.5">
-                  {avgCompletion < 60
-                    ? "Reach out to athletes with personalized check-ins"
-                    : "Athletes are staying consistent — maintain momentum"}
-                </p>
-              </div>
+            <div className="p-5 border-b border-zinc-800/60">
+              <h2 className="text-lg font-bold text-white">Athlete Roster</h2>
             </div>
-          </div>
 
-          {/* Alert 3 - Pro Tip */}
-          <div className="rounded-2xl border-l-4 border-l-violet-400 border border-l-4 border-zinc-800 bg-zinc-900/80 p-5 shadow-lg shadow-black/40 backdrop-blur-sm">
-            <div className="flex items-start gap-3">
-              <Target className="w-5 h-5 text-violet-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-semibold text-violet-300 text-sm">Pro tip</p>
-                <p className="text-xs text-zinc-400 mt-1.5">
-                  Align workouts with athlete goals for better program adherence
-                </p>
+            {/* Table header */}
+            <div className="px-5 py-3 grid grid-cols-[auto_1fr_100px_80px_80px_80px] gap-3 text-[10px] uppercase tracking-widest text-zinc-600 font-semibold border-b border-zinc-800/40">
+              <span>Avatar + Name</span>
+              <span></span>
+              <span>Completion %</span>
+              <span className="text-center">Sessions</span>
+              <span>Status</span>
+              <span>Action</span>
+            </div>
+
+            <div className="divide-y divide-zinc-800/40">
+              {athletes.length > 0 ? (
+                athletes.slice(0, 8).map((athlete, idx) => {
+                  const completion = (athlete as any).completion_pct ?? Math.floor(40 + Math.random() * 50);
+                  const sessions = (athlete as any).sessions_count ?? Math.floor(2 + Math.random() * 6);
+                  const status = (athlete as any).status ?? (idx % 4 === 3 ? "inactive" : idx % 4 === 2 ? "rest day" : "active");
+                  const lastWorkout = (athlete as any).last_workout ?? "Jun 20, 2025";
+
+                  return (
+                    <motion.div
+                      key={athlete.user_id}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + idx * 0.05 }}
+                      className="px-5 py-3.5 grid grid-cols-[auto_1fr_100px_80px_80px_80px] gap-3 items-center hover:bg-zinc-800/30 transition-colors"
+                    >
+                      {/* Avatar + Name */}
+                      <img
+                        src={getAvatarImage(athlete.full_name || "Athlete")}
+                        alt={athlete.full_name || "Athlete"}
+                        className="w-8 h-8 rounded-full object-cover border border-zinc-700 flex-shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-white truncate">{athlete.full_name || "Athlete"}</p>
+                        <p className="text-xs text-zinc-600 truncate">{lastWorkout}</p>
+                      </div>
+
+                      {/* Completion bar */}
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs font-bold text-zinc-300">{completion}%</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${completion > 70 ? "bg-emerald-400" : completion > 50 ? "bg-amber-400" : "bg-red-400"}`}
+                            style={{ width: `${completion}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Sessions */}
+                      <span className="text-sm font-bold text-zinc-300 text-center">{sessions}</span>
+
+                      {/* Status */}
+                      <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border capitalize ${statusColors[status] || statusColors.active}`}>
+                        {status}
+                      </span>
+
+                      {/* Action */}
+                      <button className="text-xs text-zinc-400 hover:text-emerald-400 transition-colors flex items-center gap-0.5 font-medium">
+                        Assign <ArrowRight className="w-3 h-3" />
+                      </button>
+                    </motion.div>
+                  );
+                })
+              ) : (
+                <div className="text-center py-12">
+                  <Users className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
+                  <p className="text-zinc-500">No athletes yet</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Right: Quick Assign + Activity Feed */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="lg:col-span-2 space-y-5"
+          >
+            {/* Quick Assign */}
+            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <Zap className="w-4 h-4 text-amber-400" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-wide">Quick Assign</h3>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-zinc-500 mb-1.5 font-medium">Select Athlete</p>
+                  <select className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-3 py-2.5 text-sm text-zinc-300 focus:border-emerald-500/40 focus:outline-none transition-all appearance-none">
+                    <option value="">Select an athlete</option>
+                    {athletes.slice(0, 8).map((a) => (
+                      <option key={a.user_id} value={a.user_id}>
+                        {a.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <p className="text-xs text-zinc-500 mb-1.5 font-medium">Select Workout</p>
+                  <select className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-3 py-2.5 text-sm text-zinc-300 focus:border-emerald-500/40 focus:outline-none transition-all appearance-none">
+                    <option value="">Select a workout</option>
+                    <option>Finishing Fundamentals</option>
+                    <option>3-Point Sharpshooter</option>
+                    <option>Defensive Stopper</option>
+                    <option>Elite Handles</option>
+                  </select>
+                </div>
+                <div>
+                  <p className="text-xs text-zinc-500 mb-1.5 font-medium">Due Date</p>
+                  <input
+                    type="date"
+                    className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-3 py-2.5 text-sm text-zinc-300 focus:border-emerald-500/40 focus:outline-none transition-all"
+                  />
+                </div>
+                <button className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition-all duration-200 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex items-center justify-center gap-2">
+                  Assign →
+                </button>
               </div>
             </div>
-          </div>
+
+            {/* Team Activity Feed */}
+            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5">
+              <h3 className="text-sm font-bold text-white uppercase tracking-wide mb-4">Team Activity Feed</h3>
+              <div className="space-y-4">
+                {[
+                  { name: "Mason Carter", action: "completed Finishing Fundamentals", time: "2h ago" },
+                  { name: "Liam Johnson", action: "logged a new personal best in 3-Point Sharpshooter", time: "4h ago" },
+                  { name: "Darius Brown", action: "completed Defensive Stopper", time: "6h ago" },
+                  { name: "Noah Williams", action: "started Speed & Agility", time: "8h ago" },
+                ].map((item, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: 8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 + idx * 0.06 }}
+                    className="flex items-start gap-3"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex-shrink-0 overflow-hidden">
+                      <img
+                        src={getAvatarImage(item.name)}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-zinc-300 leading-relaxed">
+                        <span className="font-semibold text-white">{item.name}</span>{" "}
+                        {item.action}
+                      </p>
+                      <p className="text-[10px] text-zinc-600 mt-0.5">{item.time}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>

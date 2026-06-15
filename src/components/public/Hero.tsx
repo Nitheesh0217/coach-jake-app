@@ -1,135 +1,163 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { Zap, Dumbbell, Target } from "lucide-react";
+
+const stats = [
+  { value: "120+", label: "athletes trained" },
+  { value: "Average +3\"", label: "vertical in 12 weeks" },
+  { value: "5+ years", label: "coaching experience" },
+];
+
+const features = [
+  { icon: Zap, title: "EXPLOSIVE POWER", desc: "Increase your vertical and first step quickness." },
+  { icon: Dumbbell, title: "STRENGTH & ATHLETICISM", desc: "Build lean muscle and move with control." },
+  { icon: Target, title: "GAME-READY RESULTS", desc: "Train with purpose. Perform with confidence." },
+];
 
 export default function Hero() {
-  const heroRef = useRef<HTMLElement | null>(null);
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const overlay = overlayRef.current;
-    const hero = heroRef.current;
-    if (!overlay || !hero) return;
-
-    function handleScroll() {
-      if (!hero) return;
-      const heroHeight = hero.offsetHeight;
-      const scrollY = window.scrollY;
-      const progress = Math.min(Math.max(scrollY / heroHeight, 0), 1);
-      const min = 0.25;
-      const max = 0.75;
-      const opacity = min + (max - min) * progress;
-      if (overlay) {
-        overlay.style.opacity = opacity.toFixed(2);
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <section
-      ref={heroRef}
-      className="relative text-white min-h-screen bg-[#050816]"
-      aria-label="Hero"
-    >
-      {/* Background image layer - using Pexels free image */}
+    <section className="relative min-h-screen bg-[#050816] flex flex-col justify-center overflow-hidden">
+      {/* Background image */}
       <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{
           backgroundImage:
-            "url('https://images.pexels.com/photos/3808517/pexels-photo-3808517.jpeg?auto=compress&cs=tinysrgb&w=1600')",
+            "url('https://images.pexels.com/photos/3808517/pexels-photo-3808517.jpeg?auto=compress&cs=tinysrgb&w=1920')",
         }}
         aria-hidden
       />
+      {/* Strong dark overlay */}
+      <div className="absolute inset-0 bg-black/70 z-0" aria-hidden />
+      {/* Left green glow */}
+      <div className="absolute left-0 top-1/3 w-[500px] h-[500px] rounded-full bg-emerald-500/15 blur-[140px] z-0" aria-hidden />
 
-      {/* Dark overlay that will darken while scrolling */}
-      <div
-        ref={overlayRef}
-        className="fixed inset-0 bg-black pointer-events-none -z-10"
-        style={{ opacity: 0.5, transition: "opacity 0.1s linear" }}
-        aria-hidden
-      />
-
-      <div className="max-w-5xl mx-auto px-4 pt-24 pb-32 lg:pt-36 lg:pb-44 flex flex-col gap-6 lg:flex-row lg:items-center">
-        {/* Left */}
-        <div className="lg:w-1/2 space-y-6">
-          <div className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-300">
-            Basketball performance coaching
-          </div>
-
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
-            <span className="text-zinc-50">
-              Explosive Basketball Performance for{" "}
-            </span>
-            <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-300 bg-clip-text text-transparent">
-              Serious Hoopers
-            </span>
-          </h1>
-
-          <p className="mt-4 text-sm sm:text-base text-zinc-300 max-w-xl">
-            Mobile-first strength, conditioning, and on-court skill work to get
-            you stronger, quicker, and game-ready — in the gym or at home.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4">
-            <Link
-              href="/signup"
-              className="inline-flex items-center justify-center rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-8 py-3 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all duration-300 hover:-translate-y-0.5"
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+        <div className="grid lg:grid-cols-5 gap-12 items-center">
+          {/* Left: Hero text */}
+          <div className="lg:col-span-3 space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-1.5"
             >
-              Start training free
-            </Link>
+              <div className="w-2 h-2 rounded-full bg-emerald-400" />
+              <span className="text-xs font-bold uppercase tracking-widest text-emerald-300">
+                Basketball Performance Coaching
+              </span>
+            </motion.div>
 
-            <a
-              href="#overview"
-              className="inline-flex items-center justify-center rounded-xl border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10 px-8 py-3 transition-all duration-300"
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.1 }}
+              className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight"
             >
-              Watch 60s overview
-            </a>
+              <span className="bg-gradient-to-r from-emerald-400 via-emerald-300 to-cyan-400 bg-clip-text text-transparent">
+                Explosive Basketball Performance
+              </span>{" "}
+              <span className="text-white">for Serious Hoopers</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-zinc-300 text-lg leading-relaxed max-w-xl"
+            >
+              Elite training programs designed to increase your vertical, build strength, and elevate your game on every level.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-col sm:flex-row gap-4"
+            >
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-black px-8 py-4 shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:shadow-[0_0_50px_rgba(16,185,129,0.7)] transition-all duration-300 hover:-translate-y-0.5 text-base"
+              >
+                Start training free
+              </Link>
+              <a
+                href="#overview"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-600 hover:border-zinc-400 text-zinc-200 hover:text-white px-8 py-4 transition-all duration-300 text-base"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                Watch 60s overview
+              </a>
+            </motion.div>
+
+            {/* Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="grid grid-cols-3 gap-4 pt-4"
+            >
+              {stats.map((s) => (
+                <div
+                  key={s.label}
+                  className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3 hover:border-emerald-500/30 transition-all duration-200"
+                >
+                  <p className="text-xl sm:text-2xl font-black text-emerald-400">{s.value}</p>
+                  <p className="text-xs text-zinc-400 mt-1 leading-tight">{s.label}</p>
+                </div>
+              ))}
+            </motion.div>
           </div>
 
-          {/* Stats row */}
-          <div className="mt-8 grid grid-cols-2 gap-4 text-sm text-zinc-300 sm:grid-cols-4">
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              <p className="text-2xl font-bold text-emerald-400">500+</p>
-              <p className="text-xs mt-1">Athletes Trained</p>
-            </div>
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              <p className="text-2xl font-bold text-emerald-400">92%</p>
-              <p className="text-xs mt-1">Report Improved Performance</p>
-            </div>
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              <p className="text-2xl font-bold text-emerald-400">3</p>
-              <p className="text-xs mt-1">Texas High Schools</p>
-            </div>
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              <p className="text-2xl font-bold text-emerald-400">10,000+</p>
-              <p className="text-xs mt-1">Workouts Logged</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Right - decorative glass card (keeps layout balance) */}
-        <div className="lg:w-1/2 flex justify-center">
-          <div className="relative w-full max-w-md rounded-3xl overflow-hidden border border-white/[0.08] bg-white/[0.03] shadow-xl shadow-black/40 backdrop-blur-sm">
-            <div className="relative h-64 sm:h-72 md:h-96 lg:h-[420px] w-full">
-              {/* Panel image (in-app preview) - using Pexels free image */}
+          {/* Right: Photo + feature pills */}
+          <div className="lg:col-span-2 flex flex-col items-center gap-6">
+            {/* Main photo card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="relative w-full rounded-2xl overflow-hidden border border-white/10 bg-zinc-900/40 backdrop-blur-sm shadow-2xl"
+            >
               <img
                 src="https://images.pexels.com/photos/3839969/pexels-photo-3839969.jpeg?auto=compress&cs=tinysrgb&w=600"
-                alt="Panel preview"
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover"
+                alt="Basketball performance"
+                className="w-full h-64 sm:h-80 lg:h-96 object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-              {/* Decorative foreground gradient to sit above the image */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
-            </div>
+              {/* Signature */}
+              <div className="absolute bottom-4 right-4 text-right">
+                <p className="text-emerald-400 font-bold italic text-lg" style={{ fontFamily: "cursive" }}>Coach Jake</p>
+                <p className="text-xs text-zinc-400 uppercase tracking-wider">Basketball Performance Coach</p>
+              </div>
+            </motion.div>
 
-            {/* subtle inner highlight */}
-            <div className="absolute left-0 top-0 h-full w-1/3 bg-gradient-to-r from-emerald-500/6 to-transparent mix-blend-overlay pointer-events-none" />
+            {/* Feature pills */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
+              className="w-full space-y-3"
+            >
+              {features.map((f) => {
+                const Icon = f.icon;
+                return (
+                  <div
+                    key={f.title}
+                    className="flex items-start gap-3 rounded-xl border border-white/8 bg-white/5 backdrop-blur-sm px-4 py-3 hover:border-emerald-500/30 transition-all duration-200"
+                  >
+                    <Icon className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-black text-white uppercase tracking-wider">{f.title}</p>
+                      <p className="text-xs text-zinc-400 mt-0.5">{f.desc}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </motion.div>
           </div>
         </div>
       </div>
