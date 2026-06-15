@@ -58,7 +58,7 @@ export default function TrainerDashboardLayout({
 
         {/* Footer */}
         <footer className="border-t border-zinc-800 bg-black/40 px-4 py-4 text-center text-xs text-zinc-500">
-          <p>Coach Jake © 2025. All rights reserved.</p>
+          <p>Coach Jake © 2026. All rights reserved.</p>
         </footer>
       </div>
     </div>
