@@ -6,21 +6,6 @@ export const metadata: Metadata = {
   title: "Coach Jake — Elite Basketball Performance Coaching",
   description:
     "Elite strength, conditioning, and skill training for serious basketball players. Science-backed programs for guards, wings, and bigs.",
-  openGraph: {
-    title: "Coach Jake — Elite Basketball Performance Coaching",
-    description:
-      "Elite strength, conditioning, and skill training for serious basketball players. Science-backed programs for guards, wings, and bigs.",
-    url: "https://coachjakeb.com",
-    type: "website",
-    images: [
-      {
-        url: "/hero.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Coach Jake Basketball Training Platform",
-      },
-    ],
-  },
 };
 
 export default function PublicLayout({
@@ -29,10 +14,10 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="min-h-screen bg-[#050816]">
       <PublicHeader />
-      <main className="py-6">{children}</main>
+      <main>{children}</main>
       <PublicFooter />
-    </>
+    </div>
   );
 }
