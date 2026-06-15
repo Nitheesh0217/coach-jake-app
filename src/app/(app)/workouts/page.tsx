@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
 import LogWorkoutModal from "@/components/workouts/LogWorkoutModal";
+import { Dumbbell, Clock, CheckCircle2, ArrowRight } from "lucide-react";
 
 type AssignedWorkout = {
   id: string;
@@ -106,48 +107,76 @@ export default async function WorkoutsPage() {
 
   return (
     <TrainerDashboardLayout coachName={userName}>
-      <div className="max-w-4xl mx-auto px-4 py-6 lg:py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">
-            Your Workouts
+      <div className="max-w-5xl mx-auto px-4 py-6 lg:py-8">
+        {/* PAGE HEADER - Premium Typography */}
+        <div className="mb-8 border-b border-zinc-800 pb-8">
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-br from-white via-white to-zinc-400 bg-clip-text text-transparent mb-2">
+            Workout Library
           </h1>
-          <p className="text-base text-zinc-400">
-            Log sessions and track your training history
+          <p className="text-zinc-400 text-base">
+            Browse programs and mark sessions complete to build your streak.
           </p>
         </div>
 
+        {/* FILTER TABS */}
+        <div className="mb-8 flex gap-2 overflow-x-auto pb-2">
+          {["All", "Strength", "Conditioning", "Recovery"].map((category) => (
+            <button
+              key={category}
+              className="px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 bg-emerald-500/15 border border-emerald-500/40 text-emerald-400"
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
         {error && (
-          <div className="mb-6 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-200">
+          <div
+            className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-200"
+          >
             <p className="text-sm font-medium">{error}</p>
           </div>
         )}
 
         {/* SECTION 1 — Assigned Workouts */}
         <div className="mb-12">
-          <h2 className="text-xl font-semibold text-white mb-4">
+          <h2 className="text-2xl font-bold text-zinc-100 mb-4">
             Assigned Workouts
           </h2>
           {assignedWorkouts.length === 0 ? (
-            <div className="rounded-lg border border-white/[0.08] bg-white/[0.03] p-8 text-center">
-              <p className="text-base text-zinc-400">
-                No workouts assigned yet. Your coach will add programs here.
+            <div
+              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/40 p-12 text-center"
+            >
+              <div className="flex justify-center mb-4">
+                <Dumbbell className="w-12 h-12 text-zinc-700" />
+              </div>
+              <h3 className="text-lg font-semibold text-zinc-300 mb-2">
+                Your program is being built
+              </h3>
+              <p className="text-sm text-zinc-500 mb-6">
+                Your coach will assign workouts here. Check back soon.
               </p>
+              <a
+                href="/programs"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-green-400 hover:from-emerald-400 hover:to-green-300 text-black font-semibold rounded-full px-6 py-2.5 transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Browse Public Programs <ArrowRight className="w-4 h-4" />
+              </a>
             </div>
           ) : (
             <div className="space-y-3">
-              {assignedWorkouts.map((workout: AssignedWorkout) => (
+              {assignedWorkouts.map((workout: AssignedWorkout, idx: number) => (
                 <div
                   key={workout.id}
-                  className="rounded-lg border border-white/[0.08] bg-white/[0.03] p-4 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200"
+                  className="rounded-2xl border-l-4 border-l-emerald-400 border border-l-4 border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/40 hover:border-zinc-700 hover:shadow-[0_0_30px_rgba(52,211,153,0.08)] transition-all duration-300 p-6"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-white mb-1">
+                      <h3 className="font-semibold text-white text-lg mb-2">
                         {workout.name}
                       </h3>
                       {workout.description && (
-                        <p className="text-sm text-zinc-400">
+                        <p className="text-sm text-zinc-400 line-clamp-2">
                           {workout.description}
                         </p>
                       )}
@@ -165,38 +194,43 @@ export default async function WorkoutsPage() {
 
         {/* SECTION 2 — Your History */}
         <div>
-          <h2 className="text-xl font-semibold text-white mb-4">
+          <h2 className="text-2xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
             Session History
+            {workoutLogs.length > 0 && (
+              <span className="bg-zinc-800 text-zinc-400 text-xs px-2 py-0.5 rounded-full ml-2">
+                {workoutLogs.length}
+              </span>
+            )}
           </h2>
           {workoutLogs.length === 0 ? (
-            <div className="rounded-lg border border-white/[0.08] bg-white/[0.03] p-8 text-center">
-              <p className="text-base text-zinc-400">
-                No sessions logged yet. Log your first one above.
+            <div
+              className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/40 p-8 text-center"
+            >
+              <p className="text-base text-zinc-500">
+                No sessions logged yet. Log your first one above to start tracking.
               </p>
             </div>
           ) : (
             <div className="space-y-2">
-              {workoutLogs.map((log: WorkoutLog) => (
+              {workoutLogs.map((log: WorkoutLog, idx: number) => (
                 <div
                   key={log.id}
-                  className="rounded-lg border border-white/[0.08] bg-white/[0.03] p-4"
+                  className="flex items-start justify-between p-4 rounded-xl border border-zinc-800/50 hover:border-zinc-700 transition-colors"
                 >
-                  <div className="flex items-start justify-between gap-4 mb-2">
-                    <div className="flex-1">
-                      <p className="font-semibold text-white">
+                  <div className="flex items-start gap-3 flex-1">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-zinc-100">
                         {log.workouts?.title || "Unknown Workout"}
                       </p>
-                      <p className="text-xs text-zinc-500">
-                        {formatDate(log.date)}
-                      </p>
+                      {log.notes && (
+                        <p className="text-xs text-zinc-500 mt-1">{log.notes}</p>
+                      )}
                     </div>
-                    <span className="text-emerald-400 text-lg">✅</span>
                   </div>
-                  {log.notes && (
-                    <p className="text-sm text-zinc-400 pl-4 border-l border-zinc-700">
-                      {log.notes}
-                    </p>
-                  )}
+                  <p className="text-xs text-zinc-500 whitespace-nowrap ml-4">
+                    {formatDate(log.date)}
+                  </p>
                 </div>
               ))}
             </div>

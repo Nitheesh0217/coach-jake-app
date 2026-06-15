@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Loader2, CheckCircle2 } from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 
 type LogWorkoutModalProps = {
@@ -21,13 +23,14 @@ export default function LogWorkoutModal({
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleOpen = () => {
     setIsOpen(true);
     setError(null);
     setNotes("");
     setDate(new Date().toISOString().split("T")[0]);
+    setIsSuccess(false);
   };
 
   const handleClose = () => {
@@ -62,21 +65,24 @@ export default function LogWorkoutModal({
         });
 
       if (insertError) {
-        setError(insertError.message);
+        // Check for 23505 unique constraint violation
+        if (insertError.code === "23505") {
+          setError("You've already logged a session for this date");
+        } else {
+          setError(insertError.message);
+        }
         setIsLoading(false);
         return;
       }
 
-      // Show toast
-      setToast("✅ Session logged");
-      setTimeout(() => setToast(null), 2000);
-
-      // Close modal
-      handleClose();
-      onSuccess?.();
+      // Show success state
+      setIsSuccess(true);
+      setTimeout(() => {
+        handleClose();
+        onSuccess?.();
+      }, 1500);
     } catch (err) {
       setError(String(err));
-    } finally {
       setIsLoading(false);
     }
   };
@@ -86,101 +92,140 @@ export default function LogWorkoutModal({
       {/* Button */}
       <button
         onClick={handleOpen}
-        className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-semibold transition-colors whitespace-nowrap"
+        className="bg-gradient-to-r from-emerald-500 to-green-400 hover:from-emerald-400 hover:to-green-300 text-black font-semibold rounded-full px-6 py-2 transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98]"
       >
-        Log Session
+        Log This Session
       </button>
 
       {/* Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          {/* Backdrop */}
-          <div className="absolute inset-0" onClick={handleClose} />
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/70 backdrop-blur-md"
+              onClick={handleClose}
+            />
 
-          {/* Modal Content */}
-          <div className="relative bg-zinc-900 border border-white/[0.08] rounded-lg p-6 w-full max-w-md mx-4 shadow-2xl">
-            {/* Header */}
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-semibold text-white">
-                  Log {workoutName}
-                </h2>
-                <p className="text-sm text-zinc-400 mt-1">
-                  Record when you completed this session
-                </p>
-              </div>
-              <button
-                onClick={handleClose}
-                className="text-zinc-400 hover:text-zinc-200 text-2xl leading-none"
-              >
-                ×
-              </button>
-            </div>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Date Input */}
-              <div>
-                <label className="block text-sm font-medium text-zinc-200 mb-2">
-                  Date
-                </label>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="w-full rounded-lg bg-zinc-800/50 border border-white/[0.08] text-white px-3 py-2 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30"
-                />
-              </div>
-
-              {/* Notes Input */}
-              <div>
-                <label className="block text-sm font-medium text-zinc-200 mb-2">
-                  Notes (optional)
-                </label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="e.g., Felt strong, good form..."
-                  rows={3}
-                  className="w-full rounded-lg bg-zinc-800/50 border border-white/[0.08] text-white px-3 py-2 placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/30 resize-none"
-                />
-              </div>
-
-              {/* Error */}
-              {error && (
-                <div className="rounded-lg bg-red-500/10 border border-red-500/30 p-3 text-sm text-red-200">
-                  {error}
+            {/* Modal Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="relative bg-zinc-900 border border-zinc-800 rounded-3xl p-8 w-full max-w-md mx-4 shadow-2xl shadow-black/60"
+            >
+              {/* Success State */}
+              {isSuccess ? (
+                <div className="flex flex-col items-center justify-center text-center">
+                  <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
+                  </motion.div>
+                  <h3 className="text-lg font-semibold text-white">
+                    Session logged!
+                  </h3>
+                  <p className="text-sm text-zinc-400 mt-2">
+                    Keep the streak going
+                  </p>
                 </div>
-              )}
+              ) : (
+                <>
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-6">
+                    <div>
+                      <h2 className="text-xl font-semibold text-white">
+                        Log {workoutName}
+                      </h2>
+                      <p className="text-sm text-zinc-400 mt-1">
+                        Record when you completed this session
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleClose}
+                      className="text-zinc-500 hover:text-zinc-300 transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
 
-              {/* Toast */}
-              {toast && (
-                <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/30 p-3 text-sm text-emerald-200">
-                  {toast}
-                </div>
-              )}
+                  {/* Form */}
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Date Input */}
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-200 mb-2">
+                        Date
+                      </label>
+                      <input
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                        className="w-full rounded-xl bg-zinc-800 border border-zinc-700 text-white px-4 py-3 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all"
+                      />
+                    </div>
 
-              {/* Buttons */}
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className="flex-1 px-4 py-2 rounded-lg border border-white/[0.08] text-white hover:bg-white/[0.05] transition-colors font-medium"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex-1 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold transition-colors"
-                >
-                  {isLoading ? "Saving..." : "Log Session"}
-                </button>
-              </div>
-            </form>
+                    {/* Notes Input */}
+                    <div>
+                      <label className="block text-sm font-medium text-zinc-200 mb-2">
+                        Notes (optional)
+                      </label>
+                      <textarea
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="How did it feel? Any PRs today?"
+                        rows={4}
+                        className="w-full rounded-xl bg-zinc-800 border border-zinc-700 text-white px-4 py-3 placeholder-zinc-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all resize-none"
+                      />
+                    </div>
+
+                    {/* Error */}
+                    {error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="rounded-lg bg-red-500/10 border border-red-500/30 p-3 text-sm text-red-200"
+                      >
+                        {error}
+                      </motion.div>
+                    )}
+
+                    {/* Buttons */}
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={handleClose}
+                        className="flex-1 px-4 py-3 rounded-full border border-zinc-700 bg-zinc-800/50 hover:bg-zinc-700/60 text-zinc-300 hover:text-white transition-all duration-200 font-medium"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="flex-1 px-4 py-3 rounded-full bg-gradient-to-r from-emerald-500 to-green-400 hover:from-emerald-400 hover:to-green-300 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold transition-all duration-200 flex items-center justify-center gap-2"
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Logging...
+                          </>
+                        ) : (
+                          "Log Session"
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </>
   );
 }

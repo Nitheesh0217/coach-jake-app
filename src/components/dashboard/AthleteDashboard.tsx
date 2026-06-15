@@ -1,5 +1,7 @@
 "use client";
 
+"use client";
+
 import {
   Flame,
   Dumbbell,
@@ -8,7 +10,11 @@ import {
   MessageCircle,
   Target,
   Zap,
+  CheckCircle2,
+  ChevronRight,
+  ArrowRight,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { Workout } from "@/types";
 import TodaysWorkout from "./TodaysWorkout";
 import UpcomingScheduleWidget from "./UpcomingScheduleWidget";
@@ -36,22 +42,6 @@ interface AthleteDashboardProps {
   hasLoggedToday?: boolean;
 }
 
-// Helper function to get time-of-day greeting
-function getTimeOfDayGreeting(): "Morning" | "Afternoon" | "Evening" {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Morning";
-  if (hour < 17) return "Afternoon";
-  return "Evening";
-}
-
-// Greeting emoji by time
-function getGreetingEmoji(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return "🌅";
-  if (hour < 17) return "☀️";
-  return "🌙";
-}
-
 export default function AthleteDashboard({
   todayWorkout,
   weekLogsCount,
@@ -63,69 +53,71 @@ export default function AthleteDashboard({
   recentSessions = [],
   hasLoggedToday = false,
 }: AthleteDashboardProps) {
-  const timeOfDay = getTimeOfDayGreeting();
-  const emoji = getGreetingEmoji();
   const firstName = userName.split(" ")[0];
   return (
-    <div className="min-h-screen bg-[#050816] text-slate-100">
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="min-h-screen bg-[#050816] text-slate-100"
+    >
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8 space-y-8">
-        {/* Greeting Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-zinc-50">
-              Good {timeOfDay}, {firstName}! {emoji}
-            </h1>
-            <p className="text-sm text-zinc-400 mt-2">
-              {timeOfDay === "Morning"
-                ? "Time to crush your goals today"
-                : timeOfDay === "Afternoon"
-                  ? "Keep that momentum going"
-                  : "Wind down and recover strong"}
-            </p>
-          </div>
-          <div className="px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-            <span className="text-sm font-semibold text-emerald-300">
-              Athlete
+        {/* HERO GREETING SECTION - Premium Typography */}
+        <div className="border-b border-zinc-800 pb-8">
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-br from-white via-white to-zinc-400 bg-clip-text text-transparent mb-3">
+            Let's get after it, {firstName}.
+          </h1>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              <span className="text-emerald-400 font-medium capitalize">
+                Athlete
+              </span>
             </span>
           </div>
         </div>
 
-        {/* Today's Focus Block */}
+        {/* TODAY'S FOCUS BLOCK - Premium Design */}
         {hasLoggedToday ? (
-          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 sm:p-6 shadow-lg shadow-emerald-500/10">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">✅</span>
-              <div>
-                <p className="text-sm sm:text-base font-semibold text-emerald-300">
-                  Session logged today
-                </p>
-                <p className="text-xs sm:text-sm text-emerald-400/80">
-                  Keep the streak going — stay strong!
-                </p>
-              </div>
+          <motion.div
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="rounded-2xl border-l-4 border-l-emerald-400 border border-l-4 border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/40 p-6 flex items-center justify-between"
+          >
+            <div>
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                Session logged
+              </h2>
+              <p className="text-sm text-zinc-400 mt-1">
+                Keep the streak going — stay strong!
+              </p>
             </div>
-          </div>
+          </motion.div>
         ) : (
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 sm:p-6 shadow-lg shadow-amber-500/10">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className="text-sm sm:text-base font-semibold text-amber-300">
-                  No session logged yet today
-                </p>
-                <p className="text-xs sm:text-sm text-amber-400/80 mt-1">
-                  Ready to train? Start your workout session now.
-                </p>
-              </div>
-              <a
-                href="/workouts"
-                className="ml-4 px-4 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap"
-              >
-                Go to Workouts →
-              </a>
+          <motion.div
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="rounded-2xl border-l-4 border-l-amber-400 border border-l-4 border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/40 p-6 flex items-center justify-between"
+          >
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                No session logged yet today
+              </h2>
+              <p className="text-sm text-zinc-400 mt-1">
+                Ready to get to work?
+              </p>
             </div>
-          </div>
+            <a
+              href="/workouts"
+              className="bg-gradient-to-r from-emerald-500 to-green-400 hover:from-emerald-400 hover:to-green-300 text-black font-semibold rounded-full px-6 py-2.5 transition-all duration-200 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+            >
+              Go to Workouts →
+            </a>
+          </motion.div>
         )}
 
         {/* Responsive 2-column layout */}
@@ -373,6 +365,6 @@ export default function AthleteDashboard({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
