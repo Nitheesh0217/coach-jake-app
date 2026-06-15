@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dumbbell, Check, Clock, Zap, Calendar } from "lucide-react";
+import { getWorkoutImage } from "@/lib/imageUtils";
 
 interface WorkoutSession {
   id: string;
@@ -129,6 +130,20 @@ export default function WorkoutsClient({ workouts }: WorkoutsClientProps) {
                   variants={itemVariants}
                   className={`rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/20 overflow-hidden hover:border-emerald-500/40 hover:shadow-emerald-glow-md transition-all duration-300 group cursor-pointer`}
                 >
+                  {/* Workout Image */}
+                  <div className="relative w-full h-40 overflow-hidden bg-gradient-to-br from-emerald-500/20 to-cyan-500/20">
+                    <motion.img
+                      src={getWorkoutImage(workout.title, workout.focusArea)}
+                      alt={workout.title}
+                      className="w-full h-full object-cover"
+                      initial={{ scale: 1.1, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5 }}
+                    />
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-all duration-300" />
+                  </div>
+
                   {/* Card Header with Focus Area Badge */}
                   <div className="relative p-6 border-b border-zinc-800/50">
                     <div className="flex items-start justify-between mb-3">

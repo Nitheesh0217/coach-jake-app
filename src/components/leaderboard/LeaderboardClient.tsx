@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Medal, Crown, TrendingUp, Zap } from "lucide-react";
+import { getAvatarImage } from "@/lib/imageUtils";
 
 type LeaderboardEntry = {
   user_id: string;
@@ -125,10 +126,20 @@ export default function LeaderboardClient({
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    {/* Avatar Circle */}
-                    <div className="w-14 h-14 rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center overflow-hidden font-bold text-white">
-                      {entry?.full_name?.charAt(0).toUpperCase()}
-                    </div>
+                    {/* Avatar Image */}
+                    <motion.img
+                      src={getAvatarImage(entry?.full_name || "User", 56)}
+                      alt={entry?.full_name}
+                      className="w-14 h-14 rounded-full border-2 border-white/30 shadow-lg"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                        delay: 0.1 * podiumIdx,
+                      }}
+                    />
 
                     {/* Rank Badge */}
                     <div className="absolute -top-3 -right-3 w-10 h-10 rounded-full bg-amber-400 flex items-center justify-center">
@@ -197,14 +208,19 @@ export default function LeaderboardClient({
                   }`}
                 >
                   <div className="flex items-center gap-4 flex-1">
-                    {/* Rank */}
-                    <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center shrink-0">
-                      {entry.rank === 1 ? (
-                        <Medal className="w-5 h-5 text-amber-400" />
-                      ) : (
-                        <span className="font-bold text-sm">#{entry.rank}</span>
-                      )}
-                    </div>
+                    {/* Avatar Image */}
+                    <motion.img
+                      src={getAvatarImage(entry.full_name, 40)}
+                      alt={entry.full_name}
+                      className="w-10 h-10 rounded-full border border-zinc-700 shadow-md shrink-0"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 30,
+                      }}
+                    />
 
                     {/* Name */}
                     <div className="flex-1 min-w-0">

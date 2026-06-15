@@ -3,6 +3,7 @@
 import { CheckCircle2, Circle, Clock, Plus } from "lucide-react";
 import { useState } from "react";
 import { assignWorkout } from "@/app/(app)/trainer-dashboard/actions";
+import { getAvatarImage } from "@/lib/imageUtils";
 
 type AthleteRow = {
   user_id: string;
@@ -151,9 +152,11 @@ export default function AthletesPanel({
               <div key={athlete.user_id}>
                 <div className="flex items-center justify-between p-4 rounded-xl border border-zinc-800 hover:border-zinc-700 transition">
                   <div className="flex items-center gap-3 flex-1">
-                    <div className="w-9 h-9 rounded-full bg-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-200">
-                      {initials}
-                    </div>
+                    <img
+                      src={getAvatarImage(athlete.full_name ?? athlete.email, 36)}
+                      alt={athlete.full_name || athlete.email}
+                      className="w-9 h-9 rounded-full border border-zinc-700 shadow-md"
+                    />
                     <div>
                       <p className="text-sm font-medium text-zinc-100">
                         {athlete.full_name ?? athlete.email}

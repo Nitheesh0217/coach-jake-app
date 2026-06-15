@@ -7,6 +7,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import type { AthleteProfile } from "@/types";
+import { getAvatarImage } from "@/lib/imageUtils";
 
 interface CoachDashboardProps {
   athletes: AthleteProfile[];
@@ -133,11 +134,11 @@ export default function CoachDashboard({
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3 flex-1">
-                      <div className="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-semibold text-emerald-400">
-                          {initials}
-                        </span>
-                      </div>
+                      <img
+                        src={getAvatarImage(athlete.full_name, 40)}
+                        alt={athlete.full_name}
+                        className="w-10 h-10 rounded-full border border-zinc-700 flex-shrink-0 shadow-md"
+                      />
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-white capitalize truncate">
                           {athlete.full_name}
