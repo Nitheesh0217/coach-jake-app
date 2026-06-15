@@ -79,9 +79,7 @@ export default function GamificationSection() {
 
           <div className="mt-4">
             <div className="h-3 rounded-full bg-gradient-to-r from-red-500/30 via-amber-400/30 to-emerald-500/30 overflow-hidden">
-              <div
-                className="h-3 w-[70%] rounded-full bg-gradient-to-r from-red-500 to-emerald-500"
-              />
+              <div className="h-3 w-[70%] rounded-full bg-gradient-to-r from-red-500 to-emerald-500" />
             </div>
             <div className="mt-2 text-xs text-zinc-400">
               Progress toward weekly goal
