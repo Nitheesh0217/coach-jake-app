@@ -153,7 +153,10 @@ export default function AthletesPanel({
                 <div className="flex items-center justify-between p-4 rounded-xl border border-zinc-800 hover:border-zinc-700 transition">
                   <div className="flex items-center gap-3 flex-1">
                     <img
-                      src={getAvatarImage(athlete.full_name ?? athlete.email, 36)}
+                      src={getAvatarImage(
+                        athlete.full_name ?? athlete.email,
+                        36,
+                      )}
                       alt={athlete.full_name || athlete.email}
                       className="w-9 h-9 rounded-full border border-zinc-700 shadow-md"
                     />

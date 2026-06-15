@@ -1,81 +1,93 @@
 export default function ProgramsSection() {
   const cards = [
     {
-      type: "In‑Season",
-      title: "Performance Maintenance",
-      desc: "Keep strength, speed, and on-court explosiveness while reducing cumulative fatigue.",
-      meta: "8–10 weeks · 3 sessions/week · Ideal for HS & college players",
-      popular: true,
-      image: "in-season.jpg.png",
-    },
-    {
-      type: "Off‑Season",
-      title: "Strength & Power",
-      desc: "Build a bigger engine: hypertrophy, power lifts, and velocity work for next season.",
-      meta: "10–16 weeks · 4 sessions/week · Ideal for athletes seeking mass & power",
+      badge: "MOST POPULAR",
+      badgeClass: "bg-emerald-500/20 border-emerald-500/40 text-emerald-300",
+      title: "Vertical Jump Transformation",
+      desc: "12-week program to add serious bounce and explosiveness off the floor.",
+      meta: "12 Weeks · Intermediate",
       image: "off-season.jpg.png",
     },
     {
-      type: "Youth Development",
-      title: "Foundations Program",
-      desc: "Movement literacy, mobility, and habit coaching for young athletes starting their journey.",
-      meta: "6–12 weeks · 2–3 sessions/week · Ideal for middle & high school athletes",
+      badge: "STRENGTH",
+      badgeClass: "bg-cyan-500/20 border-cyan-500/40 text-cyan-300",
+      title: "Strength & Power Builder",
+      desc: "Build foundational strength, explosiveness, and on-court power.",
+      meta: "10 Weeks · All Levels",
+      image: "in-season.jpg.png",
+    },
+    {
+      badge: "SKILLS",
+      badgeClass: "bg-violet-500/20 border-violet-500/40 text-violet-300",
+      title: "Hoop IQ & Skills Development",
+      desc: "Sharpen your skills, decision-making, and overall game.",
+      meta: "8 Weeks · All Levels",
       image: "youth.jpg.png",
     },
   ];
 
   return (
-    <section className="mx-auto mt-16 max-w-5xl px-4">
-      <h2 className="text-xl sm:text-2xl font-semibold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-        Programs
-      </h2>
-      <p className="text-sm sm:text-base text-zinc-300 mt-2">
-        Outcome-focused plans for athletes: in‑season readiness, off‑season
-        growth, and long-term development.
-      </p>
+    <section className="mx-auto mt-24 max-w-6xl px-4">
+      {/* Header with View all programs link */}
+      <div className="flex items-center justify-between mb-12">
+        <div>
+          <h2 className="text-3xl font-black text-zinc-50">Programs</h2>
+          <p className="text-zinc-400 text-base mt-2">
+            Structured. Proven. Built for Results.
+          </p>
+        </div>
+        <a
+          href="/programs"
+          className="text-emerald-400 hover:text-emerald-300 text-sm font-semibold transition-colors"
+        >
+          View all programs →
+        </a>
+      </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+      {/* Program Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {cards.map((c, idx) => (
           <article
             key={c.title}
-            className="group flex flex-col justify-between rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 shadow-lg shadow-black/40 transition transform duration-300 ease-out will-change-transform hover:-translate-y-1 hover:border-emerald-500/50 hover:bg-zinc-900"
+            className="group flex flex-col rounded-2xl border border-zinc-800 bg-zinc-900/60 overflow-hidden shadow-lg shadow-black/40 transition-all duration-300 hover:border-emerald-500/50 hover:bg-zinc-900 hover:shadow-emerald-glow-sm"
           >
-            <div className="flex items-start gap-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <div className="inline-flex items-center rounded-full bg-zinc-800 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-zinc-300">
-                    {c.type}
-                  </div>
-                  {c.popular && (
-                    <span className="inline-flex items-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-300">
-                      Most popular
-                    </span>
-                  )}
-                </div>
+            {/* Image Area */}
+            <div className="relative w-full h-48 overflow-hidden bg-gradient-to-br from-slate-800 to-slate-700">
+              <img
+                src={`/programs/${c.image}`}
+                alt={c.title}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
-                <h3 className="text-base font-semibold text-zinc-50 mt-3">
-                  {c.title}
-                </h3>
-                <p className="text-sm text-zinc-300 mt-2">{c.desc}</p>
-              </div>
-
-              <div className="hidden sm:block w-20 h-20 rounded-lg overflow-hidden bg-gradient-to-br from-slate-800 to-slate-700 flex-shrink-0">
-                <img
-                  src={`/programs/${c.image}`}
-                  alt={`${c.title} thumbnail`}
-                  className="w-full h-full object-cover"
-                />
+              {/* Badge */}
+              <div
+                className={`absolute top-4 left-4 inline-flex items-center rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wide ${c.badgeClass}`}
+              >
+                {c.badge}
               </div>
             </div>
 
-            <div>
-              <div className="mt-3 text-xs text-zinc-400">{c.meta}</div>
-              <a
-                href="/programs"
-                className="mt-4 inline-flex items-center text-sm font-medium text-emerald-400 hover:text-emerald-300"
-              >
-                View details
-              </a>
+            {/* Content */}
+            <div className="flex flex-col flex-1 p-6 space-y-4">
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-zinc-50 mb-2">
+                  {c.title}
+                </h3>
+                <p className="text-sm text-zinc-400 leading-relaxed">
+                  {c.desc}
+                </p>
+              </div>
+
+              <div className="border-t border-zinc-800 pt-4 space-y-3">
+                <p className="text-xs text-zinc-500 font-medium">📅 {c.meta}</p>
+                <a
+                  href="/programs"
+                  className="inline-flex items-center text-sm font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
+                >
+                  View details →
+                </a>
+              </div>
             </div>
           </article>
         ))}

@@ -31,10 +31,7 @@ export function getAvatarColor(nameOrId: string): string {
  * Generate SVG avatar with initials
  * Returns a data URL that can be used directly as an image source
  */
-export function generateAvatarSvg(
-  name: string,
-  size: number = 64
-): string {
+export function generateAvatarSvg(name: string, size: number = 64): string {
   const initials = name
     .split(" ")
     .map((n) => n.charAt(0))
@@ -73,7 +70,7 @@ export function generateAvatarSvg(
 export function generateWorkoutImageSvg(
   title: string,
   focusArea: string,
-  size: number = 400
+  size: number = 400,
 ): string {
   const bgGradient = getWorkoutGradient(focusArea);
 
@@ -113,13 +110,13 @@ function getWorkoutGradient(focusArea: string): [string, string] {
 
   const gradients: Record<string, [string, string]> = {
     "ball handling": ["#06b6d4", "#0891b2"],
-    "handles": ["#06b6d4", "#0891b2"],
-    "shooting": ["#f59e0b", "#d97706"],
-    "strength": ["#ef4444", "#dc2626"],
-    "conditioning": ["#10b981", "#059669"],
-    "finishing": ["#a855f7", "#9333ea"],
-    "defense": ["#3b82f6", "#1d4ed8"],
-    "footwork": ["#ec4899", "#be185d"],
+    handles: ["#06b6d4", "#0891b2"],
+    shooting: ["#f59e0b", "#d97706"],
+    strength: ["#ef4444", "#dc2626"],
+    conditioning: ["#10b981", "#059669"],
+    finishing: ["#a855f7", "#9333ea"],
+    defense: ["#3b82f6", "#1d4ed8"],
+    footwork: ["#ec4899", "#be185d"],
   };
 
   // Find matching gradient or use default
@@ -155,7 +152,7 @@ export function getAvatarImage(name: string, size: number = 64): string {
 export function getWorkoutImage(
   title: string,
   focusArea: string,
-  size: number = 400
+  size: number = 400,
 ): string {
   const cacheKey = `workout-${title}-${focusArea}-${size}`;
   if (!imageCache.has(cacheKey)) {
