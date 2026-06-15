@@ -206,12 +206,12 @@ export default function LoginForm() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-primary w-full mt-4 disabled:opacity-60"
+                  className="btn-primary w-full mt-4 py-3 disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Signing in...
+                      <span>Signing in...</span>
                     </>
                   ) : (
                     "Sign in"
