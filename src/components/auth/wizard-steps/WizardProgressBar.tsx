@@ -8,10 +8,10 @@ interface WizardProgressBarProps {
 }
 
 const STEP_LABELS = [
-  { num: 1, label: "ACCOUNT" },
-  { num: 2, label: "PLAYING STYLE" },
-  { num: 3, label: "YOUR HABITS" },
-  { num: 4, label: "YOUR GOALS" },
+  { num: 1, label: "Your Profile" },
+  { num: 2, label: "Athlete Details" },
+  { num: 3, label: "Training Preferences" },
+  { num: 4, label: "Your Goals" },
 ];
 
 export default function WizardProgressBar({
@@ -100,7 +100,7 @@ export default function WizardProgressBar({
 
               {/* Step Label */}
               <span
-                className={`text-xs font-bold tracking-widest uppercase transition-colors duration-300 ${
+                className={`text-[11px] md:text-xs font-semibold text-center max-w-[90px] md:max-w-none transition-colors duration-300 ${
                   isCurrent
                     ? "text-emerald-400"
                     : isCompleted
