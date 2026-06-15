@@ -1,110 +1,164 @@
-// FILE: src/components/ui/StatCard.tsx
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import { TrendingUp, TrendingDown } from "lucide-react";
 
 type AccentColor = "emerald" | "sky" | "violet" | "amber";
 
 const accentMap: Record<
   AccentColor,
-  { text: string; bg: string; icon: string }
+  { text: string; bg: string; border: string }
 > = {
   emerald: {
     text: "text-emerald-400",
     bg: "bg-emerald-500/10",
-    icon: "text-emerald-400",
+    border: "border-emerald-500/20",
   },
-  sky: { text: "text-sky-400", bg: "bg-sky-500/10", icon: "text-sky-400" },
+  sky: {
+    text: "text-sky-400",
+    bg: "bg-sky-500/10",
+    border: "border-sky-500/20",
+  },
   violet: {
     text: "text-violet-400",
     bg: "bg-violet-500/10",
-    icon: "text-violet-400",
+    border: "border-violet-500/20",
   },
   amber: {
     text: "text-amber-400",
     bg: "bg-amber-500/10",
-    icon: "text-amber-400",
+    border: "border-amber-500/20",
   },
 };
+
+interface Trend {
+  direction: "up" | "down" | "neutral";
+  label: string;
+}
 
 interface StatCardProps {
   label: string;
   value: string | number;
-  accent: AccentColor;
   icon: LucideIcon;
-  trend?: string;
+  iconColor?: AccentColor;
+  trend?: Trend;
+  countUp?: boolean;
+  delay?: number;
   loading?: boolean;
 }
 
 export default function StatCard({
   label,
   value,
-  accent,
   icon: Icon,
+  iconColor = "emerald",
   trend,
+  countUp = true,
+  delay = 0,
   loading = false,
 }: StatCardProps) {
-  const colors = accentMap[accent];
-  const displayValue = useRef<number>(0);
-  const currentValue = useRef<number>(0);
+  const colors = accentMap[iconColor];
+  const [displayValue, setDisplayValue] = useState<number | string>(
+    typeof value === "string" ? value : 0,
+  );
+  const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (loading || typeof value === "string") return;
+    if (loading || typeof value === "string" || !countUp) {
+      setDisplayValue(value);
+      return;
+    }
 
-    const target = typeof value === "number" ? value : 0;
-    const increment = target / 60; // Animate over ~1 second at 60fps
-    const interval = setInterval(() => {
-      currentValue.current += increment;
-      if (currentValue.current >= target) {
-        currentValue.current = target;
-        clearInterval(interval);
+    const startTime = Date.now();
+    const duration = 1200; // 1.2 seconds
+    const target = Number(value);
+    const startValue = 0;
+
+    const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeOutExpo(progress);
+      const current = Math.floor(startValue + (target - startValue) * eased);
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
       }
-      displayValue.current = Math.round(currentValue.current);
-    }, 16);
+    };
 
-    return () => clearInterval(interval);
-  }, [value, loading]);
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, [value, countUp, loading]);
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/40 p-5 flex flex-col gap-4">
-        <div className={`w-10 h-10 rounded-lg ${colors.bg} animate-pulse`} />
-        <div className="space-y-2">
-          <div className="h-8 w-24 rounded-lg bg-zinc-800 animate-pulse" />
-          <div className="h-3 w-32 rounded-lg bg-zinc-800 animate-pulse" />
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="glass-card p-5"
+      >
+        <div className="space-y-3">
+          <div
+            className={`w-10 h-10 rounded-xl ${colors.bg} ${colors.border} border animate-pulse`}
+          />
+          <div className="space-y-2">
+            <div className="h-8 w-16 rounded-lg bg-zinc-800 animate-pulse" />
+            <div className="h-3 w-20 rounded-lg bg-zinc-800 animate-pulse" />
+          </div>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
+  const trendColor =
+    trend?.direction === "up"
+      ? "text-emerald-400"
+      : trend?.direction === "down"
+        ? "text-red-400"
+        : "text-zinc-400";
+  const TrendIcon =
+    trend?.direction === "up"
+      ? TrendingUp
+      : trend?.direction === "down"
+        ? TrendingDown
+        : null;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-sm shadow-xl shadow-black/40 hover:border-zinc-700 hover:shadow-[0_0_30px_rgba(52,211,153,0.08)] transition-all duration-300 p-5 flex flex-col gap-4"
+      transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className="glass-card p-5"
     >
-      <div
-        className={`${colors.bg} w-10 h-10 rounded-lg flex items-center justify-center`}
-      >
-        <Icon className={`w-5 h-5 ${colors.icon}`} />
+      <div className="flex items-start justify-between mb-3">
+        <p className="text-xs uppercase tracking-widest text-zinc-400 font-semibold">
+          {label}
+        </p>
+        <div
+          className={`p-2.5 rounded-xl ${colors.bg} border ${colors.border}`}
+        >
+          <Icon className={`w-4 h-4 ${colors.text}`} />
+        </div>
       </div>
 
-      <div>
-        <p className={`font-mono font-bold text-3xl ${colors.text}`}>
-          {typeof value === "string" ? value : displayValue.current}
-        </p>
-        <p className="text-xs text-zinc-500 tracking-widest uppercase mt-1">
-          {label}
+      <div className="mb-3 border-t border-zinc-800 pt-3">
+        <p className="stat-value font-black text-3xl bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent">
+          {displayValue}
         </p>
       </div>
 
       {trend && (
-        <div className="bg-zinc-800/60 rounded-xl px-3 py-1.5 text-xs flex items-center gap-2">
-          <span className={colors.text}>↑</span>
-          <span className="text-zinc-400">{trend}</span>
+        <div className="flex items-center gap-1.5 text-xs">
+          {TrendIcon && <TrendIcon className={`w-3 h-3 ${trendColor}`} />}
+          <span className={trendColor}>{trend.label}</span>
         </div>
       )}
     </motion.div>

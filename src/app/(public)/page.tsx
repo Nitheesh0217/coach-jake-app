@@ -1,5 +1,5 @@
 ﻿import Link from "next/link";
-import Hero from "@/components/public/Hero";
+import HeroSection from "@/components/home/HeroSection";
 import ProgramsSection from "@/components/public/ProgramsSection";
 import BenefitsSection from "@/components/public/BenefitsSection";
 import TestimonialsSection from "@/components/public/TestimonialsSection";
@@ -14,10 +14,7 @@ import InsideAppSection from "@/components/public/InsideAppSection";
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-transparent text-[#f9fafb]">
-      
-
-      
-      <Hero />
+      <HeroSection />
       <ProgramsSection />
       <InsideAppSection />
       <BenefitsSection />

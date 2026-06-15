@@ -280,7 +280,8 @@ async function getDashboardData(): Promise<DashboardResponse> {
       // Compute completion % and sessions for each athlete
       const athletesWithData = athletes.map((athlete) => {
         // Filter logs for this athlete
-        const athleteLogs = allLogs?.filter((log) => log.user_id === athlete.user_id) ?? [];
+        const athleteLogs =
+          allLogs?.filter((log) => log.user_id === athlete.user_id) ?? [];
         const thisWeekLogs = athleteLogs.filter(
           (log) => new Date(log.created_at) >= sevenDaysAgo,
         );

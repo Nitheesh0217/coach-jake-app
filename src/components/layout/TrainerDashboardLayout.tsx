@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import BottomTabBar from "./BottomTabBar";
 import { Menu, X } from "lucide-react";
 
 interface TrainerDashboardLayoutProps {
@@ -52,7 +53,10 @@ export default function TrainerDashboardLayout({
         />
 
         {/* Content */}
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-16 md:pb-0">{children}</main>
+
+        {/* Bottom Tab Bar - Mobile Only */}
+        <BottomTabBar />
 
         {/* Footer */}
         <footer className="border-t border-zinc-800 bg-black/40 px-4 py-4 text-center text-xs text-zinc-500">
