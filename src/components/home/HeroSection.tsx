@@ -14,7 +14,7 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55 } },
 };
 
 const BENEFITS = [
@@ -40,14 +40,13 @@ const BENEFITS = [
 
 const STATS = [
   { value: "120+", label: "athletes trained" },
-  { value: "+3\" avg", label: "vertical in 12 weeks" },
+  { value: '+3" avg', label: "vertical in 12 weeks" },
   { value: "5+ yrs", label: "coaching experience" },
 ];
 
 export default function HeroSection() {
   return (
     <section className="grid lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_520px] gap-10 xl:gap-16 items-start min-h-[calc(100vh-64px)]">
-
       {/* ── LEFT COLUMN ── */}
       <motion.div
         variants={container}
@@ -84,9 +83,12 @@ export default function HeroSection() {
         </motion.h1>
 
         {/* Sub text */}
-        <motion.p variants={item} className="max-w-md text-base text-zinc-400 leading-relaxed">
-          Elite training programs designed to increase your vertical, build strength,
-          and elevate your game on every level.
+        <motion.p
+          variants={item}
+          className="max-w-md text-base text-zinc-400 leading-relaxed"
+        >
+          Elite training programs designed to increase your vertical, build
+          strength, and elevate your game on every level.
         </motion.p>
 
         {/* CTA Buttons */}
@@ -120,8 +122,12 @@ export default function HeroSection() {
               key={s.label}
               className="rounded-2xl border border-zinc-800 bg-zinc-900/50 px-4 py-3.5 hover:border-emerald-500/30 hover:bg-zinc-900/70 transition-all duration-200"
             >
-              <p className="text-xl font-black text-emerald-300 tabular-nums">{s.value}</p>
-              <p className="mt-0.5 text-[11px] text-zinc-500 font-medium leading-snug">{s.label}</p>
+              <p className="text-xl font-black text-emerald-300 tabular-nums">
+                {s.value}
+              </p>
+              <p className="mt-0.5 text-[11px] text-zinc-500 font-medium leading-snug">
+                {s.label}
+              </p>
             </div>
           ))}
         </motion.div>
@@ -139,7 +145,6 @@ export default function HeroSection() {
 
         {/* Card shell */}
         <div className="relative rounded-[2rem] border border-emerald-500/25 bg-zinc-950 overflow-hidden shadow-[0_0_60px_rgba(16,185,129,0.18),inset_0_1px_0_rgba(255,255,255,0.04)]">
-
           {/* Hero image */}
           <div className="relative h-[340px] sm:h-[400px] lg:h-[460px] w-full overflow-hidden">
             {/* Fallback gradient bg shown while image loads */}
@@ -182,7 +187,9 @@ export default function HeroSection() {
                   <p className="text-[11px] font-black text-emerald-300 uppercase tracking-[0.1em]">
                     {b.title}
                   </p>
-                  <p className="text-[12px] text-zinc-400 mt-0.5 leading-snug">{b.desc}</p>
+                  <p className="text-[12px] text-zinc-400 mt-0.5 leading-snug">
+                    {b.desc}
+                  </p>
                 </div>
               </motion.div>
             ))}
@@ -190,8 +197,12 @@ export default function HeroSection() {
             {/* Signature */}
             <div className="pt-3 border-t border-zinc-800/70 flex items-center justify-between">
               <div>
-                <p className="text-xs font-black text-emerald-300 tracking-widest">Coach Jake</p>
-                <p className="text-[10px] text-zinc-600 uppercase tracking-widest mt-0.5">Basketball Performance Coach</p>
+                <p className="text-xs font-black text-emerald-300 tracking-widest">
+                  Coach Jake
+                </p>
+                <p className="text-[10px] text-zinc-600 uppercase tracking-widest mt-0.5">
+                  Basketball Performance Coach
+                </p>
               </div>
               <div className="h-8 w-8 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
                 <span className="text-xs font-black text-emerald-300">CJ</span>
@@ -200,7 +211,6 @@ export default function HeroSection() {
           </div>
         </div>
       </motion.div>
-
     </section>
   );
 }
