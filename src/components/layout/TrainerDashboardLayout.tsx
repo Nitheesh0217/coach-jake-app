@@ -52,9 +52,7 @@ export default function TrainerDashboardLayout({
         />
 
         {/* Content */}
-        <main className="flex-1">
-          {children}
-        </main>
+        <main className="flex-1">{children}</main>
 
         {/* Footer */}
         <footer className="border-t border-zinc-800 bg-black/40 px-4 py-4 text-center text-xs text-zinc-500">

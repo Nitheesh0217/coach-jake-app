@@ -1,4 +1,11 @@
-import { TrendingUp, TrendingDown, Users, Target, Zap, AlertCircle } from "lucide-react";
+import {
+  TrendingUp,
+  TrendingDown,
+  Users,
+  Target,
+  Zap,
+  AlertCircle,
+} from "lucide-react";
 import type { AthleteProfile } from "@/types";
 
 interface CoachDashboardProps {
@@ -24,7 +31,8 @@ export default function CoachDashboard({
           Welcome back, {coachName}
         </h1>
         <p className="text-zinc-400 text-base">
-          Monitor athlete progress, track engagement, and optimize your coaching program
+          Monitor athlete progress, track engagement, and optimize your coaching
+          program
         </p>
       </div>
 
@@ -94,7 +102,9 @@ export default function CoachDashboard({
       {/* ATHLETES ROSTER - Card Grid */}
       {athletes && athletes.length > 0 ? (
         <div>
-          <h2 className="text-2xl font-bold text-zinc-100 mb-4">Your Athletes</h2>
+          <h2 className="text-2xl font-bold text-zinc-100 mb-4">
+            Your Athletes
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {athletes.map((athlete) => {
               const completion = athlete.completion_percentage || 0;
@@ -132,9 +142,7 @@ export default function CoachDashboard({
                         <p className="font-semibold text-white capitalize truncate">
                           {athlete.full_name}
                         </p>
-                        <p className="text-xs text-zinc-400">
-                          Athlete
-                        </p>
+                        <p className="text-xs text-zinc-400">Athlete</p>
                       </div>
                     </div>
                     <button className="px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 transition-colors flex-shrink-0">
@@ -144,7 +152,9 @@ export default function CoachDashboard({
 
                   <div className="space-y-3 border-t border-zinc-800 pt-3">
                     {/* Completion Badge */}
-                    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${completionBg} border border-${completionColor}-500/30`}>
+                    <div
+                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${completionBg} border border-${completionColor}-500/30`}
+                    >
                       <span className={`text-${completionColor}-300`}>
                         {Math.round(completion)}%
                       </span>
@@ -160,7 +170,9 @@ export default function CoachDashboard({
                     {/* Sessions This Week */}
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-zinc-400">Sessions this week</span>
-                      <span className="font-semibold text-white">{sessionsThisWeek}</span>
+                      <span className="font-semibold text-white">
+                        {sessionsThisWeek}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -179,7 +191,9 @@ export default function CoachDashboard({
 
       {/* COACHING INSIGHTS - 3 Alert Cards with Accent Borders */}
       <div>
-        <h2 className="text-2xl font-bold text-zinc-100 mb-4">Coaching Insights</h2>
+        <h2 className="text-2xl font-bold text-zinc-100 mb-4">
+          Coaching Insights
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Alert 1 - Onboarding */}
           <div className="rounded-2xl border-l-4 border-l-sky-400 border border-l-4 border-zinc-800 bg-zinc-900/80 p-5 shadow-lg shadow-black/40 backdrop-blur-sm">
@@ -217,9 +231,7 @@ export default function CoachDashboard({
               <div>
                 <p
                   className={`font-semibold text-sm ${
-                    avgCompletion < 60
-                      ? "text-amber-300"
-                      : "text-emerald-300"
+                    avgCompletion < 60 ? "text-amber-300" : "text-emerald-300"
                   }`}
                 >
                   {avgCompletion < 60

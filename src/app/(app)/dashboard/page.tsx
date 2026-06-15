@@ -262,63 +262,54 @@ async function getDashboardData(): Promise<DashboardResponse> {
         };
       }
 
-      // Get this month's date range
-      const thisMonth = new Date();
-      thisMonth.setDate(1);
-      const nextMonth = new Date(thisMonth);
-      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      // Get this week's date range
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      // BULK FETCH: Get all logs for all athletes in a single query
+      const { data: allLogs } = await supabase
+        .from("workout_logs")
+        .select("user_id, created_at");
+
+      // BULK FETCH: Get all active workouts once
+      const { data: activeWorkouts } = await supabase
+        .from("workouts")
+        .select("id")
+        .eq("is_active", true);
 
       // Compute completion % and sessions for each athlete
-      const athletesWithData = await Promise.all(
-        athletes.map(async (athlete) => {
-          // Get all workout logs for this athlete (for completion %)
-          const { data: allLogs } = await supabase
-            .from("workout_logs")
-            .select("created_at")
-            .eq("user_id", athlete.user_id);
+      const athletesWithData = athletes.map((athlete) => {
+        // Filter logs for this athlete
+        const athleteLogs = allLogs?.filter((log) => log.user_id === athlete.user_id) ?? [];
+        const thisWeekLogs = athleteLogs.filter(
+          (log) => new Date(log.created_at) >= sevenDaysAgo,
+        );
 
-          // Get logs for this week
-          const sevenDaysAgo = new Date();
-          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const totalLogs = athleteLogs.length;
+        const expectedWorkouts = activeWorkouts?.length ?? 1;
+        const completionPercent = Math.round(
+          (totalLogs / (expectedWorkouts * 4)) * 100,
+        );
 
-          const { data: thisWeekLogs } = await supabase
-            .from("workout_logs")
-            .select("created_at")
-            .eq("user_id", athlete.user_id)
-            .gte("created_at", sevenDaysAgo.toISOString());
+        const lastLog =
+          athleteLogs.length > 0
+            ? athleteLogs[athleteLogs.length - 1].created_at
+            : null;
 
-          // Get all active workouts
-          const { data: activeWorkouts } = await supabase
-            .from("workouts")
-            .select("id")
-            .eq("is_active", true);
-
-          const totalLogs = allLogs?.length ?? 0;
-          const expectedWorkouts = activeWorkouts?.length ?? 1;
-          const completionPercent = Math.round(
-            (totalLogs / (expectedWorkouts * 4)) * 100,
-          );
-
-          const lastLog =
-            allLogs && allLogs.length > 0
-              ? allLogs[allLogs.length - 1].created_at
-              : null;
-
-          return {
-            user_id: athlete.user_id,
-            full_name: athlete.full_name || "Unknown",
-            email: athlete.email,
-            age: athlete.age,
-            height_cm: athlete.height_cm,
-            weight_kg: athlete.weight_kg,
-            role: athlete.role,
-            completion_percentage: Math.min(completionPercent, 100),
-            sessions_this_week: thisWeekLogs?.length ?? 0,
-            last_workout_date: lastLog,
-            is_fully_scouted: athlete.is_fully_scouted ?? false,
-          };
-        }),
-      );
+        return {
+          user_id: athlete.user_id,
+          full_name: athlete.full_name || "Unknown",
+          email: athlete.email,
+          age: athlete.age,
+          height_cm: athlete.height_cm,
+          weight_kg: athlete.weight_kg,
+          role: athlete.role,
+          completion_percentage: Math.min(completionPercent, 100),
+          sessions_this_week: thisWeekLogs.length,
+          last_workout_date: lastLog,
+          is_fully_scouted: athlete.is_fully_scouted ?? false,
+        };
+      });
 
       // Calculate averages
       const avgCompletion =
