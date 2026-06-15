@@ -29,8 +29,16 @@ interface AthleteDashboardProps {
   currentStreak: number;
   longestStreak: number;
   userName?: string;
-  recentSessions?: any[];
+  recentSessions?: RecentSession[];
   hasLoggedToday?: boolean;
+}
+
+interface RecentSession {
+  id: string;
+  date: string;
+  workouts?: {
+    title?: string | null;
+  } | null;
 }
 
 export default function AthleteDashboard({
@@ -74,6 +82,28 @@ export default function AthleteDashboard({
     latestMeasurement && oldestMeasurement
       ? Number((latestMeasurement.weight_kg - oldestMeasurement.weight_kg).toFixed(1))
       : 0;
+  const fallbackSessions: RecentSession[] = [
+    {
+      id: "fallback-1",
+      workouts: { title: "Explosive Handles & Finishing" },
+      date: "2026-06-15T00:00:00.000Z",
+    },
+    {
+      id: "fallback-2",
+      workouts: { title: "Strength & Power" },
+      date: "2026-06-13T00:00:00.000Z",
+    },
+    {
+      id: "fallback-3",
+      workouts: { title: "Speed & Agility" },
+      date: "2026-06-11T00:00:00.000Z",
+    },
+    {
+      id: "fallback-4",
+      workouts: { title: "Shooting Day" },
+      date: "2026-06-09T00:00:00.000Z",
+    },
+  ];
 
   return (
     <div className="min-h-screen px-4 py-6 md:px-8 md:py-8 text-slate-100">
@@ -269,17 +299,9 @@ export default function AthleteDashboard({
             </div>
 
             <div className="space-y-3">
-              {(recentSessions.length > 0
-                ? recentSessions
-                : [
-                    { id: "fallback-1", workouts: { title: "Explosive Handles & Finishing" }, date: new Date().toISOString() },
-                    { id: "fallback-2", workouts: { title: "Strength & Power" }, date: new Date(Date.now() - 86400000).toISOString() },
-                    { id: "fallback-3", workouts: { title: "Speed & Agility" }, date: new Date(Date.now() - 172800000).toISOString() },
-                    { id: "fallback-4", workouts: { title: "Shooting Day" }, date: new Date(Date.now() - 259200000).toISOString() },
-                  ]
-              )
+              {(recentSessions.length > 0 ? recentSessions : fallbackSessions)
                 .slice(0, 4)
-                .map((session: any) => (
+                .map((session) => (
                   <div
                     key={session.id}
                     className="rounded-xl border border-cyan-500/20 bg-[#020817]/65 px-3 py-3"
