@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUserProfile } from "./actions";
 import { isProfileComplete } from "@/lib/profileUtils";
-import PlayerCardWizard from "@/components/auth/PlayerCardWizard";
+import OnboardingWizardWrapper from "@/components/auth/OnboardingWizardWrapper";
 
 export const metadata = {
   title: "Build Your Player Card - Coach Jake",
@@ -21,9 +21,6 @@ export default async function FinishProfilePage() {
   if (profile && isProfileComplete(profile) && profile.is_fully_scouted) {
     redirect("/dashboard");
   }
-
-  // Get user role - fallback to "athlete" if not set yet
-  const userRole = profile?.role || "athlete";
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[#050816]">
@@ -113,7 +110,7 @@ export default async function FinishProfilePage() {
 
       {/* Content wrapper with proper z-index */}
       <div className="relative z-20 min-h-screen">
-        <PlayerCardWizard currentProfile={profile} userRole={userRole} />
+        <OnboardingWizardWrapper />
       </div>
 
       {/* CSS animations */}
