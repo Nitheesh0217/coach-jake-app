@@ -8,10 +8,10 @@ interface WizardProgressBarProps {
 }
 
 const STEP_LABELS = [
-  { num: 1, label: "ACCOUNT" },
-  { num: 2, label: "PLAYING STYLE" },
-  { num: 3, label: "YOUR HABITS" },
-  { num: 4, label: "YOUR GOALS" },
+  { num: 1, label: "Welcome" },
+  { num: 2, label: "About You" },
+  { num: 3, label: "Your Habits" },
+  { num: 4, label: "Your Goals" },
 ];
 
 export default function WizardProgressBar({
@@ -27,18 +27,8 @@ export default function WizardProgressBar({
       transition={{ duration: 0.5 }}
       className="space-y-6"
     >
-      {/* Main Progress Bar */}
-      <div className="relative h-1 rounded-full bg-zinc-800 overflow-hidden">
-        <motion.div
-          className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-400 to-cyan-400"
-          initial={{ width: 0 }}
-          animate={{ width: `${progressPercent}%` }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        />
-      </div>
-
       {/* Step Indicators */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         {STEP_LABELS.map((step) => {
           const isCompleted = step.num < currentStep;
           const isCurrent = step.num === currentStep;
@@ -54,12 +44,12 @@ export default function WizardProgressBar({
             >
               {/* Circle Indicator */}
               <motion.div
-                className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all duration-300 ${
+                className={`mb-2 flex h-12 w-12 items-center justify-center rounded-full border-2 text-sm font-bold transition-all duration-300 ${
                   isCompleted
-                    ? "bg-emerald-500 text-black border-2 border-emerald-400"
+                    ? "border-emerald-400 bg-emerald-500 text-black"
                     : isCurrent
-                      ? "bg-emerald-500 text-black border-2 border-emerald-400 ring-4 ring-emerald-400/30"
-                      : "bg-zinc-800 text-zinc-600 border-2 border-zinc-700"
+                      ? "border-emerald-400 bg-emerald-500 text-black ring-4 ring-emerald-400/30"
+                      : "border-zinc-700 bg-zinc-800 text-zinc-600"
                 }`}
                 animate={
                   isCurrent
@@ -100,7 +90,7 @@ export default function WizardProgressBar({
 
               {/* Step Label */}
               <span
-                className={`text-xs font-bold tracking-widest uppercase transition-colors duration-300 ${
+                className={`text-sm font-medium transition-colors duration-300 ${
                   isCurrent
                     ? "text-emerald-400"
                     : isCompleted
@@ -113,6 +103,16 @@ export default function WizardProgressBar({
             </motion.div>
           );
         })}
+      </div>
+
+      {/* Main Progress Bar */}
+      <div className="relative h-2 overflow-hidden rounded-full bg-zinc-800/80">
+        <motion.div
+          className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-400 to-cyan-400"
+          initial={{ width: 0 }}
+          animate={{ width: `${progressPercent}%` }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        />
       </div>
 
       {/* Percentage */}

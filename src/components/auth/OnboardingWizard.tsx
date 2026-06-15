@@ -119,7 +119,11 @@ export default function OnboardingWizard({
         />
       </div>
 
-      <div className="relative z-10 max-w-3xl mx-auto px-4 py-8 md:py-12">
+      <div
+        className={`relative z-10 mx-auto px-4 py-8 md:py-12 ${
+          currentStep === 3 ? "max-w-7xl" : "max-w-3xl"
+        }`}
+      >
         {/* Header with Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -127,13 +131,15 @@ export default function OnboardingWizard({
           transition={{ duration: 0.4 }}
           className="mb-12 flex items-center justify-between"
         >
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center text-black font-bold">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 text-black font-bold">
               CJ
             </div>
             <div>
-              <h1 className="text-xl font-bold">Coach Jake</h1>
-              <p className="text-xs text-zinc-400">Build Different.</p>
+              <h1 className="text-xl font-bold tracking-wide">
+                COACH <span className="text-emerald-400">JAKE</span>
+              </h1>
+              <p className="text-xs text-zinc-400">Train Smarter. Win More.</p>
             </div>
           </div>
         </motion.div>
