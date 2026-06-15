@@ -32,6 +32,8 @@ interface AthleteDashboardProps {
   currentStreak: number;
   longestStreak: number;
   userName?: string;
+  recentSessions?: any[];
+  hasLoggedToday?: boolean;
 }
 
 // Helper function to get time-of-day greeting
@@ -58,6 +60,8 @@ export default function AthleteDashboard({
   currentStreak,
   longestStreak,
   userName = "Athlete",
+  recentSessions = [],
+  hasLoggedToday = false,
 }: AthleteDashboardProps) {
   const timeOfDay = getTimeOfDayGreeting();
   const emoji = getGreetingEmoji();
@@ -87,6 +91,42 @@ export default function AthleteDashboard({
             </span>
           </div>
         </div>
+
+        {/* Today's Focus Block */}
+        {hasLoggedToday ? (
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 sm:p-6 shadow-lg shadow-emerald-500/10">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">✅</span>
+              <div>
+                <p className="text-sm sm:text-base font-semibold text-emerald-300">
+                  Session logged today
+                </p>
+                <p className="text-xs sm:text-sm text-emerald-400/80">
+                  Keep the streak going — stay strong!
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 sm:p-6 shadow-lg shadow-amber-500/10">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className="text-sm sm:text-base font-semibold text-amber-300">
+                  No session logged yet today
+                </p>
+                <p className="text-xs sm:text-sm text-amber-400/80 mt-1">
+                  Ready to train? Start your workout session now.
+                </p>
+              </div>
+              <a
+                href="/workouts"
+                className="ml-4 px-4 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap"
+              >
+                Go to Workouts →
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* Responsive 2-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -244,6 +284,64 @@ export default function AthleteDashboard({
                 </div>
               </div>
             )}
+
+            {/* Recent Sessions Widget */}
+            {recentSessions && recentSessions.length > 0 ? (
+              <div className="rounded-2xl border border-emerald-500/20 bg-[#0f1623] shadow-lg shadow-emerald-500/10 hover:border-emerald-400/40 hover:translate-y-[1px] transition-all duration-300 backdrop-blur-sm p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-zinc-50">
+                    Recent Sessions
+                  </h3>
+                  <Dumbbell className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div className="space-y-3">
+                  {recentSessions.map((log: any) => (
+                    <div
+                      key={log.id}
+                      className="flex items-start justify-between gap-2 pb-3 border-b border-zinc-800 last:border-b-0 last:pb-0"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-white truncate">
+                          {log.workouts?.title || "Unknown"}
+                        </p>
+                        <p className="text-xs text-zinc-500">
+                          {new Date(log.logged_at).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </p>
+                      </div>
+                      <span className="text-emerald-400 text-lg flex-shrink-0">
+                        ✅
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <a
+                  href="/workouts"
+                  className="text-xs text-emerald-400 hover:text-emerald-300 mt-3 inline-block"
+                >
+                  View all sessions →
+                </a>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-emerald-500/20 bg-[#0f1623] shadow-lg shadow-emerald-500/10 hover:border-emerald-400/40 hover:translate-y-[1px] transition-all duration-300 backdrop-blur-sm p-6">
+                <div className="flex items-start justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-zinc-50">
+                    Recent Sessions
+                  </h3>
+                  <Dumbbell className="w-5 h-5 text-zinc-600" />
+                </div>
+                <p className="text-sm text-zinc-400">No sessions logged yet.</p>
+                <a
+                  href="/workouts"
+                  className="text-xs text-emerald-400 hover:text-emerald-300 mt-3 inline-block"
+                >
+                  Go to Workouts →
+                </a>
+              </div>
+            )}
+
             <div className="rounded-2xl border border-emerald-500/20 bg-[#0f1623] shadow-lg shadow-emerald-500/10 hover:border-emerald-400/40 hover:translate-y-[1px] transition-all duration-300 backdrop-blur-sm overflow-hidden">
               <ConsistencyWidget />
             </div>

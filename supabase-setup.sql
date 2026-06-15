@@ -51,7 +51,31 @@ ON public.measurements FOR SELECT
 USING (auth.uid() = user_id);
 
 -- ============================================================================
--- 4. SEED DATA FOR TESTING (WORKOUTS)
+-- 4. RLS POLICIES FOR WORKOUT_ASSIGNMENTS TABLE
+-- ============================================================================
+
+-- Athletes can view their own assignments
+CREATE POLICY "Athletes can view their own assignments"
+ON public.workout_assignments FOR SELECT
+USING (auth.uid() = athlete_id);
+
+-- Coaches can view assignments they've made
+CREATE POLICY "Coaches can view their own assignments"
+ON public.workout_assignments FOR SELECT
+USING (auth.uid() = assigned_by);
+
+-- Coaches can create assignments
+CREATE POLICY "Coaches can create assignments"
+ON public.workout_assignments FOR INSERT
+WITH CHECK (auth.uid() = assigned_by);
+
+-- Coaches can delete their own assignments
+CREATE POLICY "Coaches can delete their own assignments"
+ON public.workout_assignments FOR DELETE
+USING (auth.uid() = assigned_by);
+
+-- ============================================================================
+-- 5. SEED DATA FOR TESTING (WORKOUTS)
 -- ============================================================================
 
 -- Insert seed workouts (for both athlete and coach testing)
@@ -138,4 +162,13 @@ VALUES
 --   email varchar,
 --   message text,
 --   created_at timestamp DEFAULT NOW()
+-- );
+--
+-- CREATE TABLE IF NOT EXISTS public.workout_assignments (
+--   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+--   athlete_id uuid REFERENCES public.profiles(user_id),
+--   workout_id uuid REFERENCES public.workouts(id),
+--   assigned_by uuid REFERENCES public.profiles(user_id),
+--   created_at timestamp DEFAULT NOW(),
+--   CONSTRAINT unique_athlete_workout UNIQUE(athlete_id, workout_id)
 -- );

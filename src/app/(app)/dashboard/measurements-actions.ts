@@ -19,7 +19,7 @@ export interface AddMeasurementResult {
  * Inserts a row into the measurements table.
  */
 export async function addMeasurement(
-  data: AddMeasurementData
+  data: AddMeasurementData,
 ): Promise<AddMeasurementResult> {
   try {
     const cookieStore = await cookies();
@@ -39,20 +39,32 @@ export async function addMeasurement(
     // Get current user
     const { data: auth } = await supabase.auth.getUser();
     const user = auth.user;
+    console.log("[MEASUREMENT] AUTH USER:", {
+      userId: user?.id,
+      email: user?.email,
+    });
 
     if (!user) {
       return { success: false, error: "Not authenticated" };
     }
 
     // Insert measurement
-    const { error } = await supabase.from("measurements").insert({
+    const insertPayload = {
       user_id: user.id,
       date: data.date,
       weight_kg: data.weight_kg,
-    });
+    };
+    console.log("[MEASUREMENT] INSERT PAYLOAD:", insertPayload);
+    const { error } = await supabase.from("measurements").insert(insertPayload);
 
     if (error) {
-      console.error("Measurement insertion error:", error);
+      console.error("[MEASUREMENT] INSERT ERROR:", {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        fullError: JSON.stringify(error),
+      });
       return {
         success: false,
         error: `Failed to log measurement: ${error.message}`,

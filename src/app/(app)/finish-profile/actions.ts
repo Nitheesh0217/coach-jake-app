@@ -1,6 +1,7 @@
 "use server";
 
 import { supabaseServer } from "@/lib/supabaseClient";
+import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import type { Role, Profile, PlayerGoal } from "@/types";
 

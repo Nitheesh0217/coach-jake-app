@@ -90,6 +90,8 @@ type DashboardResponse = {
     measurements: Measurement[];
     currentStreak: number;
     longestStreak: number;
+    recentSessions: any[];
+    hasLoggedToday: boolean;
   };
   coachData?: {
     athletes: (AthleteProfile & { is_fully_scouted?: boolean })[];
@@ -118,6 +120,8 @@ async function getDashboardData(): Promise<DashboardResponse> {
     const { data: auth } = await supabase.auth.getUser();
     const user = auth.user;
 
+    console.log("[DASH] AUTH USER:", { userId: user?.id, email: user?.email });
+
     if (!user) {
       return { profile: null, error: "Not logged in." };
     }
@@ -139,6 +143,13 @@ async function getDashboardData(): Promise<DashboardResponse> {
 
     const profile = profileData as Profile;
 
+    console.log("[DASH] FETCHED PROFILE:", {
+      user_id: profile.user_id,
+      email: profile.email,
+      role: profile.role,
+      full_name: profile.full_name,
+    });
+
     // Gate athletes behind onboarding: redirect if not fully scouted
     // Do NOT redirect coaches
     if (profile.is_fully_scouted === false && profile.role === "athlete") {
@@ -146,6 +157,7 @@ async function getDashboardData(): Promise<DashboardResponse> {
     }
 
     if (profile.role === "athlete") {
+      console.log("[DASH] BRANCH: ATHLETE selected (role='athlete')");
       // Fetch active workouts
       const { data: workouts } = await supabase
         .from("workouts")
@@ -188,6 +200,26 @@ async function getDashboardData(): Promise<DashboardResponse> {
 
       const { currentStreak, longestStreak } = calculateStreaks(logs60d ?? []);
 
+      // Fetch recent sessions (last 3)
+      const { data: recentSessions } = await supabase
+        .from("workout_logs")
+        .select("id, logged_at, notes, workouts(title)")
+        .eq("user_id", user.id)
+        .order("logged_at", { ascending: false })
+        .limit(3);
+
+      // Check if logged today
+      const today = new Date().toISOString().split("T")[0];
+      const { data: todayLog } = await supabase
+        .from("workout_logs")
+        .select("id")
+        .eq("user_id", user.id)
+        .gte("logged_at", today)
+        .limit(1)
+        .maybeSingle();
+
+      const hasLoggedToday = !!todayLog;
+
       // Fetch recent measurements
       const measurementsResult = await getMeasurements();
 
@@ -201,9 +233,12 @@ async function getDashboardData(): Promise<DashboardResponse> {
           measurements: measurementsResult.measurements ?? [],
           currentStreak,
           longestStreak,
+          recentSessions: recentSessions ?? [],
+          hasLoggedToday,
         },
       };
     } else if (profile.role === "coach") {
+      console.log("[DASH] BRANCH: COACH selected (role='coach')");
       // Fetch all athlete profiles with Player Card fields
       const { data: athletes } = await supabase
         .from("profiles")
@@ -377,6 +412,8 @@ export default async function DashboardPage() {
           currentStreak={athleteData.currentStreak}
           longestStreak={athleteData.longestStreak}
           userName={profile.full_name || "Athlete"}
+          recentSessions={athleteData.recentSessions}
+          hasLoggedToday={athleteData.hasLoggedToday}
         />
       </TrainerDashboardLayout>
     );

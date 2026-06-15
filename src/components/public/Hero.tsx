@@ -58,25 +58,31 @@ export default function Hero() {
             Basketball performance coaching
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-zinc-50">
-            Explosive Basketball Performance for Serious Hoopers
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
+            <span className="text-zinc-50">
+              Explosive Basketball Performance for{" "}
+            </span>
+            <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-300 bg-clip-text text-transparent">
+              Serious Hoopers
+            </span>
           </h1>
 
           <p className="mt-4 text-sm sm:text-base text-zinc-300 max-w-xl">
-            Mobile-first strength, conditioning, and on-court skill work to get you stronger, quicker, and game-ready — in the gym or at home.
+            Mobile-first strength, conditioning, and on-court skill work to get
+            you stronger, quicker, and game-ready — in the gym or at home.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4">
             <Link
               href="/signup"
-              className="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-3 text-sm font-semibold text-black shadow-lg shadow-emerald-500/30 transition transform will-change-transform hover:bg-emerald-400 hover:-translate-y-0.5 hover:shadow-emerald-500/30"
+              className="inline-flex items-center justify-center rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-8 py-3 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all duration-300 hover:-translate-y-0.5"
             >
               Start training free
             </Link>
 
             <a
               href="#overview"
-              className="inline-flex items-center justify-center rounded-full border border-zinc-700 px-5 py-2.5 text-sm font-medium text-zinc-200 hover:border-zinc-500 hover:bg-zinc-900/60 hover:text-white transition"
+              className="inline-flex items-center justify-center rounded-xl border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10 px-8 py-3 transition-all duration-300"
             >
               Watch 60s overview
             </a>
@@ -84,15 +90,21 @@ export default function Hero() {
 
           {/* Stats row */}
           <div className="mt-8 grid grid-cols-1 gap-4 text-sm text-zinc-300 sm:grid-cols-3">
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 px-4 py-3">120+ athletes trained</div>
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 px-4 py-3">Average +3" vertical in 12 weeks</div>
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 px-4 py-3">5+ years coaching experience</div>
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
+              120+ athletes trained
+            </div>
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
+              Average +3" vertical in 12 weeks
+            </div>
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
+              5+ years coaching experience
+            </div>
           </div>
         </div>
 
         {/* Right - decorative glass card (keeps layout balance) */}
         <div className="lg:w-1/2 flex justify-center">
-          <div className="relative w-full max-w-md rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-900/40 shadow-xl shadow-black/40 backdrop-blur-sm">
+          <div className="relative w-full max-w-md rounded-3xl overflow-hidden border border-white/[0.08] bg-white/[0.03] shadow-xl shadow-black/40 backdrop-blur-sm">
             <div className="relative h-64 sm:h-72 md:h-96 lg:h-[420px] w-full">
               {/* Panel image (in-app preview) */}
               <img

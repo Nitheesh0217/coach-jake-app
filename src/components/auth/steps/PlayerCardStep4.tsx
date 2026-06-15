@@ -13,26 +13,144 @@ const VISIBILITY_OPTIONS = [
   { id: "community", name: "Community", emoji: "🌍", desc: "Visible to all" },
 ];
 
+const SESSION_LENGTHS = [
+  { value: 30, label: "30 min" },
+  { value: 45, label: "45 min" },
+  { value: 60, label: "60 min" },
+  { value: 75, label: "75 min" },
+  { value: 90, label: "90 min" },
+];
+
+const SLEEP_HOURS = [
+  { value: "<6", label: "Less than 6h" },
+  { value: "6-7", label: "6-7 hours" },
+  { value: "7-8", label: "7-8 hours" },
+  { value: ">8", label: "More than 8h" },
+];
+
+const SCHEDULE_BLOCKS = [
+  { id: "morning", label: "🌅 Morning", emoji: "🌅" },
+  { id: "afternoon", label: "☀️ Afternoon", emoji: "☀️" },
+  { id: "evening", label: "🌆 Evening", emoji: "🌆" },
+  { id: "late_night", label: "🌙 Late Night", emoji: "🌙" },
+];
+
 export default function PlayerCardStep4({
   formData,
   setFormData,
 }: PlayerCardStep4Props) {
-  const isValidUrl = (url: string) => {
-    if (!url) return true; // Optional field
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
+  const toggleScheduleBlock = (blockId: string) => {
+    const current = formData.schedule_blocks || [];
+    const updated = current.includes(blockId)
+      ? current.filter((b) => b !== blockId)
+      : [...current, blockId];
+    setFormData({ ...formData, schedule_blocks: updated });
   };
 
   return (
     <div className="space-y-6">
-      <p className="text-zinc-400 text-sm">Final touches: visibility and social links</p>
+      <p className="text-zinc-400 text-sm">Your schedule, preferences, and visibility</p>
 
-      {/* Visibility */}
+      {/* Weekly Sessions Slider */}
       <div>
+        <label className="block text-sm font-medium text-white mb-3">
+          Weekly Sessions Target <span className="text-red-400">*</span>
+        </label>
+        <div className="flex items-center gap-4">
+          <input
+            type="range"
+            min="1"
+            max="7"
+            value={formData.weekly_sessions_target || 3}
+            onChange={(e) => setFormData({ ...formData, weekly_sessions_target: Number(e.target.value) })}
+            className="flex-1 h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer slider"
+          />
+          <div className="text-center min-w-fit">
+            <span className="text-2xl font-bold text-emerald-400">{formData.weekly_sessions_target || 3}</span>
+            <span className="text-xs text-zinc-400 block">sessions/week</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Typical Session Length */}
+      <div className="pt-4 border-t border-zinc-800">
+        <label className="block text-sm font-medium text-white mb-3">
+          Typical Session Length <span className="text-red-400">*</span>
+        </label>
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+          {SESSION_LENGTHS.map((session) => (
+            <button
+              key={session.value}
+              type="button"
+              onClick={() =>
+                setFormData({ ...formData, typical_session_length_minutes: session.value })
+              }
+              className={`p-3 rounded-lg border-2 text-center text-sm font-medium transition-all ${
+                formData.typical_session_length_minutes === session.value
+                  ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
+                  : "border-zinc-700 bg-zinc-900 text-white hover:border-zinc-600"
+              }`}
+            >
+              {session.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Sleep Hours */}
+      <div className="pt-4 border-t border-zinc-800">
+        <label className="block text-sm font-medium text-white mb-3">
+          Sleep Per Night <span className="text-red-400">*</span>
+        </label>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {SLEEP_HOURS.map((sleep) => (
+            <button
+              key={sleep.value}
+              type="button"
+              onClick={() =>
+                setFormData({ ...formData, sleep_hours_per_night: sleep.value })
+              }
+              className={`p-3 rounded-lg border-2 text-center text-sm font-medium transition-all ${
+                formData.sleep_hours_per_night === sleep.value
+                  ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
+                  : "border-zinc-700 bg-zinc-900 text-white hover:border-zinc-600"
+              }`}
+            >
+              {sleep.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Available Training Blocks */}
+      <div className="pt-4 border-t border-zinc-800">
+        <label className="block text-sm font-medium text-white mb-3">
+          Available Training Times <span className="text-red-400">*</span>
+        </label>
+        <div className="grid grid-cols-2 gap-2">
+          {SCHEDULE_BLOCKS.map((block) => (
+            <button
+              key={block.id}
+              type="button"
+              onClick={() => toggleScheduleBlock(block.id)}
+              className={`p-3 rounded-lg border-2 text-center transition-all ${
+                (formData.schedule_blocks || []).includes(block.id)
+                  ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
+                  : "border-zinc-700 bg-zinc-900 text-white hover:border-zinc-600"
+              }`}
+            >
+              <div className="text-xl mb-1">{block.emoji}</div>
+              <div className="text-xs font-medium">{block.id === "late_night" ? "Late Night" : block.id.charAt(0).toUpperCase() + block.id.slice(1)}</div>
+            </button>
+          ))}
+        </div>
+        {(!formData.schedule_blocks || formData.schedule_blocks.length === 0) && (
+          <p className="text-xs text-amber-400 mt-2">⚠️ Select at least one available training time</p>
+        )}
+      </div>
+
+      {/* Profile Visibility */}
+      <div className="pt-4 border-t border-zinc-800">
         <label className="block text-sm font-medium text-white mb-3">
           Profile Visibility <span className="text-red-400">*</span>
         </label>
@@ -78,56 +196,26 @@ export default function PlayerCardStep4({
         </p>
       </div>
 
-      {/* Social Links */}
-      <div className="pt-4 border-t border-zinc-800">
-        <label className="block text-sm font-medium text-white mb-3">
-          Social Links <span className="text-zinc-500 text-xs">(Optional)</span>
-        </label>
-
-        {/* Instagram */}
-        <div className="mb-4">
-          <label htmlFor="instagram" className="block text-xs font-medium text-zinc-300 mb-2">
-            Instagram URL
-          </label>
-          <input
-            id="instagram"
-            type="url"
-            value={formData.instagram_url || ""}
-            onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value || null })}
-            placeholder="https://instagram.com/yourprofile"
-            className={`w-full px-4 py-3 bg-zinc-900 border rounded-xl text-white placeholder-zinc-500 focus:outline-none transition-all ${
-              formData.instagram_url && !isValidUrl(formData.instagram_url)
-                ? "border-red-500/50 focus:border-red-500"
-                : "border-zinc-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50"
-            }`}
-          />
-          {formData.instagram_url && !isValidUrl(formData.instagram_url) && (
-            <p className="text-xs text-red-400 mt-1">Invalid URL</p>
-          )}
-        </div>
-
-        {/* YouTube */}
-        <div>
-          <label htmlFor="youtube" className="block text-xs font-medium text-zinc-300 mb-2">
-            YouTube URL
-          </label>
-          <input
-            id="youtube"
-            type="url"
-            value={formData.youtube_url || ""}
-            onChange={(e) => setFormData({ ...formData, youtube_url: e.target.value || null })}
-            placeholder="https://youtube.com/c/yourchannel"
-            className={`w-full px-4 py-3 bg-zinc-900 border rounded-xl text-white placeholder-zinc-500 focus:outline-none transition-all ${
-              formData.youtube_url && !isValidUrl(formData.youtube_url)
-                ? "border-red-500/50 focus:border-red-500"
-                : "border-zinc-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50"
-            }`}
-          />
-          {formData.youtube_url && !isValidUrl(formData.youtube_url) && (
-            <p className="text-xs text-red-400 mt-1">Invalid URL</p>
-          )}
-        </div>
-      </div>
+      <style>{`
+        input[type="range"].slider::-webkit-slider-thumb {
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #10b981;
+          cursor: pointer;
+          box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        input[type="range"].slider::-moz-range-thumb {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #10b981;
+          cursor: pointer;
+          border: none;
+          box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+      `}</style>
     </div>
   );
 }

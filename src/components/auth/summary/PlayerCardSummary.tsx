@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import type { CompletePlayerCardData } from "@/app/(app)/finish-profile/actions";
 
 interface PlayerCardSummaryProps {
@@ -12,6 +13,13 @@ export default function PlayerCardSummary({
   profile,
   router,
 }: PlayerCardSummaryProps) {
+  // Auto-redirect to dashboard after 4 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push("/dashboard");
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [router]);
   const checklistItems = [
     { label: "Profile basics complete", done: !!profile.fullName && !!profile.age },
     { label: "Archetype selected", done: !!profile.playerArchetype },

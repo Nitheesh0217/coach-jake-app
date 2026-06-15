@@ -16,13 +16,22 @@ const ARCHETYPES = [
   { id: "rim-protector", name: "Rim Protector", emoji: "🛡️", desc: "Defensive anchor and rebounder" },
 ];
 
+const TRAINING_CONTEXTS = [
+  { id: "off-season", name: "Off-season", emoji: "🏖️" },
+  { id: "pre-season", name: "Pre-season", emoji: "🔥" },
+  { id: "in-season", name: "In-season", emoji: "🏀" },
+  { id: "tryouts", name: "Tryouts", emoji: "🎯" },
+  { id: "showcases", name: "Showcases", emoji: "⭐" },
+  { id: "general", name: "General Fitness", emoji: "💪" },
+];
+
 export default function PlayerCardStep2({
   formData,
   setFormData,
 }: PlayerCardStep2Props) {
   return (
     <div className="space-y-6">
-      <p className="text-zinc-400 text-sm">Define your game and playstyle</p>
+      <p className="text-zinc-400 text-sm">Define your game and training goals</p>
 
       {/* Archetype Selection */}
       <div>
@@ -48,6 +57,30 @@ export default function PlayerCardStep2({
                   <p className="text-xs text-zinc-400 mt-1">{arch.desc}</p>
                 </div>
               </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Training Context */}
+      <div className="pt-4 border-t border-zinc-800">
+        <label className="block text-sm font-medium text-white mb-3">
+          Training Context <span className="text-red-400">*</span>
+        </label>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {TRAINING_CONTEXTS.map((ctx) => (
+            <button
+              key={ctx.id}
+              type="button"
+              onClick={() => setFormData({ ...formData, training_context: ctx.id })}
+              className={`p-3 rounded-lg border-2 text-center transition-all ${
+                formData.training_context === ctx.id
+                  ? "border-emerald-500 bg-emerald-500/10"
+                  : "border-zinc-700 bg-zinc-900 hover:border-zinc-600"
+              }`}
+            >
+              <div className="text-xl mb-1">{ctx.emoji}</div>
+              <div className="text-xs font-medium text-white">{ctx.name}</div>
             </button>
           ))}
         </div>
