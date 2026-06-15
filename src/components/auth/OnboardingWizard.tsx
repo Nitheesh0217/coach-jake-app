@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Globe } from "lucide-react";
 import Step1Profile from "./wizard-steps/Step1Profile";
 import Step2PlayingStyle from "./wizard-steps/Step2PlayingStyle";
 import Step3TrainingHabits from "./wizard-steps/Step3TrainingHabits";
@@ -96,8 +97,6 @@ export default function OnboardingWizard({
     onComplete(data);
   };
 
-  const progressPercent = Math.round((currentStep / STEP_COUNT) * 100);
-
   return (
     <div className="min-h-screen bg-[#050816] text-white overflow-hidden relative">
       {/* Ambient Glows */}
@@ -119,30 +118,33 @@ export default function OnboardingWizard({
         />
       </div>
 
-      <div className="relative z-10 max-w-3xl mx-auto px-4 py-8 md:py-12">
+      <div className="relative z-10 mx-auto max-w-5xl px-4 py-8 md:py-10">
         {/* Header with Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="mb-12 flex items-center justify-between"
+          className="mb-8 flex items-center justify-between"
         >
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center text-black font-bold">
-              CJ
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-emerald-300/70 bg-emerald-500/10 text-emerald-300">
+              <Globe className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold">Coach Jake</h1>
-              <p className="text-xs text-zinc-400">Build Different.</p>
+              <h1 className="text-3xl font-bold leading-none md:text-4xl">Coach Jake</h1>
             </div>
           </div>
+
+          <span className="rounded-full border border-slate-600 bg-slate-900/80 px-4 py-2 text-sm font-semibold text-slate-200">
+            Built Different.
+          </span>
         </motion.div>
 
         {/* Progress Bar */}
         <WizardProgressBar currentStep={currentStep} totalSteps={STEP_COUNT} />
 
         {/* Step Content */}
-        <div className="mt-12">
+        <div className="mt-9">
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
               <motion.div
@@ -199,12 +201,12 @@ export default function OnboardingWizard({
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="mt-12 flex gap-4 justify-between"
+          className="mt-8 flex justify-between gap-4"
         >
           {currentStep > 1 ? (
             <button
               onClick={handleBack}
-              className="px-8 py-3.5 rounded-full border border-zinc-700 text-zinc-300 font-semibold hover:border-emerald-500/40 hover:bg-emerald-500/10 transition-all duration-300"
+              className="rounded-2xl border border-slate-600 bg-slate-900/70 px-7 py-3 text-xl font-semibold text-slate-300 transition-all duration-300 hover:border-slate-400 hover:bg-slate-800/90"
             >
               ← Back
             </button>
@@ -215,19 +217,24 @@ export default function OnboardingWizard({
           {currentStep < STEP_COUNT ? (
             <button
               onClick={handleNext}
-              className="px-8 py-3.5 rounded-full bg-emerald-500 text-black font-bold hover:bg-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2"
+              className="flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 px-9 py-3 text-2xl font-bold text-slate-950 shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-emerald-500/50 active:scale-[0.98]"
             >
               Next <span>→</span>
             </button>
           ) : (
             <button
               onClick={handleComplete}
-              className="px-8 py-3.5 rounded-full bg-emerald-500 text-black font-bold hover:bg-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 w-full justify-center"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-500 px-9 py-3 text-2xl font-bold text-slate-950 shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-emerald-500/50 active:scale-[0.98]"
             >
               Finish Setup <span>→</span>
             </button>
           )}
         </motion.div>
+
+        <div className="mt-8 text-center text-sm text-slate-500">
+          Data drives development. <span className="px-2">|</span> We build
+          winners.
+        </div>
       </div>
     </div>
   );
