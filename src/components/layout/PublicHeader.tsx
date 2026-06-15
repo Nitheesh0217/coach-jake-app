@@ -25,43 +25,39 @@ export default function PublicHeader() {
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#050816]/90 backdrop-blur-xl border-b border-zinc-800/60 shadow-[0_4px_32px_rgba(0,0,0,0.5)]"
+          ? "bg-[#050816]/80 backdrop-blur-xl"
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div className="flex items-center justify-between h-16 rounded-2xl border border-cyan-400/20 bg-[#050816]/90 px-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_0_30px_rgba(6,182,212,0.12)]">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group no-underline">
-            <div className="h-8 w-8 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center group-hover:border-emerald-400/70 group-hover:bg-emerald-500/30 transition-all duration-200">
-              <span className="text-sm font-black text-emerald-300">CJ</span>
-            </div>
             <span className="text-base font-bold tracking-tight text-zinc-50 group-hover:text-white transition-colors">
               Coach Jake
             </span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-2">
             {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-full px-4 py-1.5 text-sm text-zinc-300 hover:bg-zinc-800/70 hover:text-white transition-all duration-200 font-medium"
+                className="rounded-full border border-zinc-700/80 bg-zinc-900/60 px-5 py-2 text-sm text-zinc-200 hover:border-cyan-400/40 hover:text-white transition-all duration-200 font-medium"
               >
                 {item.label}
               </Link>
             ))}
-            <div className="w-px h-5 bg-zinc-700 mx-2" />
             <Link
               href="/login"
-              className="rounded-full px-4 py-1.5 text-sm text-zinc-300 hover:bg-zinc-800/70 hover:text-white transition-all duration-200 font-medium"
+              className="rounded-full border border-zinc-700/80 bg-zinc-900/60 px-5 py-2 text-sm text-zinc-200 hover:border-cyan-400/40 hover:text-white transition-all duration-200 font-medium"
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="ml-1 rounded-full bg-emerald-500 px-5 py-2 text-sm font-bold text-black hover:bg-emerald-400 transition-all duration-200 shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_28px_rgba(16,185,129,0.6)]"
+              className="ml-1 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 px-8 py-2.5 text-sm font-bold text-black hover:from-emerald-300 hover:to-emerald-400 transition-all duration-200 shadow-[0_0_24px_rgba(16,185,129,0.45)] hover:shadow-[0_0_32px_rgba(16,185,129,0.6)]"
             >
               Sign up
             </Link>
