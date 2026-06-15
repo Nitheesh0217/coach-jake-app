@@ -49,13 +49,13 @@ async function getWorkoutsData() {
     // Fetch assigned workouts
     const { data: assignedWorkoutData, error: assignedError } = await supabase
       .from("workout_assignments")
-      .select("workout_id, workouts(id, name, description)")
+      .select("workout_id, workouts(id, title, description)")
       .eq("athlete_id", user.id);
 
     const assignedWorkouts: AssignedWorkout[] = (assignedWorkoutData || [])
       .map((item: any) => ({
         id: item.workout_id,
-        name: item.workouts?.name || "Unknown",
+        name: item.workouts?.title || "Unknown",
         description: item.workouts?.description || null,
       }))
       .filter((w) => w.name !== "Unknown");
