@@ -1,146 +1,121 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Clock, BarChart2, Zap, Dumbbell, Target } from "lucide-react";
+
+const PROGRAMS = [
+  {
+    badge: "MOST POPULAR",
+    badgeClass: "border-emerald-500/50 bg-emerald-500/15 text-emerald-300",
+    cardClass: "border-emerald-500/35 bg-gradient-to-br from-emerald-500/[0.07] to-zinc-950 shadow-[0_0_40px_rgba(16,185,129,0.12)]",
+    Icon: Zap,
+    iconClass: "text-emerald-400",
+    title: "Vertical Jump Transformation",
+    desc: "12-week program to add serious bounce and explode off the floor. Science-backed plyometrics and strength work.",
+    duration: "12 Weeks",
+    level: "Intermediate",
+    image: "https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?w=600&q=80&auto=format&fit=crop",
+  },
+  {
+    badge: "STRENGTH",
+    badgeClass: "border-cyan-500/50 bg-cyan-500/15 text-cyan-300",
+    cardClass: "border-zinc-700/50 bg-zinc-900/40 hover:border-zinc-600/70 hover:bg-zinc-900/60",
+    Icon: Dumbbell,
+    iconClass: "text-cyan-400",
+    title: "Strength & Power Builder",
+    desc: "Build foundational strength, explosiveness, and on-court power in 10 focused weeks.",
+    duration: "10 Weeks",
+    level: "All Levels",
+    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=80&auto=format&fit=crop",
+  },
+  {
+    badge: "SKILLS",
+    badgeClass: "border-violet-500/50 bg-violet-500/15 text-violet-300",
+    cardClass: "border-zinc-700/50 bg-zinc-900/40 hover:border-zinc-600/70 hover:bg-zinc-900/60",
+    Icon: Target,
+    iconClass: "text-violet-400",
+    title: "Hoop IQ & Skills Development",
+    desc: "Sharpen your handle, decision-making, and court vision. 8 weeks to a smarter game.",
+    duration: "8 Weeks",
+    level: "All Levels",
+    image: "https://images.unsplash.com/photo-1608245449230-4ac19066d2d0?w=600&q=80&auto=format&fit=crop",
+  },
+];
 
 export default function ProgramsSection() {
-  const cards = [
-    {
-      badge: "MOST POPULAR",
-      badgeColor: "emerald",
-      icon: "⚡",
-      title: "Vertical Jump Transformation",
-      desc: "12-week program to add serious bounce and explosiveness off the floor.",
-      duration: "12 Weeks",
-      level: "Intermediate",
-      image: "off-season.jpg.png",
-      popular: true,
-    },
-    {
-      badge: "STRENGTH",
-      badgeColor: "cyan",
-      icon: "💪",
-      title: "Strength & Power Builder",
-      desc: "Build foundational strength, explosiveness, and on-court power.",
-      duration: "10 Weeks",
-      level: "All Levels",
-      image: "in-season.jpg.png",
-      popular: false,
-    },
-    {
-      badge: "SKILLS",
-      badgeColor: "violet",
-      icon: "🎯",
-      title: "Hoop IQ & Skills Development",
-      desc: "Sharpen your skills, decision-making, and overall game.",
-      duration: "8 Weeks",
-      level: "All Levels",
-      image: "youth.jpg.png",
-      popular: false,
-    },
-  ];
-
-  const badgeStyles = {
-    emerald: "border-emerald-500/50 bg-emerald-500/15 text-emerald-400",
-    cyan: "border-cyan-500/50 bg-cyan-500/15 text-cyan-400",
-    violet: "border-violet-500/50 bg-violet-500/15 text-violet-400",
-  };
-
   return (
-    <section className="py-24 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-16 gap-4 md:gap-8">
-          <div>
-            <h2 className="text-4xl md:text-5xl font-black text-white mb-3">
-              Programs
-            </h2>
-            <p className="text-zinc-400 text-lg">
-              Structured. Proven. Built for Results.
-            </p>
-          </div>
-          <a
-            href="/programs"
-            className="text-emerald-400 hover:text-emerald-300 font-bold text-sm whitespace-nowrap mt-2 transition-colors flex items-center gap-1.5"
+    <section className="py-20">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <div>
+          <h2 className="text-4xl md:text-5xl font-black text-white">Programs</h2>
+          <p className="mt-2 text-zinc-400 text-base">Structured. Proven. Built for Results.</p>
+        </div>
+        <a
+          href="/programs"
+          className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-400 hover:text-emerald-300 transition-colors whitespace-nowrap"
+        >
+          View all programs <ArrowRight className="w-4 h-4" />
+        </a>
+      </div>
+
+      {/* Cards — horizontal list matching screenshot */}
+      <div className="grid md:grid-cols-3 gap-5">
+        {PROGRAMS.map((p, idx) => (
+          <motion.div
+            key={p.title}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.5, delay: idx * 0.1 }}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            className={`group flex flex-col rounded-2xl border overflow-hidden transition-all duration-300 ${p.cardClass}`}
           >
-            View all programs <ArrowRight className="w-4 h-4" />
-          </a>
-        </div>
+            {/* Image */}
+            <div className="relative h-44 overflow-hidden bg-zinc-900">
+              <img
+                src={p.image}
+                alt={p.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent" />
+              {/* Badge over image */}
+              <div className="absolute top-3 left-3">
+                <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${p.badgeClass}`}>
+                  <p.Icon className={`w-3 h-3 ${p.iconClass}`} />
+                  {p.badge}
+                </span>
+              </div>
+            </div>
 
-        {/* Cards Grid */}
-        <div className="space-y-6">
-          {cards.map((card, idx) => (
-            <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
-              viewport={{ once: true, margin: "-100px" }}
-              className={`group flex flex-col md:flex-row gap-6 md:gap-8 rounded-2xl border backdrop-blur-sm transition-all duration-300 p-6 md:p-8 ${
-                card.popular
-                  ? "border-emerald-500/50 bg-gradient-to-br from-emerald-500/8 to-emerald-500/3 shadow-lg shadow-emerald-500/20"
-                  : "border-zinc-700/60 bg-zinc-900/40 shadow-lg shadow-black/30 hover:border-zinc-600 hover:bg-zinc-900/50"
-              }`}
-            >
-              {/* Image Container */}
-              <div className="flex-shrink-0 w-full md:w-48 h-40 md:h-48 overflow-hidden rounded-xl bg-gradient-to-br from-slate-800 to-slate-900">
-                <img
-                  src={`/programs/${card.image}`}
-                  alt={card.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
+            {/* Content */}
+            <div className="flex flex-col flex-1 p-5 space-y-4">
+              <div className="space-y-2">
+                <h3 className="text-lg font-black text-white leading-tight">{p.title}</h3>
+                <p className="text-sm text-zinc-400 leading-relaxed">{p.desc}</p>
               </div>
 
-              {/* Content Container */}
-              <div className="flex-1 flex flex-col justify-between">
-                {/* Top Section */}
-                <div className="space-y-4">
-                  {/* Badge */}
-                  <div
-                    className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-bold uppercase tracking-wider ${badgeStyles[card.badgeColor as keyof typeof badgeStyles]}`}
-                  >
-                    <span className="text-base">{card.icon}</span>
-                    {card.badge}
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-2xl md:text-3xl font-black text-white leading-tight max-w-2xl">
-                    {card.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-zinc-300 text-base leading-relaxed max-w-2xl">
-                    {card.desc}
-                  </p>
+              <div className="mt-auto pt-4 border-t border-zinc-800/60 flex items-center justify-between">
+                <div className="flex gap-4 text-xs text-zinc-500">
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span className="font-semibold text-zinc-300">{p.duration}</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <BarChart2 className="w-3.5 h-3.5" />
+                    <span className="font-semibold text-zinc-300">{p.level}</span>
+                  </span>
                 </div>
-
-                {/* Bottom Section */}
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-6 border-t border-zinc-700/40">
-                  <div className="flex gap-6 text-sm">
-                    <div className="flex items-center gap-2 text-zinc-400">
-                      <span>📅</span>
-                      <span className="font-semibold text-white">
-                        {card.duration}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-zinc-400">
-                      <span>📊</span>
-                      <span className="font-semibold text-white">
-                        {card.level}
-                      </span>
-                    </div>
-                  </div>
-                  <a
-                    href="/programs"
-                    className="text-emerald-400 hover:text-emerald-300 font-bold text-sm whitespace-nowrap transition-colors flex items-center gap-1.5"
-                  >
-                    View details <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
+                <a
+                  href="/programs"
+                  className="text-emerald-400 hover:text-emerald-300 font-bold text-xs flex items-center gap-1 transition-colors"
+                >
+                  View details <ArrowRight className="w-3.5 h-3.5" />
+                </a>
               </div>
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </section>
   );

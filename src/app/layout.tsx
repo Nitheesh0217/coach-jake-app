@@ -34,26 +34,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden bg-[#050816] text-[#f9fafb]`}
       >
-        {/* Background image layer */}
-        <div
-          className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
-          style={{ backgroundImage: "url('/hero.jpg')" }}
-          aria-hidden
-        />
-
-        {/* Dark overlay */}
-        <div
-          className="fixed inset-0 bg-black pointer-events-none -z-10"
-          style={{ opacity: 0.25 }}
-          aria-hidden
-        />
-
-        {/* Content wrapper */}
-        <div className="relative z-0 min-h-screen">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   );
