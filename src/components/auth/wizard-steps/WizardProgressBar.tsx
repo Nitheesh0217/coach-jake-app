@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Check } from "lucide-react";
 
 interface WizardProgressBarProps {
   currentStep: number;
@@ -10,120 +11,84 @@ interface WizardProgressBarProps {
 const STEP_LABELS = [
   { num: 1, label: "ACCOUNT" },
   { num: 2, label: "PLAYING STYLE" },
-  { num: 3, label: "YOUR HABITS" },
-  { num: 4, label: "YOUR GOALS" },
+  { num: 3, label: "YOUR GOALS" },
+  { num: 4, label: "REVIEW" },
 ];
 
 export default function WizardProgressBar({
   currentStep,
   totalSteps,
 }: WizardProgressBarProps) {
-  const progressPercent = Math.round((currentStep / totalSteps) * 100);
+  const progressPercent =
+    totalSteps > 1 ? ((currentStep - 1) / (totalSteps - 1)) * 100 : 100;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -16 }}
+      initial={{ opacity: 0, y: -12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="space-y-6"
+      transition={{ duration: 0.35 }}
+      className="space-y-5"
     >
-      {/* Main Progress Bar */}
-      <div className="relative h-1 rounded-full bg-zinc-800 overflow-hidden">
+      <div className="relative mx-5 h-1 rounded-full bg-slate-700/70">
         <motion.div
-          className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-400 to-cyan-400"
+          className="absolute left-0 top-0 h-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-cyan-300"
           initial={{ width: 0 }}
           animate={{ width: `${progressPercent}%` }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         />
+
+        <div className="absolute inset-0 flex items-center justify-between">
+          {STEP_LABELS.map((step) => {
+            const done = step.num < currentStep;
+            const active = step.num === currentStep;
+
+            return (
+              <div
+                key={step.num}
+                className="relative flex -translate-y-1/2 flex-col items-center"
+              >
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-full border text-base font-bold transition-all md:h-11 md:w-11 ${
+                    active
+                      ? "border-cyan-300 bg-cyan-500/25 text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,0.5)]"
+                      : done
+                        ? "border-emerald-300 bg-emerald-500/40 text-emerald-100"
+                        : "border-slate-600 bg-slate-900 text-slate-400"
+                  }`}
+                >
+                  {done ? <Check className="h-5 w-5" /> : step.num}
+                </div>
+
+                {active && (
+                  <span className="absolute inset-0 h-10 w-10 rounded-full border border-cyan-300/80 md:h-11 md:w-11" />
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Step Indicators */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-2 text-center">
         {STEP_LABELS.map((step) => {
-          const isCompleted = step.num < currentStep;
-          const isCurrent = step.num === currentStep;
-          const isUpcoming = step.num > currentStep;
+          const done = step.num < currentStep;
+          const active = step.num === currentStep;
 
           return (
-            <motion.div
+            <p
               key={step.num}
-              className="flex flex-col items-center"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: step.num * 0.05 }}
+              className={`flex-1 text-[11px] font-bold uppercase tracking-[0.14em] md:text-xs ${
+                active
+                  ? "text-emerald-300"
+                  : done
+                    ? "text-slate-300"
+                    : "text-slate-500"
+              }`}
             >
-              {/* Circle Indicator */}
-              <motion.div
-                className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all duration-300 ${
-                  isCompleted
-                    ? "bg-emerald-500 text-black border-2 border-emerald-400"
-                    : isCurrent
-                      ? "bg-emerald-500 text-black border-2 border-emerald-400 ring-4 ring-emerald-400/30"
-                      : "bg-zinc-800 text-zinc-600 border-2 border-zinc-700"
-                }`}
-                animate={
-                  isCurrent
-                    ? {
-                        boxShadow: [
-                          "0 0 0 0 rgba(16, 185, 129, 0.3)",
-                          "0 0 0 8px rgba(16, 185, 129, 0.1)",
-                          "0 0 0 0 rgba(16, 185, 129, 0.3)",
-                        ],
-                      }
-                    : {}
-                }
-                transition={isCurrent ? { duration: 2, repeat: Infinity } : {}}
-              >
-                {isCompleted ? (
-                  <motion.svg
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 500,
-                      damping: 30,
-                    }}
-                    className="w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </motion.svg>
-                ) : (
-                  step.num
-                )}
-              </motion.div>
-
-              {/* Step Label */}
-              <span
-                className={`text-xs font-bold tracking-widest uppercase transition-colors duration-300 ${
-                  isCurrent
-                    ? "text-emerald-400"
-                    : isCompleted
-                      ? "text-zinc-400"
-                      : "text-zinc-600"
-                }`}
-              >
-                {step.label}
-              </span>
-            </motion.div>
+              {step.label}
+            </p>
           );
         })}
       </div>
-
-      {/* Percentage */}
-      <motion.div
-        className="text-right text-sm font-bold text-emerald-400"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        {progressPercent}% COMPLETE
-      </motion.div>
     </motion.div>
   );
 }
