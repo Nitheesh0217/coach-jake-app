@@ -89,15 +89,22 @@ export default function Hero() {
           </div>
 
           {/* Stats row */}
-          <div className="mt-8 grid grid-cols-1 gap-4 text-sm text-zinc-300 sm:grid-cols-3">
+          <div className="mt-8 grid grid-cols-2 gap-4 text-sm text-zinc-300 sm:grid-cols-4">
             <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              120+ athletes trained
+              <p className="text-2xl font-bold text-emerald-400">500+</p>
+              <p className="text-xs mt-1">Athletes Trained</p>
             </div>
             <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              Average +3" vertical in 12 weeks
+              <p className="text-2xl font-bold text-emerald-400">92%</p>
+              <p className="text-xs mt-1">Report Improved Performance</p>
             </div>
             <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              5+ years coaching experience
+              <p className="text-2xl font-bold text-emerald-400">3</p>
+              <p className="text-xs mt-1">Texas High Schools</p>
+            </div>
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
+              <p className="text-2xl font-bold text-emerald-400">10,000+</p>
+              <p className="text-xs mt-1">Workouts Logged</p>
             </div>
           </div>
         </div>

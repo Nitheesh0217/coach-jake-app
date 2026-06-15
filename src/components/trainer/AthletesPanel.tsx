@@ -52,6 +52,29 @@ export default function AthletesPanel({
       .map((a) => a.workout_id);
   };
 
+  // Calculate athlete status based on last workout date
+  const getAthleteStatus = (
+    lastWorkoutDate: string | null,
+  ): { icon: string; label: string; color: string } => {
+    if (!lastWorkoutDate) {
+      return { icon: "🔴", label: "At Risk", color: "text-red-400" };
+    }
+
+    const lastDate = new Date(lastWorkoutDate);
+    const today = new Date();
+    const daysSince = Math.floor(
+      (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    if (daysSince <= 7) {
+      return { icon: "🟢", label: "Active", color: "text-emerald-400" };
+    } else if (daysSince <= 14) {
+      return { icon: "🟡", label: "Inactive", color: "text-amber-400" };
+    } else {
+      return { icon: "🔴", label: "At Risk", color: "text-red-400" };
+    }
+  };
+
   const handleAssignWorkout = async (
     athleteId: string,
     workoutId: string,
@@ -119,6 +142,7 @@ export default function AthletesPanel({
                   },
                 )
               : null;
+            const status = getAthleteStatus(athlete.last_workout_date);
 
             const isExpanded = expandedAthlete === athlete.user_id;
             const assignedWorkoutIds = getAssignedWorkouts(athlete.user_id);
@@ -148,15 +172,16 @@ export default function AthletesPanel({
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <p className="text-sm font-semibold text-zinc-100">
-                        {athlete.sessions_this_week}
+                        {athlete.sessions_30d}
                       </p>
-                      <p className="text-xs text-zinc-500">this week</p>
+                      <p className="text-xs text-zinc-500">30d</p>
                     </div>
-                    {activeToday ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    ) : (
-                      <Circle className="w-4 h-4 text-zinc-600" />
-                    )}
+                    <div
+                      className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${status.color}`}
+                    >
+                      <span>{status.icon}</span>
+                      <span>{status.label}</span>
+                    </div>
                     <button
                       onClick={() =>
                         setExpandedAthlete(isExpanded ? null : athlete.user_id)

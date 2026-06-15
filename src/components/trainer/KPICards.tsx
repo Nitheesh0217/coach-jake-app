@@ -9,19 +9,17 @@ type AthleteRow = {
 interface KPICardsProps {
   athletes: AthleteRow[];
   totalSessions7d: number;
+  activePrograms: number;
+  completionRate: number;
 }
 
-export default function KPICards({ athletes, totalSessions7d }: KPICardsProps) {
+export default function KPICards({
+  athletes,
+  totalSessions7d,
+  activePrograms,
+  completionRate,
+}: KPICardsProps) {
   const totalAthletes = athletes.length;
-  const activeThisWeek = athletes.filter(
-    (a) => a.sessions_this_week > 0,
-  ).length;
-  const avgSessions30d =
-    totalAthletes > 0
-      ? (
-          athletes.reduce((s, a) => s + a.sessions_30d, 0) / totalAthletes
-        ).toFixed(1)
-      : "0";
 
   const cards = [
     {
@@ -32,22 +30,22 @@ export default function KPICards({ athletes, totalSessions7d }: KPICardsProps) {
       bg: "bg-blue-500/10 border-blue-500/20",
     },
     {
-      label: "Active This Week",
-      value: activeThisWeek,
-      icon: Zap,
+      label: "Sessions This Week",
+      value: totalSessions7d,
+      icon: Activity,
       color: "text-emerald-400",
       bg: "bg-emerald-500/10 border-emerald-500/20",
     },
     {
-      label: "Sessions This Week",
-      value: totalSessions7d,
-      icon: Activity,
+      label: "Active Programs",
+      value: activePrograms,
+      icon: Zap,
       color: "text-violet-400",
       bg: "bg-violet-500/10 border-violet-500/20",
     },
     {
-      label: "Avg Sessions / 30d",
-      value: avgSessions30d,
+      label: "Completion Rate",
+      value: `${completionRate}%`,
       icon: TrendingUp,
       color: "text-amber-400",
       bg: "bg-amber-500/10 border-amber-500/20",

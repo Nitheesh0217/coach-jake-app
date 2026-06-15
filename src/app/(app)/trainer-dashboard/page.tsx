@@ -35,6 +35,7 @@ async function getCoachData(): Promise<{
   totalSessions7d: number;
   workouts: SimpleWorkout[];
   assignments: Assignment[];
+  completionRate: number;
   error: string | null;
 }> {
   try {
@@ -57,6 +58,7 @@ async function getCoachData(): Promise<{
         totalSessions7d: 0,
         workouts: [],
         assignments: [],
+        completionRate: 0,
         error: "Not authenticated",
       };
 
@@ -74,6 +76,7 @@ async function getCoachData(): Promise<{
         totalSessions7d: 0,
         workouts: [],
         assignments: [],
+        completionRate: 0,
         error: "coach_only",
       };
     }
@@ -140,12 +143,21 @@ async function getCoachData(): Promise<{
 
     const totalSessions7d = (logs7dRes.data ?? []).length;
 
+    // Calculate completion rate: (total logs / total assignments) * 100
+    const totalAssignments = assignmentsRes.data?.length ?? 0;
+    const totalLogs = (logs30dRes.data ?? []).length;
+    const completionRate =
+      totalAssignments > 0
+        ? Math.round((totalLogs / totalAssignments) * 100)
+        : 0;
+
     return {
       coachName: coachProfile?.full_name?.split(" ")[0] ?? "Coach",
       athletes,
       totalSessions7d,
       workouts: workoutsRes.data ?? [],
       assignments: assignmentsRes.data ?? [],
+      completionRate,
       error: null,
     };
   } catch (err) {
@@ -155,14 +167,22 @@ async function getCoachData(): Promise<{
       totalSessions7d: 0,
       workouts: [],
       assignments: [],
+      completionRate: 0,
       error: String(err),
     };
   }
 }
 
 export default async function TrainerDashboardPage() {
-  const { coachName, athletes, totalSessions7d, workouts, assignments, error } =
-    await getCoachData();
+  const {
+    coachName,
+    athletes,
+    totalSessions7d,
+    workouts,
+    assignments,
+    completionRate,
+    error,
+  } = await getCoachData();
 
   if (error === "coach_only") redirect("/dashboard");
 
@@ -177,7 +197,12 @@ export default async function TrainerDashboardPage() {
           </div>
         )}
 
-        <KPICards athletes={athletes} totalSessions7d={totalSessions7d} />
+        <KPICards
+          athletes={athletes}
+          totalSessions7d={totalSessions7d}
+          activePrograms={workouts.length}
+          completionRate={completionRate}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2">
