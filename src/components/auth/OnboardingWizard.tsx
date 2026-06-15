@@ -7,6 +7,7 @@ import Step2PlayingStyle from "./wizard-steps/Step2PlayingStyle";
 import Step3TrainingHabits from "./wizard-steps/Step3TrainingHabits";
 import Step4Goals from "./wizard-steps/Step4Goals";
 import WizardProgressBar from "./wizard-steps/WizardProgressBar";
+import confetti from "canvas-confetti";
 
 export interface WizardData {
   // Step 1
@@ -83,6 +84,15 @@ export default function OnboardingWizard({
   };
 
   const handleComplete = () => {
+    // Trigger confetti celebration
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ["#10b981", "#06b6d4", "#f59e0b", "#a855f7"],
+    });
+
+    // Call the completion handler
     onComplete(data);
   };
 

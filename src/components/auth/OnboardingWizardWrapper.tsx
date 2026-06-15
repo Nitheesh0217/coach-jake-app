@@ -75,7 +75,9 @@ export default function OnboardingWizardWrapper() {
       }
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "An error occurred. Please try again."
+        err instanceof Error
+          ? err.message
+          : "An error occurred. Please try again.",
       );
     } finally {
       setIsSubmitting(false);

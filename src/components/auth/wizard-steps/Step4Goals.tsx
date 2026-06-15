@@ -73,7 +73,7 @@ export default function Step4Goals({ data, setData }: Step4GoalsProps) {
 
   const handleOptionalFieldChange = (
     field: "highlightTagline" | "instagramUrl" | "youtubeUrl",
-    value: string
+    value: string,
   ) => {
     setData({ ...data, [field]: value });
   };
