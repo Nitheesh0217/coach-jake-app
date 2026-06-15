@@ -1,116 +1,146 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+
 export default function ProgramsSection() {
   const cards = [
     {
       badge: "MOST POPULAR",
-      badgeColor: "text-emerald-400",
-      badgeBg: "bg-emerald-500/20",
-      badgeIcon: "⚡",
+      badgeColor: "emerald",
+      icon: "⚡",
       title: "Vertical Jump Transformation",
       desc: "12-week program to add serious bounce and explosiveness off the floor.",
-      meta: "12 Weeks",
-      metaRight: "Intermediate",
+      duration: "12 Weeks",
+      level: "Intermediate",
       image: "off-season.jpg.png",
       popular: true,
     },
     {
       badge: "STRENGTH",
-      badgeColor: "text-cyan-400",
-      badgeBg: "bg-cyan-500/20",
-      badgeIcon: "💪",
+      badgeColor: "cyan",
+      icon: "💪",
       title: "Strength & Power Builder",
       desc: "Build foundational strength, explosiveness, and on-court power.",
-      meta: "10 Weeks",
-      metaRight: "All Levels",
+      duration: "10 Weeks",
+      level: "All Levels",
       image: "in-season.jpg.png",
       popular: false,
     },
     {
       badge: "SKILLS",
-      badgeColor: "text-violet-400",
-      badgeBg: "bg-violet-500/20",
-      badgeIcon: "🎯",
+      badgeColor: "violet",
+      icon: "🎯",
       title: "Hoop IQ & Skills Development",
       desc: "Sharpen your skills, decision-making, and overall game.",
-      meta: "8 Weeks",
-      metaRight: "All Levels",
+      duration: "8 Weeks",
+      level: "All Levels",
       image: "youth.jpg.png",
       popular: false,
     },
   ];
 
+  const badgeStyles = {
+    emerald: "border-emerald-500/50 bg-emerald-500/15 text-emerald-400",
+    cyan: "border-cyan-500/50 bg-cyan-500/15 text-cyan-400",
+    violet: "border-violet-500/50 bg-violet-500/15 text-violet-400",
+  };
+
   return (
-    <section className="mx-auto mt-24 max-w-6xl px-4">
-      {/* Header with View all programs link */}
-      <div className="flex items-center justify-between mb-12">
-        <div>
-          <h2 className="text-3xl font-black text-zinc-50">Programs</h2>
-          <p className="text-zinc-400 text-base mt-2">
-            Structured. Proven. Built for Results.
-          </p>
-        </div>
-        <a
-          href="/programs"
-          className="text-emerald-400 hover:text-emerald-300 text-sm font-semibold transition-colors"
-        >
-          View all programs →
-        </a>
-      </div>
-
-      {/* Program Cards - Horizontal Layout */}
-      <div className="space-y-4">
-        {cards.map((c) => (
-          <article
-            key={c.title}
-            className={`group flex gap-6 rounded-2xl border bg-zinc-900/60 p-6 shadow-lg shadow-black/40 transition-all duration-300 hover:bg-zinc-900 ${
-              c.popular
-                ? "border-emerald-500/50 shadow-emerald-glow-sm"
-                : "border-zinc-800 hover:border-emerald-500/40 hover:shadow-emerald-glow-sm"
-            }`}
+    <section className="py-24 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-16 gap-4 md:gap-8">
+          <div>
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-3">
+              Programs
+            </h2>
+            <p className="text-zinc-400 text-lg">
+              Structured. Proven. Built for Results.
+            </p>
+          </div>
+          <a
+            href="/programs"
+            className="text-emerald-400 hover:text-emerald-300 font-bold text-sm whitespace-nowrap mt-2 transition-colors flex items-center gap-1.5"
           >
-            {/* Image Thumbnail - Left */}
-            <div className="flex-shrink-0 w-32 h-32 rounded-xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-700 shadow-md">
-              <img
-                src={`/programs/${c.image}`}
-                alt={c.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-            </div>
+            View all programs <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
 
-            {/* Content - Right */}
-            <div className="flex-1 flex flex-col justify-between">
-              <div className="space-y-3">
-                {/* Badge */}
-                <div
-                  className={`inline-flex items-center gap-1.5 rounded-full border ${c.badgeBg} border-current px-3 py-1 text-xs font-bold uppercase tracking-wide ${c.badgeColor}`}
-                >
-                  {c.badgeIcon}
-                  {c.badge}
+        {/* Cards Grid */}
+        <div className="space-y-6">
+          {cards.map((card, idx) => (
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              className={`group flex flex-col md:flex-row gap-6 md:gap-8 rounded-2xl border backdrop-blur-sm transition-all duration-300 p-6 md:p-8 ${
+                card.popular
+                  ? "border-emerald-500/50 bg-gradient-to-br from-emerald-500/8 to-emerald-500/3 shadow-lg shadow-emerald-500/20"
+                  : "border-zinc-700/60 bg-zinc-900/40 shadow-lg shadow-black/30 hover:border-zinc-600 hover:bg-zinc-900/50"
+              }`}
+            >
+              {/* Image Container */}
+              <div className="flex-shrink-0 w-full md:w-48 h-40 md:h-48 overflow-hidden rounded-xl bg-gradient-to-br from-slate-800 to-slate-900">
+                <img
+                  src={`/programs/${card.image}`}
+                  alt={card.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+
+              {/* Content Container */}
+              <div className="flex-1 flex flex-col justify-between">
+                {/* Top Section */}
+                <div className="space-y-4">
+                  {/* Badge */}
+                  <div
+                    className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-bold uppercase tracking-wider ${badgeStyles[card.badgeColor as keyof typeof badgeStyles]}`}
+                  >
+                    <span className="text-base">{card.icon}</span>
+                    {card.badge}
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-2xl md:text-3xl font-black text-white leading-tight max-w-2xl">
+                    {card.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-zinc-300 text-base leading-relaxed max-w-2xl">
+                    {card.desc}
+                  </p>
                 </div>
 
-                {/* Title */}
-                <h3 className="text-xl font-bold text-zinc-50">{c.title}</h3>
-
-                {/* Description */}
-                <p className="text-sm text-zinc-400 leading-relaxed max-w-xl">
-                  {c.desc}
-                </p>
+                {/* Bottom Section */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-6 border-t border-zinc-700/40">
+                  <div className="flex gap-6 text-sm">
+                    <div className="flex items-center gap-2 text-zinc-400">
+                      <span>📅</span>
+                      <span className="font-semibold text-white">
+                        {card.duration}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-zinc-400">
+                      <span>📊</span>
+                      <span className="font-semibold text-white">
+                        {card.level}
+                      </span>
+                    </div>
+                  </div>
+                  <a
+                    href="/programs"
+                    className="text-emerald-400 hover:text-emerald-300 font-bold text-sm whitespace-nowrap transition-colors flex items-center gap-1.5"
+                  >
+                    View details <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
               </div>
-
-              {/* Footer - Meta and Link */}
-              <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
-                <p className="text-xs text-zinc-500 font-medium">
-                  📅 {c.meta} · 📊 {c.metaRight}
-                </p>
-                <a
-                  href="/programs"
-                  className="text-emerald-400 hover:text-emerald-300 text-sm font-semibold transition-colors"
-                >
-                  View details →
-                </a>
-              </div>
-            </div>
-          </article>
-        ))}
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
