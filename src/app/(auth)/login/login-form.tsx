@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CheckCircle2, Loader2, Zap } from "lucide-react";
+import { CheckCircle2, Eye, Loader2, Lock, Mail, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { getCurrentUserProfile } from "@/app/(app)/finish-profile/actions";
 import { isProfileComplete } from "@/lib/profileUtils";
-import GradientText from "@/components/ui/GradientText";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -59,7 +58,7 @@ export default function LoginForm() {
           router.push("/finish-profile");
           return;
         }
-      } catch (err) {
+      } catch {
         // If there's an error checking profile, still redirect to finish-profile to be safe
         setLoading(false);
         router.push("/finish-profile");
@@ -72,10 +71,13 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050816] text-zinc-50 flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="min-h-screen text-zinc-50 flex items-center justify-center px-4 sm:px-6 lg:px-10 py-10 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_68%_45%,rgba(16,185,129,0.22),transparent_44%)]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#030614]/80 via-[#040915]/45 to-[#030614]/75" />
+
       {/* Ambient Glow Background */}
       <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
-        <div className="w-[800px] h-[800px] rounded-full bg-emerald-500/12 blur-[150px] animate-ambient-pulse" />
+        <div className="w-[820px] h-[820px] rounded-full bg-emerald-500/15 blur-[150px] animate-ambient-pulse" />
       </div>
 
       {/* Content */}
@@ -90,20 +92,20 @@ export default function LoginForm() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Column - Hidden on mobile */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="hidden md:flex flex-col space-y-8"
+            className="hidden lg:flex flex-col space-y-8 lg:pr-10"
           >
             <div className="space-y-4">
-              <h2 className="text-7xl font-black text-zinc-50 leading-tight">
+              <h2 className="text-6xl xl:text-7xl font-black text-zinc-50 leading-[0.95]">
                 Welcome back.
               </h2>
-              <p className="text-zinc-400 text-lg leading-relaxed">
-                Your squad is training right now. Let's get to work.
+              <p className="text-zinc-300/90 text-2xl italic font-medium leading-relaxed">
+                Your squad is training right now.
               </p>
             </div>
 
@@ -121,7 +123,7 @@ export default function LoginForm() {
                   className="flex gap-4 items-start"
                 >
                   <CheckCircle2 className="w-6 h-6 text-emerald-400 flex-shrink-0 mt-1" />
-                  <span className="text-zinc-300 text-base font-medium">
+                  <span className="text-zinc-200/95 text-xl font-medium">
                     {bullet}
                   </span>
                 </motion.div>
@@ -136,46 +138,53 @@ export default function LoginForm() {
             transition={{ duration: 0.5, delay: 0 }}
             className="w-full"
           >
-            <div className="glass-card border-emerald-500/30 shadow-emerald-glow-md p-8 md:p-10 relative">
-              {/* Lightning Bolt Icon - Top Center */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-                className="absolute -top-6 left-1/2 transform -translate-x-1/2"
-              >
-                <div className="w-12 h-12 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-emerald-400 fill-emerald-400" />
-                </div>
-              </motion.div>
+            <div className="glass-card border-zinc-300/30 shadow-[0_20px_60px_rgba(0,0,0,0.55),0_0_36px_rgba(16,185,129,0.12)] p-6 sm:p-8 md:p-10 relative rounded-[2rem] max-w-xl lg:ml-auto">
 
               {/* Card header */}
-              <div className="mb-8 text-center">
+              <div className="mb-8 text-center space-y-3">
                 <motion.h2
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.4, delay: 0.15 }}
-                  className="text-3xl font-black bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent mb-3"
+                  className="inline-flex items-center justify-center w-12 h-12 mx-auto rounded-full bg-emerald-500/15 border border-emerald-400/45"
                 >
-                  Coach Jake
+                  <Zap className="w-6 h-6 text-emerald-300 fill-emerald-300" />
                 </motion.h2>
                 <motion.h3
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.4, delay: 0.2 }}
-                  className="text-2xl font-bold text-zinc-50 mb-2"
+                  className="text-5xl sm:text-6xl font-black bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent"
+                >
+                  Coach Jake
+                </motion.h3>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.25 }}
+                  className="text-3xl font-bold text-zinc-50"
                 >
                   Sign in to your account
-                </motion.h3>
+                </motion.p>
               </div>
 
               {/* Form */}
-              <form onSubmit={onSubmit} className="space-y-5">
+              <motion.form
+                onSubmit={onSubmit}
+                initial="hidden"
+                animate="show"
+                variants={{
+                  hidden: {},
+                  show: { transition: { staggerChildren: 0.2 } },
+                }}
+                className="space-y-5"
+              >
                 {/* Email field */}
                 <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.25 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 12 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+                  }}
                   className="space-y-2.5"
                 >
                   <label
@@ -184,32 +193,58 @@ export default function LoginForm() {
                   >
                     Email
                   </label>
-                  <input
-                    id="email"
-                    type="email"
-                    autoComplete="email"
-                    placeholder="jake@hooplab.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full bg-zinc-800/40 border border-emerald-500/30 rounded-xl px-4 py-3.5 text-zinc-50 placeholder-zinc-600 text-sm focus:border-emerald-400 focus:outline-none focus:ring-[4px] focus:ring-emerald-500/30 focus:shadow-emerald-glow-md transition-all duration-300"
-                  />
+                  <div className="group relative">
+                    <div className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
+                      <Mail className="h-5 w-5" />
+                    </div>
+                    <input
+                      id="email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="jake@hooplab.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full bg-zinc-900/65 border border-emerald-500/35 rounded-2xl pl-12 pr-4 py-3.5 text-zinc-50 placeholder-zinc-500 text-sm focus:border-emerald-300 focus:outline-none transition-all duration-300"
+                    />
+                    <span className="pointer-events-none absolute inset-0 rounded-2xl border border-emerald-300/0 shadow-[0_0_0_0_rgba(16,185,129,0)] transition-all duration-300 group-focus-within:border-emerald-300/70 group-focus-within:shadow-[0_0_0_4px_rgba(16,185,129,0.2),0_0_28px_rgba(16,185,129,0.3)] group-focus-within:scale-[1.01]" />
+                  </div>
                 </motion.div>
 
                 {/* Password field */}
                 <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.3 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 12 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+                  }}
                   className="space-y-2.5"
                 >
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor="password"
-                      className="text-xs uppercase text-zinc-400 tracking-widest font-bold block"
-                    >
-                      Password
-                    </label>
+                  <label
+                    htmlFor="password"
+                    className="text-xs uppercase text-zinc-400 tracking-widest font-bold block"
+                  >
+                    Password
+                  </label>
+                  <div className="group relative">
+                    <div className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
+                      <Lock className="h-5 w-5" />
+                    </div>
+                    <input
+                      id="password"
+                      type="password"
+                      autoComplete="current-password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="w-full bg-zinc-900/65 border border-zinc-600/70 rounded-2xl pl-12 pr-11 py-3.5 text-zinc-50 placeholder-zinc-500 text-sm focus:border-emerald-300 focus:outline-none transition-all duration-300"
+                    />
+                    <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400">
+                      <Eye className="h-5 w-5" />
+                    </span>
+                    <span className="pointer-events-none absolute inset-0 rounded-2xl border border-emerald-300/0 shadow-[0_0_0_0_rgba(16,185,129,0)] transition-all duration-300 group-focus-within:border-emerald-300/70 group-focus-within:shadow-[0_0_0_4px_rgba(16,185,129,0.2),0_0_24px_rgba(16,185,129,0.25)] group-focus-within:scale-[1.01]" />
+                  </div>
+                  <div className="text-right">
                     <a
                       href="#"
                       className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors font-medium"
@@ -217,16 +252,6 @@ export default function LoginForm() {
                       Forgot password?
                     </a>
                   </div>
-                  <input
-                    id="password"
-                    type="password"
-                    autoComplete="current-password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full bg-zinc-800/40 border border-emerald-500/30 rounded-xl px-4 py-3.5 text-zinc-50 placeholder-zinc-600 text-sm focus:border-emerald-400 focus:outline-none focus:ring-[4px] focus:ring-emerald-500/30 focus:shadow-emerald-glow-md transition-all duration-300"
-                  />
                 </motion.div>
 
                 {/* Error message */}
@@ -242,12 +267,13 @@ export default function LoginForm() {
 
                 {/* Submit button */}
                 <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3, delay: 0.35 }}
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+                  }}
                   type="submit"
                   disabled={loading}
-                  className="btn-primary w-full mt-6 py-3.5 font-bold text-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-emerald-glow-md rounded-xl"
+                  className="btn-primary w-full mt-6 py-3.5 font-bold text-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-emerald-glow-md rounded-2xl"
                 >
                   {loading ? (
                     <>
@@ -258,7 +284,7 @@ export default function LoginForm() {
                     <span>Sign in</span>
                   )}
                 </motion.button>
-              </form>
+              </motion.form>
 
               {/* Divider */}
               <div className="mt-7 flex items-center gap-3">
@@ -274,9 +300,9 @@ export default function LoginForm() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 0.4 }}
-                className="text-center text-zinc-400 text-sm mt-7"
+                className="text-center text-zinc-300 text-sm mt-7"
               >
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/signup"
                   className="font-bold text-emerald-400 hover:text-emerald-300 transition-colors"

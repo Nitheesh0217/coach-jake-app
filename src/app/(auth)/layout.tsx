@@ -1,7 +1,13 @@
+"use client";
+
 import PublicHeader from "@/components/layout/PublicHeader";
 import PublicFooter from "@/components/layout/PublicFooter";
+import { usePathname } from "next/navigation";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === "/login";
+
   return (
     <div className="min-h-screen bg-transparent text-[#f9fafb] flex flex-col relative">
       {/* Background image layer */}
@@ -18,11 +24,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         aria-hidden
       />
 
-      <PublicHeader />
+      {!isLoginPage && <PublicHeader />}
       <main className="flex-1 relative z-0">
         {children}
       </main>
-      <PublicFooter />
+      {!isLoginPage && <PublicFooter />}
     </div>
   );
 }
