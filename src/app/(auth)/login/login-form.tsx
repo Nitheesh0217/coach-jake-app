@@ -73,9 +73,9 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen bg-[#050816] text-zinc-50 flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Ambient Glow */}
+      {/* Ambient Glow Background */}
       <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-0">
-        <div className="w-[600px] h-[600px] rounded-full bg-emerald-500/8 blur-[120px] animate-ambient-pulse" />
+        <div className="w-[800px] h-[800px] rounded-full bg-emerald-500/12 blur-[150px] animate-ambient-pulse" />
       </div>
 
       {/* Content */}
@@ -90,7 +90,7 @@ export default function LoginForm() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           {/* Left Column - Hidden on mobile */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -98,16 +98,16 @@ export default function LoginForm() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="hidden md:flex flex-col space-y-8"
           >
-            <div className="space-y-2">
-              <h2 className="text-6xl font-black text-zinc-50">
+            <div className="space-y-4">
+              <h2 className="text-7xl font-black text-zinc-50 leading-tight">
                 Welcome back.
               </h2>
-              <p className="text-zinc-400 text-lg">
-                Your squad is training right now.
+              <p className="text-zinc-400 text-lg leading-relaxed">
+                Your squad is training right now. Let's get to work.
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
               {[
                 "Track every session",
                 "Stay on the leaderboard",
@@ -117,11 +117,13 @@ export default function LoginForm() {
                   key={idx}
                   initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: 0.15 + idx * 0.08 }}
-                  className="flex gap-3 items-start"
+                  transition={{ duration: 0.4, delay: 0.2 + idx * 0.1 }}
+                  className="flex gap-4 items-start"
                 >
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-zinc-300 text-sm">{bullet}</span>
+                  <CheckCircle2 className="w-6 h-6 text-emerald-400 flex-shrink-0 mt-1" />
+                  <span className="text-zinc-300 text-base font-medium">
+                    {bullet}
+                  </span>
                 </motion.div>
               ))}
             </div>
@@ -132,30 +134,34 @@ export default function LoginForm() {
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
+            className="w-full"
           >
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/80 backdrop-blur-xl p-8 shadow-2xl shadow-black/60">
+            <div className="glass-card border-emerald-500/20 shadow-emerald-glow-md p-8 md:p-10">
               {/* Card header */}
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span className="text-sm font-semibold text-emerald-400">
+              <div className="mb-8">
+                <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/40 mb-5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-sm font-bold text-emerald-300 tracking-wide">
                     Coach Jake
                   </span>
                 </div>
-                <h2 className="text-zinc-50 font-semibold text-2xl">
+                <h2 className="text-3xl font-black text-zinc-50 mb-2">
                   Sign in to your account
                 </h2>
+                <p className="text-zinc-500 text-sm">
+                  Access your personalized coaching program
+                </p>
               </div>
 
               {/* Form */}
-              <form onSubmit={onSubmit} className="space-y-5">
+              <form onSubmit={onSubmit} className="space-y-6">
                 {/* Email field */}
-                <div>
+                <div className="space-y-2.5">
                   <label
                     htmlFor="email"
-                    className="text-xs uppercase text-zinc-400 tracking-wide font-semibold block mb-1.5"
+                    className="text-xs uppercase text-zinc-400 tracking-widest font-bold block"
                   >
-                    Email
+                    Email Address
                   </label>
                   <input
                     id="email"
@@ -165,18 +171,26 @@ export default function LoginForm() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-zinc-50 placeholder-zinc-500 text-sm focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-500/20 transition-all duration-200"
+                    className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3.5 text-zinc-50 placeholder-zinc-600 text-sm focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-500/25 focus:shadow-emerald-glow-sm transition-all duration-300"
                   />
                 </div>
 
                 {/* Password field */}
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="text-xs uppercase text-zinc-400 tracking-wide font-semibold block mb-1.5"
-                  >
-                    Password
-                  </label>
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="password"
+                      className="text-xs uppercase text-zinc-400 tracking-widest font-bold block"
+                    >
+                      Password
+                    </label>
+                    <a
+                      href="#"
+                      className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
+                    >
+                      Forgot?
+                    </a>
+                  </div>
                   <input
                     id="password"
                     type="password"
@@ -185,28 +199,26 @@ export default function LoginForm() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-zinc-50 placeholder-zinc-500 text-sm focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-500/20 transition-all duration-200"
+                    className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3.5 text-zinc-50 placeholder-zinc-600 text-sm focus:border-emerald-500 focus:outline-none focus:ring-[3px] focus:ring-emerald-500/25 focus:shadow-emerald-glow-sm transition-all duration-300"
                   />
-                  <a
-                    href="#"
-                    className="text-right text-xs text-emerald-400 hover:text-emerald-300 mt-1 inline-block"
-                  >
-                    Forgot password?
-                  </a>
                 </div>
 
                 {/* Error message */}
                 {error && (
-                  <div className="rounded-xl bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-300">
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-xl bg-red-500/15 border border-red-500/40 px-4 py-3.5 text-sm text-red-300"
+                  >
                     {error}
-                  </div>
+                  </motion.div>
                 )}
 
                 {/* Submit button */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-primary w-full mt-4 py-3 disabled:opacity-60 flex items-center justify-center gap-2"
+                  className="btn-primary w-full mt-6 py-3.5 font-bold uppercase tracking-wide text-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 transition-all duration-300 hover:shadow-emerald-glow-md"
                 >
                   {loading ? (
                     <>
@@ -214,26 +226,31 @@ export default function LoginForm() {
                       <span>Signing in...</span>
                     </>
                   ) : (
-                    "Sign in"
+                    <>
+                      <span>Sign in</span>
+                      <span className="text-base">→</span>
+                    </>
                   )}
                 </button>
               </form>
 
               {/* Divider */}
-              <div className="mt-6 flex items-center gap-3">
-                <hr className="flex-1 border-zinc-800" />
-                <span className="text-xs text-zinc-500">or</span>
-                <hr className="flex-1 border-zinc-800" />
+              <div className="mt-8 flex items-center gap-3">
+                <div className="flex-1 h-px bg-gradient-to-r from-zinc-700 to-transparent" />
+                <span className="text-xs text-zinc-600 uppercase tracking-wide font-semibold px-2">
+                  or
+                </span>
+                <div className="flex-1 h-px bg-gradient-to-l from-zinc-700 to-transparent" />
               </div>
 
               {/* Signup link */}
-              <p className="text-center text-zinc-400 text-sm mt-4">
+              <p className="text-center text-zinc-400 text-sm mt-8">
                 Don't have an account?{" "}
                 <Link
                   href="/signup"
-                  className="text-emerald-400 hover:text-emerald-300"
+                  className="font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
                 >
-                  Sign up →
+                  Create one →
                 </Link>
               </p>
             </div>
