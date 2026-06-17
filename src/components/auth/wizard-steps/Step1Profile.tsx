@@ -3,116 +3,43 @@
 import { motion } from "framer-motion";
 import { WizardData } from "../OnboardingWizard";
 
-interface Step1ProfileProps {
-  data: WizardData;
-  setData: (data: WizardData) => void;
-}
+interface Props { data: WizardData; setData: (d: WizardData) => void; }
 
-export default function Step1Profile({ data, setData }: Step1ProfileProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setData({ ...data, [name]: value });
-  };
+export default function Step1Profile({ data, setData }: Props) {
+  const set = (key: string, val: string) => setData({ ...data, [key]: val } as WizardData);
 
   const fields = [
-    {
-      name: "fullName",
-      label: "Full Name",
-      placeholder: "Enter your full name",
-      type: "text",
-      delay: 0.3,
-    },
-    {
-      name: "age",
-      label: "Age",
-      placeholder: "Enter your age",
-      type: "number",
-      delay: 0.36,
-    },
-    {
-      name: "height",
-      label: "Height",
-      placeholder: "Enter your height",
-      type: "number",
-      suffix: "cm",
-      delay: 0.42,
-    },
-    {
-      name: "weight",
-      label: "Weight",
-      placeholder: "Enter your weight",
-      type: "number",
-      suffix: "kg",
-      delay: 0.48,
-    },
+    { key:"fullName", label:"Full Name", placeholder:"Enter your full name", type:"text" },
+    { key:"age",      label:"Age",       placeholder:"Enter your age",       type:"number" },
+    { key:"height",   label:"Height",    placeholder:"Enter your height",    type:"number", suffix:"cm" },
+    { key:"weight",   label:"Weight",    placeholder:"Enter your weight",    type:"number", suffix:"kg" },
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      className="rounded-3xl border border-emerald-500/20 bg-gradient-to-b from-zinc-900/80 to-zinc-950/80 backdrop-blur-xl p-8 md:p-10 shadow-2xl shadow-emerald-500/10"
-    >
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
-        className="mb-8"
-      >
-        <h2 className="text-sm font-bold text-emerald-400 uppercase tracking-widest mb-3">
-          Step 1 of 4 · Tell us about you
-        </h2>
-        <h1 className="text-4xl md:text-5xl font-black text-white mb-3">
-          Build your player profile
-        </h1>
-        <p className="text-zinc-400 text-base">
-          We use this to personalize your training plan
-        </p>
+    <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-xl p-7 sm:p-10 shadow-2xl">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent rounded-t-2xl" />
+
+      <motion.div initial={{ opacity:0, y:-12 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.4 }} className="mb-8">
+        <p className="text-emerald-400 text-xs font-black uppercase tracking-widest mb-3">Step 1 of 4 · Tell us about you</p>
+        <h1 className="text-3xl sm:text-4xl font-black text-white mb-2">Build your player profile</h1>
+        <p className="text-zinc-500">We use this to personalize your training plan</p>
       </motion.div>
 
-      {/* Form Fields */}
-      <div className="space-y-6">
-        {fields.map((field, idx) => (
-          <motion.div
-            key={field.name}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: field.delay }}
-            className="space-y-2.5"
-          >
-            <label className="text-sm font-bold text-zinc-300 uppercase tracking-widest block">
-              {field.label}
-            </label>
+      <div className="space-y-5">
+        {fields.map((f, i) => (
+          <motion.div key={f.key} initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.15+i*0.06 }}>
+            <label className="text-sm font-bold text-zinc-300 block mb-2">{f.label}</label>
             <div className="relative">
-              <input
-                type={field.type}
-                name={field.name}
-                value={data[field.name as keyof WizardData] as string}
-                onChange={handleChange}
-                placeholder={field.placeholder}
-                className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3.5 text-white placeholder-zinc-600 text-base focus:border-emerald-400 focus:outline-none focus:ring-[3px] focus:ring-emerald-500/30 transition-all duration-300"
-              />
-              {field.suffix && (
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 font-semibold">
-                  {field.suffix}
-                </span>
-              )}
+              <input type={f.type} placeholder={f.placeholder}
+                value={(data as any)[f.key] ?? ""}
+                onChange={e => set(f.key, e.target.value)}
+                className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-4 py-3.5 text-white placeholder-zinc-700 text-sm focus:border-emerald-500/60 focus:ring-[3px] focus:ring-emerald-500/20 focus:outline-none transition-all pr-14" />
+              {f.suffix && <span className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-600 font-semibold text-sm">{f.suffix}</span>}
             </div>
           </motion.div>
         ))}
       </div>
-
-      {/* Help Text */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4, delay: 0.54 }}
-        className="text-xs text-zinc-500 mt-8 italic"
-      >
-        Your data is secure and never shared.
-      </motion.p>
-    </motion.div>
+      <p className="text-xs text-zinc-700 mt-6">🔒 Your data is secure and never shared.</p>
+    </div>
   );
 }

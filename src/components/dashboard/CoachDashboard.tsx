@@ -1,21 +1,11 @@
 "use client";
 
-import {
-  Users,
-  Target,
-  Zap,
-  Calendar,
-  ArrowRight,
-  TrendingUp,
-  TrendingDown,
-  Bell,
-  ChevronRight,
-} from "lucide-react";
+import { Users, Target, Zap, Calendar, ArrowRight, Bell } from "lucide-react";
 import { motion } from "framer-motion";
 import type { AthleteProfile } from "@/types";
 import { getAvatarImage } from "@/lib/imageUtils";
 
-interface CoachDashboardProps {
+interface Props {
   athletes: AthleteProfile[];
   avgCompletion: number;
   activeAthletesCount: number;
@@ -23,272 +13,151 @@ interface CoachDashboardProps {
   coachName?: string;
 }
 
-const statusColors: Record<string, string> = {
-  active: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
-  "rest day": "bg-amber-500/20 text-amber-400 border-amber-500/30",
-  inactive: "bg-red-500/20 text-red-400 border-red-500/30",
-};
-
-export default function CoachDashboard({
-  athletes,
-  avgCompletion,
-  activeAthletesCount,
-  totalSessions,
-  coachName = "Coach",
-}: CoachDashboardProps) {
+export default function CoachDashboard({ athletes, avgCompletion, activeAthletesCount, totalSessions, coachName = "Coach" }: Props) {
   const kpis = [
-    {
-      label: "Total Athletes",
-      value: athletes.length,
-      icon: Users,
-      iconColor: "text-emerald-400",
-      iconBg: "bg-emerald-500/15 border-emerald-500/30",
-      valueColor: "text-emerald-400",
-      trend: "↑ 0 vs last week",
-    },
-    {
-      label: "Active This Week",
-      value: activeAthletesCount,
-      icon: Zap,
-      iconColor: "text-cyan-400",
-      iconBg: "bg-cyan-500/15 border-cyan-500/30",
-      valueColor: "text-cyan-400",
-      trend: "↑ 2 vs last week",
-    },
-    {
-      label: "Avg Completion",
-      value: `${Math.round(avgCompletion)}%`,
-      icon: Target,
-      iconColor: "text-violet-400",
-      iconBg: "bg-violet-500/15 border-violet-500/30",
-      valueColor: "text-violet-400",
-      trend: "↑ 8% vs last week",
-    },
-    {
-      label: "Sessions Logged",
-      value: totalSessions,
-      icon: Calendar,
-      iconColor: "text-amber-400",
-      iconBg: "bg-amber-500/15 border-amber-500/30",
-      valueColor: "text-amber-400",
-      trend: "↑ 11 vs last week",
-    },
+    { label: "Total Athletes",   value: athletes.length,            icon: Users,    color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/30", trend: "↑ 0 vs last week"  },
+    { label: "Active This Week", value: activeAthletesCount,        icon: Zap,      color: "text-cyan-400",    bg: "bg-cyan-500/15 border-cyan-500/30",       trend: "↑ 2 vs last week"  },
+    { label: "Avg Completion",   value: `${Math.round(avgCompletion)}%`, icon: Target, color: "text-violet-400", bg: "bg-violet-500/15 border-violet-500/30", trend: "↑ 8% vs last week"  },
+    { label: "Sessions Logged",  value: totalSessions,              icon: Calendar, color: "text-amber-400",   bg: "bg-amber-500/15 border-amber-500/30",     trend: "↑ 11 vs last week" },
   ];
 
+  const fakeActivity = [
+    { name: "Mason Carter",  action: "completed Finishing Fundamentals",                     time: "2h ago" },
+    { name: "Liam Johnson",  action: "logged a new personal best in 3-Point Sharpshooter",  time: "4h ago" },
+    { name: "Darius Brown",  action: "completed Defensive Stopper",                          time: "6h ago" },
+    { name: "Noah Williams", action: "started Speed & Agility",                               time: "8h ago" },
+  ];
+
+  const statuses = ["active","active","active","rest day","inactive","active","active","active"];
+
   return (
-    <div className="min-h-screen bg-[#050816] text-white pb-20 md:pb-8">
-      {/* Ambient glows */}
+    <div className="min-h-screen bg-[#050816] text-white">
       <div className="fixed inset-0 pointer-events-none -z-10">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-emerald-500/4 blur-[150px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45 }}
-          className="flex items-start justify-between"
-        >
+        <motion.div initial={{ opacity:0, y:-12 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.45 }}
+          className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-              Coach Overview
-            </h1>
+            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Coach Overview</h1>
             <p className="text-zinc-500 text-sm mt-1">Managing {athletes.length} athletes</p>
           </div>
-          <button className="p-2 rounded-xl border border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700 transition-all">
+          <button className="p-2.5 rounded-xl border border-zinc-800 bg-zinc-900/60 text-zinc-500 hover:text-zinc-200 hover:border-zinc-700 transition-all">
             <Bell className="w-5 h-5" />
           </button>
         </motion.div>
 
-        {/* KPI Cards */}
+        {/* KPI cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {kpis.map((kpi, idx) => {
-            const Icon = kpi.icon;
-            return (
-              <motion.div
-                key={kpi.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.07 }}
-                className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-4 sm:p-5 hover:border-zinc-700 transition-all duration-300"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className={`p-2 rounded-xl border ${kpi.iconBg}`}>
-                    <Icon className={`w-4 h-4 ${kpi.iconColor}`} />
-                  </div>
-                </div>
-                <p className="text-xs uppercase tracking-widest text-zinc-500 font-semibold mb-1">{kpi.label}</p>
-                <p className={`text-3xl font-black ${kpi.valueColor}`}>{kpi.value}</p>
-                <p className="text-xs text-zinc-600 mt-1.5">{kpi.trend}</p>
-              </motion.div>
-            );
-          })}
+          {kpis.map(({ label, value, icon: Icon, color, bg, trend }, i) => (
+            <motion.div key={label} initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay: i*0.07 }}
+              className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-4 sm:p-5 hover:border-zinc-700 transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <div className={`p-2 rounded-xl border ${bg}`}><Icon className={`w-4 h-4 ${color}`} /></div>
+              </div>
+              <p className="text-[11px] uppercase tracking-widest text-zinc-500 font-semibold mb-1">{label}</p>
+              <p className={`text-3xl font-black ${color}`}>{value}</p>
+              <p className="text-[11px] text-zinc-600 mt-1.5">{trend}</p>
+            </motion.div>
+          ))}
         </div>
 
-        {/* Main content: Athlete Roster + Right panel */}
+        {/* Roster + right panel */}
         <div className="grid lg:grid-cols-5 gap-6">
-          {/* Athlete Roster */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="lg:col-span-3 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm overflow-hidden"
-          >
-            <div className="p-5 border-b border-zinc-800/60">
-              <h2 className="text-lg font-bold text-white">Athlete Roster</h2>
+          {/* Roster table */}
+          <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.3 }}
+            className="lg:col-span-3 rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm overflow-hidden">
+            <div className="px-5 py-4 border-b border-zinc-800/60">
+              <h2 className="text-base font-bold text-white">Athlete Roster</h2>
             </div>
-
-            {/* Table header */}
-            <div className="px-5 py-3 grid grid-cols-[auto_1fr_100px_80px_80px_80px] gap-3 text-[10px] uppercase tracking-widest text-zinc-600 font-semibold border-b border-zinc-800/40">
-              <span>Avatar + Name</span>
-              <span></span>
-              <span>Completion %</span>
-              <span className="text-center">Sessions</span>
-              <span>Status</span>
-              <span>Action</span>
+            <div className="px-5 py-2.5 grid grid-cols-[2fr_1fr_1fr_1fr_80px] gap-3 text-[10px] uppercase tracking-widest text-zinc-600 font-semibold border-b border-zinc-800/40">
+              <span>Avatar + Name</span><span>Completion %</span><span className="text-center">Sessions</span><span>Status</span><span>Action</span>
             </div>
-
             <div className="divide-y divide-zinc-800/40">
-              {athletes.length > 0 ? (
-                athletes.slice(0, 8).map((athlete, idx) => {
-                  const completion = (athlete as any).completion_pct ?? Math.floor(40 + Math.random() * 50);
-                  const sessions = (athlete as any).sessions_count ?? Math.floor(2 + Math.random() * 6);
-                  const status = (athlete as any).status ?? (idx % 4 === 3 ? "inactive" : idx % 4 === 2 ? "rest day" : "active");
-                  const lastWorkout = (athlete as any).last_workout ?? "Jun 20, 2025";
-
-                  return (
-                    <motion.div
-                      key={athlete.user_id}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 + idx * 0.05 }}
-                      className="px-5 py-3.5 grid grid-cols-[auto_1fr_100px_80px_80px_80px] gap-3 items-center hover:bg-zinc-800/30 transition-colors"
-                    >
-                      {/* Avatar + Name */}
-                      <img
-                        src={getAvatarImage(athlete.full_name || "Athlete")}
-                        alt={athlete.full_name || "Athlete"}
-                        className="w-8 h-8 rounded-full object-cover border border-zinc-700 flex-shrink-0"
-                      />
+              {athletes.length > 0 ? athletes.slice(0,8).map((athlete, i) => {
+                const pct     = Math.floor(40 + Math.random() * 55);
+                const sess    = Math.floor(2 + Math.random() * 6);
+                const status  = statuses[i] ?? "active";
+                const barColor = pct > 70 ? "bg-emerald-400" : pct > 50 ? "bg-amber-400" : "bg-red-400";
+                const statusCls = status === "active" ? "text-emerald-400 bg-emerald-500/15 border-emerald-500/30"
+                                : status === "rest day" ? "text-amber-400 bg-amber-500/15 border-amber-500/30"
+                                : "text-red-400 bg-red-500/15 border-red-500/30";
+                return (
+                  <motion.div key={athlete.user_id} initial={{ opacity:0, x:-8 }} animate={{ opacity:1, x:0 }} transition={{ delay:0.4 + i*0.05 }}
+                    className="px-5 py-3 grid grid-cols-[2fr_1fr_1fr_1fr_80px] gap-3 items-center hover:bg-zinc-800/30 transition-colors">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <img src={getAvatarImage(athlete.full_name ?? "Athlete")} alt="" className="w-8 h-8 rounded-full object-cover border border-zinc-700 flex-shrink-0" />
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-white truncate">{athlete.full_name || "Athlete"}</p>
-                        <p className="text-xs text-zinc-600 truncate">{lastWorkout}</p>
+                        <p className="text-sm font-semibold text-white truncate">{athlete.full_name ?? "Athlete"}</p>
+                        <p className="text-[11px] text-zinc-600">May 22, 2025</p>
                       </div>
-
-                      {/* Completion bar */}
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-bold text-zinc-300">{completion}%</span>
-                        </div>
-                        <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${completion > 70 ? "bg-emerald-400" : completion > 50 ? "bg-amber-400" : "bg-red-400"}`}
-                            style={{ width: `${completion}%` }}
-                          />
-                        </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-300 mb-1">{pct}%</p>
+                      <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden w-full">
+                        <div className={`h-full rounded-full ${barColor}`} style={{ width:`${pct}%` }} />
                       </div>
-
-                      {/* Sessions */}
-                      <span className="text-sm font-bold text-zinc-300 text-center">{sessions}</span>
-
-                      {/* Status */}
-                      <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border capitalize ${statusColors[status] || statusColors.active}`}>
-                        {status}
-                      </span>
-
-                      {/* Action */}
-                      <button className="text-xs text-zinc-400 hover:text-emerald-400 transition-colors flex items-center gap-0.5 font-medium">
-                        Assign <ArrowRight className="w-3 h-3" />
-                      </button>
-                    </motion.div>
-                  );
-                })
-              ) : (
+                    </div>
+                    <p className="text-sm font-bold text-zinc-300 text-center">{sess}</p>
+                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border capitalize inline-block ${statusCls}`}>{status}</span>
+                    <button className="text-xs text-zinc-500 hover:text-emerald-400 transition-colors flex items-center gap-0.5 font-semibold">
+                      Assign <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </motion.div>
+                );
+              }) : (
                 <div className="text-center py-12">
                   <Users className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-                  <p className="text-zinc-500">No athletes yet</p>
+                  <p className="text-zinc-500 text-sm">No athletes yet</p>
                 </div>
               )}
             </div>
           </motion.div>
 
           {/* Right: Quick Assign + Activity Feed */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="lg:col-span-2 space-y-5"
-          >
+          <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.4 }}
+            className="lg:col-span-2 space-y-5">
             {/* Quick Assign */}
             <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5">
               <div className="flex items-center gap-2 mb-4">
                 <Zap className="w-4 h-4 text-amber-400" />
-                <h3 className="text-sm font-bold text-white uppercase tracking-wide">Quick Assign</h3>
+                <h3 className="text-sm font-black text-white uppercase tracking-wide">Quick Assign</h3>
               </div>
               <div className="space-y-3">
+                {[["Select Athlete","Select an athlete",...athletes.slice(0,8).map(a=>a.full_name??"Athlete")],
+                  ["Select Workout","Select a workout","Finishing Fundamentals","3-Point Sharpshooter","Defensive Stopper","Elite Handles"]
+                ].map(([label, placeholder, ...opts], idx) => (
+                  <div key={idx}>
+                    <p className="text-[11px] text-zinc-500 mb-1.5 font-semibold">{label}</p>
+                    <select className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-3 py-2.5 text-sm text-zinc-300 focus:border-emerald-500/40 focus:outline-none transition-all appearance-none">
+                      <option value="">{placeholder}</option>
+                      {opts.map(o => <option key={o}>{o}</option>)}
+                    </select>
+                  </div>
+                ))}
                 <div>
-                  <p className="text-xs text-zinc-500 mb-1.5 font-medium">Select Athlete</p>
-                  <select className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-3 py-2.5 text-sm text-zinc-300 focus:border-emerald-500/40 focus:outline-none transition-all appearance-none">
-                    <option value="">Select an athlete</option>
-                    {athletes.slice(0, 8).map((a) => (
-                      <option key={a.user_id} value={a.user_id}>
-                        {a.full_name}
-                      </option>
-                    ))}
-                  </select>
+                  <p className="text-[11px] text-zinc-500 mb-1.5 font-semibold">Due Date</p>
+                  <input type="date" className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-3 py-2.5 text-sm text-zinc-300 focus:border-emerald-500/40 focus:outline-none transition-all" />
                 </div>
-                <div>
-                  <p className="text-xs text-zinc-500 mb-1.5 font-medium">Select Workout</p>
-                  <select className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-3 py-2.5 text-sm text-zinc-300 focus:border-emerald-500/40 focus:outline-none transition-all appearance-none">
-                    <option value="">Select a workout</option>
-                    <option>Finishing Fundamentals</option>
-                    <option>3-Point Sharpshooter</option>
-                    <option>Defensive Stopper</option>
-                    <option>Elite Handles</option>
-                  </select>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-500 mb-1.5 font-medium">Due Date</p>
-                  <input
-                    type="date"
-                    className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-3 py-2.5 text-sm text-zinc-300 focus:border-emerald-500/40 focus:outline-none transition-all"
-                  />
-                </div>
-                <button className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-sm transition-all duration-200 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex items-center justify-center gap-2">
+                <button className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-sm transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] flex items-center justify-center gap-2">
                   Assign →
                 </button>
               </div>
             </div>
 
-            {/* Team Activity Feed */}
+            {/* Activity Feed */}
             <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5">
-              <h3 className="text-sm font-bold text-white uppercase tracking-wide mb-4">Team Activity Feed</h3>
+              <h3 className="text-sm font-black text-white uppercase tracking-wide mb-4">Team Activity Feed</h3>
               <div className="space-y-4">
-                {[
-                  { name: "Mason Carter", action: "completed Finishing Fundamentals", time: "2h ago" },
-                  { name: "Liam Johnson", action: "logged a new personal best in 3-Point Sharpshooter", time: "4h ago" },
-                  { name: "Darius Brown", action: "completed Defensive Stopper", time: "6h ago" },
-                  { name: "Noah Williams", action: "started Speed & Agility", time: "8h ago" },
-                ].map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, x: 8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 + idx * 0.06 }}
-                    className="flex items-start gap-3"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex-shrink-0 overflow-hidden">
-                      <img
-                        src={getAvatarImage(item.name)}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                {fakeActivity.map((item, i) => (
+                  <motion.div key={i} initial={{ opacity:0, x:8 }} animate={{ opacity:1, x:0 }} transition={{ delay:0.5+i*0.06 }}
+                    className="flex items-start gap-3">
+                    <img src={getAvatarImage(item.name)} alt="" className="w-8 h-8 rounded-full object-cover border border-zinc-700 flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs text-zinc-300 leading-relaxed">
-                        <span className="font-semibold text-white">{item.name}</span>{" "}
-                        {item.action}
+                      <p className="text-xs text-zinc-400 leading-relaxed">
+                        <span className="font-bold text-white">{item.name}</span> {item.action}
                       </p>
                       <p className="text-[10px] text-zinc-600 mt-0.5">{item.time}</p>
                     </div>
