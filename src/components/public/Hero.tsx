@@ -1,135 +1,149 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { Zap, Dumbbell, Target, Play } from "lucide-react";
+
+const features = [
+  {
+    icon: Zap,
+    title: "EXPLOSIVE POWER",
+    desc: "Increase your vertical and first step quickness.",
+  },
+  {
+    icon: Dumbbell,
+    title: "STRENGTH & ATHLETICISM",
+    desc: "Build lean muscle and move with control.",
+  },
+  {
+    icon: Target,
+    title: "GAME-READY RESULTS",
+    desc: "Train with purpose. Perform with confidence.",
+  },
+];
 
 export default function Hero() {
-  const heroRef = useRef<HTMLElement | null>(null);
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const overlay = overlayRef.current;
-    const hero = heroRef.current;
-    if (!overlay || !hero) return;
-
-    function handleScroll() {
-      if (!hero) return;
-      const heroHeight = hero.offsetHeight;
-      const scrollY = window.scrollY;
-      const progress = Math.min(Math.max(scrollY / heroHeight, 0), 1);
-      const min = 0.25;
-      const max = 0.75;
-      const opacity = min + (max - min) * progress;
-      if (overlay) {
-        overlay.style.opacity = opacity.toFixed(2);
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <section
-      ref={heroRef}
-      className="relative text-white min-h-screen bg-[#050816]"
-      aria-label="Hero"
-    >
-      {/* Background image layer - using Pexels free image */}
-      <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
-        style={{
-          backgroundImage:
-            "url('https://images.pexels.com/photos/3808517/pexels-photo-3808517.jpeg?auto=compress&cs=tinysrgb&w=1600')",
-        }}
-        aria-hidden
-      />
+    <section className="relative min-h-screen bg-[#050816] flex flex-col justify-center overflow-hidden pt-24 pb-16">
+      {/* Ambient glow effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute top-1/2 -left-32 w-96 h-96 bg-emerald-500/20 rounded-full blur-[120px]" />
+        <div className="absolute top-1/3 -right-32 w-80 h-80 bg-cyan-500/15 rounded-full blur-[100px]" />
+      </div>
 
-      {/* Dark overlay that will darken while scrolling */}
-      <div
-        ref={overlayRef}
-        className="fixed inset-0 bg-black pointer-events-none -z-10"
-        style={{ opacity: 0.5, transition: "opacity 0.1s linear" }}
-        aria-hidden
-      />
-
-      <div className="max-w-5xl mx-auto px-4 pt-24 pb-32 lg:pt-36 lg:pb-44 flex flex-col gap-6 lg:flex-row lg:items-center">
-        {/* Left */}
-        <div className="lg:w-1/2 space-y-6">
-          <div className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-300">
-            Basketball performance coaching
-          </div>
-
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight">
-            <span className="text-zinc-50">
-              Explosive Basketball Performance for{" "}
-            </span>
-            <span className="bg-gradient-to-r from-emerald-400 via-cyan-400 to-emerald-300 bg-clip-text text-transparent">
-              Serious Hoopers
-            </span>
-          </h1>
-
-          <p className="mt-4 text-sm sm:text-base text-zinc-300 max-w-xl">
-            Mobile-first strength, conditioning, and on-court skill work to get
-            you stronger, quicker, and game-ready — in the gym or at home.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4">
-            <Link
-              href="/signup"
-              className="inline-flex items-center justify-center rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-8 py-3 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all duration-300 hover:-translate-y-0.5"
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left: Hero text and CTA */}
+          <div className="space-y-8">
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-2"
             >
-              Start training free
-            </Link>
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                Basketball Performance Coaching
+              </span>
+            </motion.div>
 
-            <a
-              href="#overview"
-              className="inline-flex items-center justify-center rounded-xl border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10 px-8 py-3 transition-all duration-300"
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[1.1] tracking-tight"
             >
-              Watch 60s overview
-            </a>
+              <span className="bg-gradient-to-r from-emerald-400 via-emerald-300 to-cyan-400 bg-clip-text text-transparent">
+                Explosive Basketball Performance
+              </span>
+              <br />
+              <span className="text-white">for Serious Hoopers</span>
+            </motion.h1>
+
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="text-lg text-zinc-300 leading-relaxed max-w-lg"
+            >
+              Elite training programs designed to increase your vertical, build
+              strength, and elevate your game on every level.
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="flex flex-col sm:flex-row gap-4 pt-4"
+            >
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-center rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-black px-8 py-4 shadow-[0_0_30px_rgba(16,185,129,0.5)] hover:shadow-[0_0_50px_rgba(16,185,129,0.7)] transition-all duration-300 hover:-translate-y-1 text-base"
+              >
+                Start training free
+              </Link>
+              <button className="inline-flex items-center justify-center gap-3 rounded-full border border-zinc-600 hover:border-emerald-400/50 text-zinc-200 hover:text-white px-8 py-4 transition-all duration-300 text-base group">
+                <Play className="w-4 h-4 fill-current" />
+                <span>Watch 60s overview</span>
+              </button>
+            </motion.div>
           </div>
 
-          {/* Stats row */}
-          <div className="mt-8 grid grid-cols-2 gap-4 text-sm text-zinc-300 sm:grid-cols-4">
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              <p className="text-2xl font-bold text-emerald-400">500+</p>
-              <p className="text-xs mt-1">Athletes Trained</p>
-            </div>
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              <p className="text-2xl font-bold text-emerald-400">92%</p>
-              <p className="text-xs mt-1">Report Improved Performance</p>
-            </div>
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              <p className="text-2xl font-bold text-emerald-400">3</p>
-              <p className="text-xs mt-1">Texas High Schools</p>
-            </div>
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3 hover:border-emerald-500/30 hover:bg-emerald-500/[0.04] transition-all duration-200">
-              <p className="text-2xl font-bold text-emerald-400">10,000+</p>
-              <p className="text-xs mt-1">Workouts Logged</p>
-            </div>
-          </div>
-        </div>
+          {/* Right: Premium image panel with features */}
+          <div className="flex flex-col gap-8">
+            {/* Main image card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative w-full rounded-2xl overflow-hidden border border-white/10 bg-zinc-900/40 backdrop-blur-sm shadow-2xl group"
+            >
+              <div className="relative h-96 sm:h-[480px] overflow-hidden">
+                <img
+                  src="https://images.pexels.com/photos/3808517/pexels-photo-3808517.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                  alt="Basketball athlete in action"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              </div>
 
-        {/* Right - decorative glass card (keeps layout balance) */}
-        <div className="lg:w-1/2 flex justify-center">
-          <div className="relative w-full max-w-md rounded-3xl overflow-hidden border border-white/[0.08] bg-white/[0.03] shadow-xl shadow-black/40 backdrop-blur-sm">
-            <div className="relative h-64 sm:h-72 md:h-96 lg:h-[420px] w-full">
-              {/* Panel image (in-app preview) - using Pexels free image */}
-              <img
-                src="https://images.pexels.com/photos/3839969/pexels-photo-3839969.jpeg?auto=compress&cs=tinysrgb&w=600"
-                alt="Panel preview"
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
+              {/* Glow border effect on hover */}
+              <div className="absolute inset-0 rounded-2xl border border-emerald-500/0 group-hover:border-emerald-500/30 transition-colors duration-300" />
+            </motion.div>
 
-              {/* Decorative foreground gradient to sit above the image */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
-            </div>
-
-            {/* subtle inner highlight */}
-            <div className="absolute left-0 top-0 h-full w-1/3 bg-gradient-to-r from-emerald-500/6 to-transparent mix-blend-overlay pointer-events-none" />
+            {/* Feature list */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="space-y-3"
+            >
+              {features.map((f, i) => {
+                const Icon = f.icon;
+                return (
+                  <motion.div
+                    key={f.title}
+                    initial={{ opacity: 0, x: 12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.5 + i * 0.08 }}
+                    className="flex items-start gap-3 rounded-xl border border-white/8 bg-white/5 p-3.5 backdrop-blur-sm hover:border-emerald-500/30 hover:bg-emerald-500/10 transition-all duration-200 group/item"
+                  >
+                    <Icon className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-white uppercase tracking-wider">
+                        {f.title}
+                      </p>
+                      <p className="text-xs text-zinc-400 mt-0.5">{f.desc}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           </div>
         </div>
       </div>

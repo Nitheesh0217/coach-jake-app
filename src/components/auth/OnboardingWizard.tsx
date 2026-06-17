@@ -6,8 +6,8 @@ import Step1Profile from "./wizard-steps/Step1Profile";
 import Step2PlayingStyle from "./wizard-steps/Step2PlayingStyle";
 import Step3TrainingHabits from "./wizard-steps/Step3TrainingHabits";
 import Step4Goals from "./wizard-steps/Step4Goals";
-import WizardProgressBar from "./wizard-steps/WizardProgressBar";
 import confetti from "canvas-confetti";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export interface WizardData {
   // Step 1
@@ -46,6 +46,7 @@ interface OnboardingWizardProps {
   onComplete: (data: WizardData) => void;
 }
 
+const STEP_LABELS = ["Account", "Playing Style", "Your Habits", "Your Goals"];
 const STEP_COUNT = 4;
 
 export default function OnboardingWizard({
@@ -72,19 +73,14 @@ export default function OnboardingWizard({
   });
 
   const handleNext = () => {
-    if (currentStep < STEP_COUNT) {
-      setCurrentStep(currentStep + 1);
-    }
+    if (currentStep < STEP_COUNT) setCurrentStep(currentStep + 1);
   };
 
   const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
   const handleComplete = () => {
-    // Trigger confetti celebration
     confetti({
       particleCount: 150,
       spread: 70,
@@ -92,7 +88,6 @@ export default function OnboardingWizard({
       colors: ["#10b981", "#06b6d4", "#f59e0b", "#a855f7"],
     });
 
-    // Call the completion handler
     onComplete(data);
   };
 
@@ -100,134 +95,177 @@ export default function OnboardingWizard({
 
   return (
     <div className="min-h-screen bg-[#050816] text-white overflow-hidden relative">
-      {/* Ambient Glows */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      {/* Top thin progress bar */}
+      <div className="fixed top-0 left-0 right-0 h-1 bg-zinc-900 z-50">
         <motion.div
-          className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full bg-cyan-500/8 blur-[120px]"
-          animate={{ y: [0, -50, 0] }}
+          className="h-full bg-gradient-to-r from-emerald-400 to-cyan-400"
+          animate={{ width: `${progressPercent}%` }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        />
+      </div>
+
+      {/* Ambient orbs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <motion.div
+          className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-cyan-500/6 blur-[150px]"
+          animate={{ y: [0, -40, 0] }}
           transition={{ duration: 8, repeat: Infinity }}
         />
         <motion.div
-          className="absolute bottom-0 right-1/4 w-[600px] h-[600px] rounded-full bg-emerald-500/8 blur-[150px]"
-          animate={{ y: [0, 50, 0] }}
+          className="absolute bottom-0 right-1/4 w-[700px] h-[700px] rounded-full bg-emerald-500/5 blur-[180px]"
+          animate={{ y: [0, 40, 0] }}
           transition={{ duration: 10, repeat: Infinity }}
         />
         <motion.div
-          className="absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-violet-500/6 blur-[120px]"
-          animate={{ x: [0, 50, 0] }}
+          className="absolute top-1/3 right-0 w-[400px] h-[400px] rounded-full bg-violet-500/5 blur-[150px]"
+          animate={{ x: [0, 40, 0] }}
           transition={{ duration: 12, repeat: Infinity }}
         />
       </div>
 
-      <div className="relative z-10 max-w-3xl mx-auto px-4 py-8 md:py-12">
-        {/* Header with Logo */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-12 flex items-center justify-between"
-        >
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400 flex items-center justify-center text-black font-bold">
-              CJ
+      <div className="relative z-10 max-w-3xl mx-auto px-4 pt-8 pb-16 md:pt-12">
+        {/* Logo + dots */}
+        <div className="mb-10 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center">
+              <span className="text-sm font-black text-emerald-400">CJ</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold">Coach Jake</h1>
-              <p className="text-xs text-zinc-400">Build Different.</p>
+              <p className="text-base font-black text-white">Coach Jake</p>
+              <p className="text-[10px] text-zinc-500 uppercase tracking-wider">
+                Build Different.
+              </p>
             </div>
           </div>
-        </motion.div>
-
-        {/* Progress Bar */}
-        <WizardProgressBar currentStep={currentStep} totalSteps={STEP_COUNT} />
-
-        {/* Step Content */}
-        <div className="mt-12">
-          <AnimatePresence mode="wait">
-            {currentStep === 1 && (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, y: 32 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -32 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-              >
-                <Step1Profile data={data} setData={setData} />
-              </motion.div>
-            )}
-
-            {currentStep === 2 && (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, y: 32 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -32 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-              >
-                <Step2PlayingStyle data={data} setData={setData} />
-              </motion.div>
-            )}
-
-            {currentStep === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, y: 32 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -32 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-              >
-                <Step3TrainingHabits data={data} setData={setData} />
-              </motion.div>
-            )}
-
-            {currentStep === 4 && (
-              <motion.div
-                key="step4"
-                initial={{ opacity: 0, y: 32 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -32 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-              >
-                <Step4Goals data={data} setData={setData} />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div className="flex items-center gap-2">
+            {Array.from({ length: STEP_COUNT }).map((_, i) => (
+              <div
+                key={i}
+                className={`rounded-full transition-all duration-300 ${
+                  i + 1 === currentStep
+                    ? "w-5 h-5 bg-emerald-500 border-2 border-emerald-400"
+                    : i + 1 < currentStep
+                      ? "w-3 h-3 bg-emerald-500/60"
+                      : "w-3 h-3 bg-zinc-700"
+                }`}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* Navigation Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="mt-12 flex gap-4 justify-between"
-        >
-          {currentStep > 1 ? (
+        {/* Horizontal step connector */}
+        <div className="relative flex items-start justify-between mb-10">
+          <div className="absolute left-4 right-4 top-4 h-0.5 bg-zinc-800" />
+          <motion.div
+            className="absolute left-4 top-4 h-0.5 bg-gradient-to-r from-emerald-400 to-cyan-400 origin-left"
+            animate={{
+              width: `${Math.max(0, (currentStep - 1) / (STEP_COUNT - 1)) * 100}%`,
+            }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
+          {Array.from({ length: STEP_COUNT }).map((_, i) => {
+            const step = i + 1;
+            const isCompleted = step < currentStep;
+            const isCurrent = step === currentStep;
+            return (
+              <div
+                key={step}
+                className="relative z-10 flex flex-col items-center gap-2"
+              >
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 ${
+                    isCompleted
+                      ? "bg-emerald-500 border-emerald-400 text-black"
+                      : isCurrent
+                        ? "bg-emerald-500 border-emerald-400 text-black shadow-[0_0_14px_rgba(16,185,129,0.5)]"
+                        : "bg-zinc-900 border-zinc-700 text-zinc-600"
+                  }`}
+                >
+                  {isCompleted ? (
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  ) : (
+                    step
+                  )}
+                </div>
+                <span
+                  className={`text-[10px] font-semibold uppercase tracking-wide ${
+                    isCurrent
+                      ? "text-emerald-400"
+                      : isCompleted
+                        ? "text-zinc-400"
+                        : "text-zinc-700"
+                  }`}
+                >
+                  {STEP_LABELS[i]}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Step content */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.38 }}
+          >
+            {currentStep === 1 && (
+              <Step1Profile data={data} setData={setData} />
+            )}
+            {currentStep === 2 && (
+              <Step2PlayingStyle data={data} setData={setData} />
+            )}
+            {currentStep === 3 && (
+              <Step3TrainingHabits data={data} setData={setData} />
+            )}
+            {currentStep === 4 && <Step4Goals data={data} setData={setData} />}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Navigation buttons */}
+        <div className="flex items-center justify-between mt-8">
+          {currentStep > 1 && (
             <button
               onClick={handleBack}
-              className="px-8 py-3.5 rounded-full border border-zinc-700 text-zinc-300 font-semibold hover:border-emerald-500/40 hover:bg-emerald-500/10 transition-all duration-300"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl border border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-600 font-semibold text-sm transition-all duration-200"
             >
-              ← Back
+              <ArrowLeft className="w-4 h-4" />
+              Back
             </button>
-          ) : (
-            <div />
           )}
 
-          {currentStep < STEP_COUNT ? (
+          {currentStep < STEP_COUNT && (
             <button
               onClick={handleNext}
-              className="px-8 py-3.5 rounded-full bg-emerald-500 text-black font-bold hover:bg-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2"
+              className="flex items-center gap-2 px-8 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-sm transition-all duration-200 shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_32px_rgba(16,185,129,0.6)] hover:-translate-y-0.5"
             >
-              Next <span>→</span>
-            </button>
-          ) : (
-            <button
-              onClick={handleComplete}
-              className="px-8 py-3.5 rounded-full bg-emerald-500 text-black font-bold hover:bg-emerald-400 transition-all duration-300 shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 w-full justify-center"
-            >
-              Finish Setup <span>→</span>
+              Next
+              <ArrowRight className="w-4 h-4" />
             </button>
           )}
-        </motion.div>
+
+          {currentStep === STEP_COUNT && (
+            <button
+              onClick={handleComplete}
+              className="flex items-center gap-2 px-8 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-sm transition-all duration-200 shadow-[0_0_24px_rgba(16,185,129,0.5)] hover:shadow-[0_0_40px_rgba(16,185,129,0.7)] hover:-translate-y-0.5"
+            >
+              Finish Setup →
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function FinalCtaSection() {
   return (
     <>
-      <section className="mt-20 border-y border-emerald-500/20 bg-gradient-to-r from-emerald-500/10 via-zinc-900 to-emerald-500/10 [background-color:rgb(5,8,22)]">
+      <section className="mt-20 border-y border-emerald-500/20 bg-gradient-to-r from-emerald-500/10 via-[#050816] to-emerald-500/10">
         <div className="max-w-5xl mx-auto flex flex-col gap-4 px-4 py-10 md:flex-row md:items-center md:justify-between">
           <div>
             <h3 className="text-xl sm:text-2xl font-semibold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
