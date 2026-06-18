@@ -48,9 +48,9 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050816] text-white flex overflow-hidden relative">
+    <div className="min-h-screen bg-transparent text-white flex overflow-hidden relative">
       {/* Background court image */}
-      <div className="absolute inset-0 z-0"
+      <div className="absolute inset-0 z-0 opacity-15"
         style={{ backgroundImage:"url('https://images.pexels.com/photos/1752757/pexels-photo-1752757.jpeg?auto=compress&cs=tinysrgb&w=1600')", backgroundSize:"cover", backgroundPosition:"center" }} />
       <div className="absolute inset-0 bg-[#050816]/75 z-0" />
       {/* Left green glow */}
@@ -149,7 +149,7 @@ export default function LoginForm() {
             </div>
 
             <p className="text-center text-zinc-500 text-sm mt-7">
-              Don't have an account?{" "}
+              {"Don't have an account?"}{" "}
               <Link href="/signup" className="font-bold text-emerald-400 hover:text-emerald-300 transition-colors">Sign up →</Link>
             </p>
           </div>

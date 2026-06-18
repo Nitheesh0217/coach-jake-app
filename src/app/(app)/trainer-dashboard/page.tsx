@@ -1,21 +1,24 @@
 import { supabaseServer } from "@/lib/supabaseClient";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
-import KPICards from "@/components/trainer/KPICards";
-import AthletesPanel from "@/components/trainer/AthletesPanel";
-import CalendarPanel from "@/components/trainer/CalendarPanel";
-import CoachInsightsWidget from "@/components/trainer/CoachInsightsWidget";
-import RecentActivityWidget from "@/components/trainer/RecentActivityWidget";
+import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboardLayout";
+import CoachDashboard from "@/components/sections/dashboard/CoachDashboard";
+
+export const dynamic = "force-dynamic";
 
 type AthleteRow = {
   user_id: string;
   email: string;
   full_name: string | null;
   age: number | null;
+  player_archetype?: string | null;
   sessions_this_week: number;
   sessions_30d: number;
   last_workout_date: string | null;
+  completion_percentage?: number;
+  playstyle_team_vs_iso?: number | null;
+  playstyle_shooter_vs_slasher?: number | null;
+  playstyle_finesse_vs_power?: number | null;
 };
 
 type SimpleWorkout = {
@@ -29,13 +32,22 @@ type Assignment = {
   workout_id: string;
 };
 
+type ActivityItem = {
+  id: string;
+  created_at: string;
+  profiles: { full_name: string | null } | null;
+  workouts: { title: string | null } | null;
+};
+
 async function getCoachData(): Promise<{
   coachName: string;
   athletes: AthleteRow[];
-  totalSessions7d: number;
   workouts: SimpleWorkout[];
   assignments: Assignment[];
-  completionRate: number;
+  avgCompletion: number;
+  activeAthletesCount: number;
+  totalSessions7d: number;
+  recentActivity: ActivityItem[];
   error: string | null;
 }> {
   try {
@@ -51,18 +63,20 @@ async function getCoachData(): Promise<{
 
     const { data: auth } = await supabase.auth.getUser();
     const user = auth.user;
-    if (!user)
+    if (!user) {
       return {
         coachName: "Coach",
         athletes: [],
-        totalSessions7d: 0,
         workouts: [],
         assignments: [],
-        completionRate: 0,
+        avgCompletion: 0,
+        activeAthletesCount: 0,
+        totalSessions7d: 0,
+        recentActivity: [],
         error: "Not authenticated",
       };
+    }
 
-    // ✅ Fix: use user_id not id
     const { data: coachProfile } = await supabase
       .from("profiles")
       .select("full_name, role")
@@ -73,10 +87,12 @@ async function getCoachData(): Promise<{
       return {
         coachName: "Coach",
         athletes: [],
-        totalSessions7d: 0,
         workouts: [],
         assignments: [],
-        completionRate: 0,
+        avgCompletion: 0,
+        activeAthletesCount: 0,
+        totalSessions7d: 0,
+        recentActivity: [],
         error: "coach_only",
       };
     }
@@ -86,11 +102,11 @@ async function getCoachData(): Promise<{
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const [athletesRes, logs7dRes, logs30dRes, workoutsRes, assignmentsRes] =
+    const [athletesRes, logs7dRes, logs30dRes, workoutsRes, assignmentsRes, activityRes] =
       await Promise.all([
         supabase
           .from("profiles")
-          .select("user_id, email, full_name, age")
+          .select("user_id, email, full_name, age, player_archetype, playstyle_team_vs_iso, playstyle_shooter_vs_slasher, playstyle_finesse_vs_power")
           .eq("role", "athlete"),
         supabase
           .from("workout_logs")
@@ -104,6 +120,11 @@ async function getCoachData(): Promise<{
         supabase
           .from("workout_assignments")
           .select("id, athlete_id, workout_id"),
+        supabase
+          .from("workout_logs")
+          .select("id, created_at, profiles(full_name), workouts(title)")
+          .order("created_at", { ascending: false })
+          .limit(6),
       ]);
 
     const count7d = (logs7dRes.data ?? []).reduce<Record<string, number>>(
@@ -131,43 +152,61 @@ async function getCoachData(): Promise<{
       {},
     );
 
-    const athletes: AthleteRow[] = (athletesRes.data ?? []).map((a) => ({
-      user_id: a.user_id,
-      email: a.email,
-      full_name: a.full_name,
-      age: a.age,
-      sessions_this_week: count7d[a.user_id] ?? 0,
-      sessions_30d: count30d[a.user_id] ?? 0,
-      last_workout_date: lastWorkout[a.user_id] ?? null,
-    }));
+    const athletes: AthleteRow[] = (athletesRes.data ?? []).map((a) => {
+      const athleteLogs = (logs30dRes.data ?? []).filter((l) => l.user_id === a.user_id);
+      const totalLogs = athleteLogs.length;
+      const expectedWorkouts = workoutsRes.data?.length ?? 1;
+      // Calculate completion based on logs relative to expected workouts over 30 days
+      const completionPercent = Math.min(
+        Math.round((totalLogs / (expectedWorkouts * 4)) * 100),
+        100
+      );
+
+      return {
+        user_id: a.user_id,
+        email: a.email,
+        full_name: a.full_name,
+        age: a.age,
+        player_archetype: a.player_archetype,
+        sessions_this_week: count7d[a.user_id] ?? 0,
+        sessions_30d: count30d[a.user_id] ?? 0,
+        last_workout_date: lastWorkout[a.user_id] ?? null,
+        completion_percentage: completionPercent,
+        playstyle_team_vs_iso: a.playstyle_team_vs_iso,
+        playstyle_shooter_vs_slasher: a.playstyle_shooter_vs_slasher,
+        playstyle_finesse_vs_power: a.playstyle_finesse_vs_power,
+      };
+    });
 
     const totalSessions7d = (logs7dRes.data ?? []).length;
+    const activeAthletesCount = athletes.filter((a) => a.sessions_this_week > 0).length;
 
-    // Calculate completion rate: (total logs / total assignments) * 100
-    const totalAssignments = assignmentsRes.data?.length ?? 0;
-    const totalLogs = (logs30dRes.data ?? []).length;
-    const completionRate =
-      totalAssignments > 0
-        ? Math.round((totalLogs / totalAssignments) * 100)
+    const avgCompletion =
+      athletes.length > 0
+        ? athletes.reduce((sum, a) => sum + (a.completion_percentage ?? 0), 0) / athletes.length
         : 0;
 
     return {
       coachName: coachProfile?.full_name?.split(" ")[0] ?? "Coach",
       athletes,
-      totalSessions7d,
       workouts: workoutsRes.data ?? [],
       assignments: assignmentsRes.data ?? [],
-      completionRate,
+      avgCompletion,
+      activeAthletesCount,
+      totalSessions7d,
+      recentActivity: (activityRes.data as unknown as ActivityItem[]) ?? [],
       error: null,
     };
   } catch (err) {
     return {
       coachName: "Coach",
       athletes: [],
-      totalSessions7d: 0,
       workouts: [],
       assignments: [],
-      completionRate: 0,
+      avgCompletion: 0,
+      activeAthletesCount: 0,
+      totalSessions7d: 0,
+      recentActivity: [],
       error: String(err),
     };
   }
@@ -177,10 +216,12 @@ export default async function TrainerDashboardPage() {
   const {
     coachName,
     athletes,
-    totalSessions7d,
     workouts,
     assignments,
-    completionRate,
+    avgCompletion,
+    activeAthletesCount,
+    totalSessions7d,
+    recentActivity,
     error,
   } = await getCoachData();
 
@@ -191,40 +232,21 @@ export default async function TrainerDashboardPage() {
       <div className="max-w-7xl mx-auto px-4 py-6 lg:py-8 space-y-8">
         <h1 className="sr-only">Trainer Dashboard</h1>
 
-        {error && error !== "coach_only" && (
+        {error && (
           <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-200">
             <p className="font-medium">{error}</p>
           </div>
         )}
 
-        <KPICards
+        <CoachDashboard
           athletes={athletes}
-          totalSessions7d={totalSessions7d}
-          activePrograms={workouts.length}
-          completionRate={completionRate}
+          workouts={workouts}
+          avgCompletion={avgCompletion}
+          activeAthletesCount={activeAthletesCount}
+          totalSessions={totalSessions7d}
+          coachName={coachName}
+          recentActivity={recentActivity}
         />
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          <div className="lg:col-span-2">
-            <AthletesPanel
-              athletes={athletes}
-              workouts={workouts}
-              assignments={assignments}
-            />
-          </div>
-          <div className="lg:col-span-1">
-            <CalendarPanel />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          <div className="lg:col-span-2">
-            <CoachInsightsWidget athletes={athletes} />
-          </div>
-          <div className="lg:col-span-1">
-            <RecentActivityWidget athletes={athletes} />
-          </div>
-        </div>
       </div>
     </TrainerDashboardLayout>
   );

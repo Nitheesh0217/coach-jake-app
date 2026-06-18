@@ -8,7 +8,7 @@ export default function AppError({
   reset: () => void;
 }) {
   return (
-    <div className="min-h-screen bg-[#050816] text-slate-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-transparent text-slate-100 flex items-center justify-center px-4">
       {/* Background layers */}
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"

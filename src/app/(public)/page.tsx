@@ -1,17 +1,17 @@
-import HeroSection from "@/components/home/HeroSection";
-import ProgramsSection from "@/components/public/ProgramsSection";
-import BenefitsSection from "@/components/public/BenefitsSection";
-import TestimonialsSection from "@/components/public/TestimonialsSection";
-import FinalCtaSection from "@/components/public/FinalCtaSection";
-import HowItWorksSection from "@/components/public/HowItWorksSection";
-import FAQSection from "@/components/public/FAQSection";
-import CoachCredibilityBand from "@/components/public/CoachCredibilityBand";
-import GamificationSection from "@/components/public/GamificationSection";
-import InsideAppSection from "@/components/public/InsideAppSection";
+import HeroSection from "@/components/HeroSection";
+import ProgramsSection from "@/components/sections/public/ProgramsSection";
+import BenefitsSection from "@/components/sections/public/BenefitsSection";
+import TestimonialsSection from "@/components/sections/public/TestimonialsSection";
+import FinalCtaSection from "@/components/sections/public/FinalCtaSection";
+import HowItWorksSection from "@/components/sections/public/HowItWorksSection";
+import FAQSection from "@/components/sections/public/FAQSection";
+import CoachCredibilityBand from "@/components/sections/public/CoachCredibilityBand";
+import GamificationSection from "@/components/sections/public/GamificationSection";
+import InsideAppSection from "@/components/sections/public/InsideAppSection";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#050816] text-white overflow-x-hidden">
+    <main className="min-h-screen bg-transparent text-white overflow-x-hidden">
       {/* Hero — full screen 3D */}
       <HeroSection />
 

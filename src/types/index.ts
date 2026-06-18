@@ -100,3 +100,15 @@ export interface WorkoutAssignment {
   assigned_at: string;
   notes?: string | null;
 }
+
+/**
+ * Recent Session log entry for dashboards
+ */
+export interface RecentSession {
+  id?: string;
+  date: string;
+  notes?: string | null;
+  workouts: {
+    title: string;
+  } | null;
+}

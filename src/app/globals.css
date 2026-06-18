@@ -1,10 +1,24 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-brand-emerald: #10b981;
+  --color-brand-amber: #f59e0b;
+  --color-brand-cyan: #06b6d4;
+  --color-space-900: #050816;
+  --color-space-800: #0a0f1e;
+
+  --shadow-emerald-glow-sm: 0 0 20px rgba(16, 185, 129, 0.35);
+  --shadow-emerald-glow-md: 0 0 32px rgba(16, 185, 129, 0.55);
+  --shadow-amber-glow-sm: 0 0 20px rgba(245, 158, 11, 0.35);
+  --shadow-card-default: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-card-hover: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(16, 185, 129, 0.08);
+
+  --font-space-grotesk: var(--font-space-grotesk);
+}
 
 /* ─────────────────────────────────────────
    DESIGN TOKENS  (single source of truth)
-───────────────────────────────────────── */
+   ───────────────────────────────────────── */
 :root {
   --bg-primary:        #050816;
   --bg-secondary:      #0a0f1e;
@@ -22,7 +36,7 @@
 
 /* ─────────────────────────────────────────
    BASE RESETS
-───────────────────────────────────────── */
+   ───────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
 }
@@ -30,6 +44,7 @@ html {
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
+  font-family: var(--font-space-grotesk), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -131,4 +146,48 @@ body {
 
   /* Tabular number display */
   .stat-value { font-variant-numeric: tabular-nums; }
+
+  /* Cybernetic scanline grid overlay */
+  .cyber-scanlines {
+    position: relative;
+  }
+  .cyber-scanlines::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(16, 185, 129, 0.05) 50%);
+    background-size: 100% 4px;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.45;
+  }
+
+  /* Hologram glow effect for text and elements */
+  .hologram-glow {
+    text-shadow: 0 0 10px rgba(16,185,129,0.5), 0 0 20px rgba(6,182,212,0.3);
+  }
+
+  /* Cyber grid background */
+  .cyber-grid {
+    background-image: 
+      linear-gradient(to right, rgba(16, 185, 129, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center;
+  }
+
+  /* Glowing cyan-emerald gradient border */
+  .glow-border {
+    position: relative;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .glow-border:hover {
+    border-color: rgba(6, 182, 212, 0.45);
+    box-shadow: 
+      0 0 20px rgba(16, 185, 129, 0.1),
+      inset 0 0 10px rgba(6, 182, 212, 0.05);
+  }
 }
+

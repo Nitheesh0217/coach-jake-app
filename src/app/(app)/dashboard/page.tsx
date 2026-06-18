@@ -1,11 +1,13 @@
 import { supabaseServer } from "@/lib/supabaseClient";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
-import AthleteDashboard from "@/components/dashboard/AthleteDashboard";
-import CoachDashboard from "@/components/dashboard/CoachDashboard";
+import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboardLayout";
+import AthleteDashboard from "@/components/sections/dashboard/AthleteDashboard";
+import CoachDashboard from "@/components/sections/dashboard/CoachDashboard";
 import { getMeasurements } from "./measurements-actions";
-import type { Profile, Workout, Measurement, AthleteProfile } from "@/types";
+import type { Profile, Workout, Measurement, AthleteProfile, RecentSession } from "@/types";
+
+export const dynamic = "force-dynamic";
 
 /**
  * Calculate workout streaks from an array of workout log timestamps
@@ -41,7 +43,7 @@ function calculateStreaks(logs: { date: string }[]): {
   const today = new Date().toISOString().split("T")[0];
   const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
 
-  let streakStartDate = sortedDates[0];
+  const streakStartDate = sortedDates[0];
   if (streakStartDate !== today && streakStartDate !== yesterday) {
     // No recent activity, current streak is 0
     currentStreak = 0;
@@ -94,7 +96,7 @@ type DashboardResponse = {
     measurements: Measurement[];
     currentStreak: number;
     longestStreak: number;
-    recentSessions: any[];
+    recentSessions: RecentSession[];
     hasLoggedToday: boolean;
   };
   coachData?: {
@@ -124,7 +126,6 @@ async function getDashboardData(): Promise<DashboardResponse> {
     const { data: auth } = await supabase.auth.getUser();
     const user = auth.user;
 
-    console.log("[DASH] AUTH USER:", { userId: user?.id, email: user?.email });
 
     if (!user) {
       return { profile: null, error: "Not logged in." };
@@ -147,21 +148,18 @@ async function getDashboardData(): Promise<DashboardResponse> {
 
     const profile = profileData as Profile;
 
-    console.log("[DASH] FETCHED PROFILE:", {
-      user_id: profile.user_id,
-      email: profile.email,
-      role: profile.role,
-      full_name: profile.full_name,
-    });
+
+    // Redirect coaches to their dedicated dashboard
+    if (profile.role === "coach") {
+      redirect("/trainer-dashboard");
+    }
 
     // Gate athletes behind onboarding: redirect if not fully scouted
-    // Do NOT redirect coaches
     if (profile.is_fully_scouted === false && profile.role === "athlete") {
       redirect("/finish-profile");
     }
 
     if (profile.role === "athlete") {
-      console.log("[DASH] BRANCH: ATHLETE selected (role='athlete')");
       // Fetch active workouts
       const { data: workouts } = await supabase
         .from("workouts")
@@ -205,12 +203,22 @@ async function getDashboardData(): Promise<DashboardResponse> {
       const { currentStreak, longestStreak } = calculateStreaks(logs60d ?? []);
 
       // Fetch recent sessions (last 3)
-      const { data: recentSessions } = await supabase
+      const { data: recentLogs } = await supabase
         .from("workout_logs")
         .select("id, date, notes, workouts(title)")
         .eq("user_id", user.id)
         .order("date", { ascending: false })
         .limit(3);
+
+      const recentSessions: RecentSession[] = (recentLogs || []).map((log: any) => {
+        const w = Array.isArray(log.workouts) ? log.workouts[0] : log.workouts;
+        return {
+          id: log.id,
+          date: log.date,
+          notes: log.notes,
+          workouts: w ? { title: w.title } : null,
+        };
+      });
 
       // Check if logged today
       const today = new Date().toISOString().split("T")[0];
@@ -242,7 +250,6 @@ async function getDashboardData(): Promise<DashboardResponse> {
         },
       };
     } else if (profile.role === "coach") {
-      console.log("[DASH] BRANCH: COACH selected (role='coach')");
       // Fetch all athlete profiles with Player Card fields
       const { data: athletes } = await supabase
         .from("profiles")
@@ -401,13 +408,13 @@ export default async function DashboardPage() {
     return (
       <TrainerDashboardLayout coachName={coachName}>
         <AthleteDashboard
+          profile={profile}
           todayWorkout={athleteData.todayWorkout}
           weekLogsCount={athleteData.weekLogsCount}
           last30DaysCount={athleteData.last30DaysCount}
           measurements={athleteData.measurements}
           currentStreak={athleteData.currentStreak}
           longestStreak={athleteData.longestStreak}
-          userName={profile.full_name || "Athlete"}
           recentSessions={athleteData.recentSessions}
           hasLoggedToday={athleteData.hasLoggedToday}
         />

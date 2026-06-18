@@ -174,7 +174,6 @@ export async function completePlayerCard(
         .single();
 
       if (error) {
-        console.error("Profile update error:", error);
         return {
           success: false,
           error: `Failed to update profile: ${error.message}`,
@@ -198,7 +197,6 @@ export async function completePlayerCard(
         .single();
 
       if (error) {
-        console.error("Profile insertion error:", error);
         return {
           success: false,
           error: `Failed to create profile: ${error.message}`,
@@ -212,7 +210,6 @@ export async function completePlayerCard(
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Profile completion exception:", message);
     return {
       success: false,
       error: `Profile operation failed: ${message}`,

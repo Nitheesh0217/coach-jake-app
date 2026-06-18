@@ -1,9 +1,11 @@
 import { supabaseServer } from "@/lib/supabaseClient";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
-import WorkoutsClient from "@/components/workouts/WorkoutsClient";
+import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboardLayout";
+import WorkoutsClient from "@/components/sections/workouts/WorkoutsClient";
 import { Dumbbell, Clock, CheckCircle2, ArrowRight } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 type AssignedWorkout = {
   id: string;
@@ -24,6 +26,20 @@ type WorkoutLog = {
     title: string;
   } | null;
 };
+
+interface WorkoutDataRow {
+  id: string;
+  title: string;
+  description: string | null;
+  duration: number | null;
+  focus_area: string | null;
+}
+
+interface LogDataRow {
+  workout_id: string;
+  date: string;
+  user_id: string;
+}
 
 async function getWorkoutsData() {
   try {
@@ -64,8 +80,8 @@ async function getWorkoutsData() {
       .order("date", { ascending: false });
 
     // Combine into unified workout list
-    const workoutsList = (workoutsData || []).map((w: any) => {
-      const log = logsData?.find((l: any) => l.workout_id === w.id);
+    const workoutsList = (workoutsData as unknown as WorkoutDataRow[] || []).map((w) => {
+      const log = (logsData as unknown as LogDataRow[])?.find((l) => l.workout_id === w.id);
       return {
         id: w.id,
         title: w.title,

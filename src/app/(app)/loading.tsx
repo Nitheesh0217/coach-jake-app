@@ -1,6 +1,6 @@
 export default function AppLoading() {
   return (
-    <div className="min-h-screen bg-[#050816] text-slate-100">
+    <div className="min-h-screen bg-transparent text-slate-100">
       {/* Background layers */}
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
