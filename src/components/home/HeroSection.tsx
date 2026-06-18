@@ -1,13 +1,24 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { ArrowRight, Zap, Dumbbell, Target } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
 
+// ── DYNAMIC 3D IMPORTS (Prevents SSR execution errors) ──
 const BasketballOrb = dynamic(() => import("@/components/3d/BasketballOrb"), {
   ssr: false,
   loading: () => <div className="w-full h-full bg-[#050816]" />,
+});
+
+const PlayerCard3D = dynamic(() => import("@/components/3d/PlayerCard3D"), {
+  ssr: false,
+  loading: () => <div className="w-full h-[450px] bg-zinc-950/60 rounded-3xl animate-pulse border border-white/5" />,
+});
+
+const TacticalPlayground3D = dynamic(() => import("@/components/3d/TacticalPlayground3D"), {
+  ssr: false,
+  loading: () => <div className="w-full h-[450px] bg-zinc-950/60 rounded-3xl animate-pulse border border-white/5" />,
 });
 
 const STATS = [
@@ -16,18 +27,25 @@ const STATS = [
   { value: "5+",   label: "years coaching",        color: "text-amber-400"   },
 ];
 
-const BENEFITS = [
-  { icon: Zap,      title: "EXPLOSIVE POWER",        desc: "Increase your vertical and first step quickness."  },
-  { icon: Dumbbell, title: "STRENGTH & ATHLETICISM", desc: "Build lean muscle and move with control."          },
-  { icon: Target,   title: "GAME-READY RESULTS",     desc: "Train with purpose. Perform with confidence."      },
-];
-
 export default function HeroSection() {
   const ref = useRef<HTMLElement>(null);
+  const [activeConsole, setActiveConsole] = useState<"card" | "court">("card");
+  const [activePlay, setActivePlay] = useState<number>(0);
+  const [mousePos, setMousePos] = useState({ x: -1000, y: -1000 });
+
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const rawY   = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const rawOp  = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const y      = useSpring(rawY, { stiffness: 80, damping: 20 });
+
+  // Cursor tracker for Z-index 40 interactive lighting overlay
+  useEffect(() => {
+    const updateMousePos = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", updateMousePos);
+    return () => window.removeEventListener("mousemove", updateMousePos);
+  }, []);
 
   return (
     <section
@@ -35,32 +53,26 @@ export default function HeroSection() {
       className="relative w-full bg-[#050816] overflow-hidden"
       style={{ minHeight: "100svh" }}
     >
-      {/* ── 3D Canvas — absolute fill ── */}
-      <div className="absolute inset-0 z-0">
+      {/* ── LAYER 1 (Z-index: 10): 3D Canvas World ── */}
+      <div className="absolute inset-0 z-10 pointer-events-none">
         <BasketballOrb />
       </div>
 
-      {/* ── Gradient overlays to make text readable ── */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#050816]/50 via-[#050816]/10 to-[#050816]" />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#050816]/80 via-transparent to-transparent" />
+      {/* ── LAYER 2 (Z-index: 20): Interface Grid Overlay & Scanlines ── */}
+      <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-[#050816]/40 via-[#050816]/10 to-[#050816]" />
+      <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-r from-[#050816]/75 via-transparent to-transparent" />
+      <div className="absolute inset-0 z-20 pointer-events-none opacity-[0.035] cyber-grid" />
+      <div className="absolute inset-0 z-20 pointer-events-none cyber-scanlines opacity-[0.25]" />
 
-      {/* ── Animated grid lines ── */}
-      <div className="absolute inset-0 z-[1] opacity-[0.03]"
-        style={{
-          backgroundImage: "linear-gradient(rgba(16,185,129,1) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,1) 1px,transparent 1px)",
-          backgroundSize: "70px 70px",
-        }}
-      />
-
-      {/* ── Content ── */}
+      {/* ── LAYER 3 (Z-index: 30): Content HUD Layer ── */}
       <motion.div
         style={{ y, opacity: rawOp }}
-        className="relative z-[2] flex items-center min-h-[100svh] w-full"
+        className="relative z-30 flex items-center min-h-[100svh] w-full"
       >
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-            {/* ── LEFT: copy ── */}
+            {/* ── LEFT: Copy / Stats ── */}
             <div className="space-y-8">
               {/* Badge */}
               <motion.span
@@ -155,83 +167,87 @@ export default function HeroSection() {
               </motion.div>
             </div>
 
-            {/* ── RIGHT: glass card ── */}
+            {/* ── RIGHT: Futuristic Console HUD ── */}
             <motion.div
               initial={{ opacity: 0, x: 60 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="hidden lg:block relative"
+              className="hidden lg:block relative w-full max-w-[440px] ml-auto"
             >
-              <div className="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-emerald-500/15 via-transparent to-cyan-500/8 blur-3xl pointer-events-none" />
+              <div className="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-emerald-500/10 via-transparent to-cyan-500/8 blur-3xl pointer-events-none" />
 
-              <motion.div
-                whileHover={{ y: -8 }}
-                transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                className="relative rounded-[2rem] border border-white/10 bg-zinc-950/90 backdrop-blur-xl overflow-hidden shadow-[0_0_80px_rgba(16,185,129,0.12),inset_0_1px_0_rgba(255,255,255,0.06)]"
-              >
-                {/* Image */}
-                <div className="relative h-[340px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-zinc-900 to-black" />
-                  <img
-                    src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=85&auto=format&fit=crop"
-                    alt="Basketball training"
-                    className="absolute inset-0 w-full h-full object-cover object-center opacity-80"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/30 to-transparent" />
-                  <div className="absolute top-4 left-4">
-                    <motion.span
-                      animate={{ opacity: [0.7, 1, 0.7] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-black/70 backdrop-blur-md px-3 py-1.5 text-[11px] font-bold text-emerald-300 uppercase tracking-wide"
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Elite Training
-                    </motion.span>
-                  </div>
-                </div>
+              {/* HUD Selector Tabs */}
+              <div className="flex gap-2.5 p-1 rounded-xl bg-zinc-950/60 border border-white/5 backdrop-blur-md mb-4 shadow-lg">
+                <button
+                  onClick={() => setActiveConsole("card")}
+                  className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
+                    activeConsole === "card"
+                      ? "bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.35)]"
+                      : "text-zinc-500 hover:text-zinc-300"
+                  }`}
+                >
+                  Player Cards
+                </button>
+                <button
+                  onClick={() => setActiveConsole("court")}
+                  className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-300 ${
+                    activeConsole === "court"
+                      ? "bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.35)]"
+                      : "text-zinc-500 hover:text-zinc-300"
+                  }`}
+                >
+                  Tactical Board
+                </button>
+              </div>
 
-                {/* Feature list */}
-                <div className="bg-zinc-950/95 px-5 py-5 space-y-3.5">
-                  {BENEFITS.map((b, i) => (
-                    <motion.div
-                      key={b.title}
-                      initial={{ opacity: 0, x: -16 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.5 + i * 0.1 }}
-                      className="flex items-start gap-3 group"
-                    >
-                      <div className="flex-shrink-0 h-9 w-9 rounded-xl border border-emerald-500/25 bg-emerald-500/10 flex items-center justify-center group-hover:border-emerald-500/50 group-hover:bg-emerald-500/20 group-hover:shadow-[0_0_12px_rgba(16,185,129,0.3)] transition-all duration-300">
-                        <b.icon className="h-4 w-4 text-emerald-400" />
-                      </div>
-                      <div>
-                        <p className="text-[11px] font-black text-emerald-300 uppercase tracking-widest">{b.title}</p>
-                        <p className="text-xs text-zinc-400 mt-0.5">{b.desc}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                  <div className="pt-3 border-t border-zinc-800/60 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-black text-white">Coach Jake</p>
-                      <p className="text-[10px] text-zinc-600 uppercase tracking-widest mt-0.5">Basketball Performance Coach</p>
+              {/* active panel */}
+              <div className="relative min-h-[460px] flex flex-col justify-between">
+                {activeConsole === "card" ? (
+                  <PlayerCard3D />
+                ) : (
+                  <div className="w-full flex flex-col gap-4">
+                    <div className="h-[370px]">
+                      <TacticalPlayground3D activeProgram={activePlay} />
                     </div>
-                    <div className="h-9 w-9 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-                      <span className="text-xs font-black text-emerald-300">CJ</span>
+
+                    <div className="flex gap-2 p-1 rounded-xl bg-zinc-950/70 border border-white/5">
+                      {["PLYOMETRICS", "PICK & ROLL", "SKILLS DRILL"].map((name, i) => (
+                        <button
+                          key={name}
+                          onClick={() => setActivePlay(i)}
+                          className={`flex-1 py-2 rounded-lg text-[9px] font-black tracking-widest transition-all duration-200 ${
+                            activePlay === i
+                              ? "bg-zinc-800 text-cyan-400 border border-cyan-500/20 shadow-[0_0_10px_rgba(6,182,212,0.1)]"
+                              : "text-zinc-600 hover:text-zinc-400"
+                          }`}
+                        >
+                          {name}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                </div>
-              </motion.div>
+                )}
+              </div>
             </motion.div>
 
           </div>
         </div>
       </motion.div>
 
-      {/* ── Scroll indicator ── */}
+      {/* ── LAYER 4 (Z-index: 40): Cursor Glow / Lighting Overlay ── */}
+      <div
+        className="pointer-events-none fixed inset-0 z-40 transition-opacity duration-300 hidden md:block"
+        style={{
+          background: `radial-gradient(550px circle at ${mousePos.x}px ${mousePos.y}px, rgba(16, 185, 129, 0.05), transparent 75%)`,
+        }}
+      />
+
+      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[2] flex flex-col items-center gap-2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2"
       >
         <span className="text-[10px] text-zinc-600 uppercase tracking-widest font-semibold">Scroll</span>
         <motion.div
@@ -245,3 +261,5 @@ export default function HeroSection() {
     </section>
   );
 }
+
+
