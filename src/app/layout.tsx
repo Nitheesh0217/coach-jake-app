@@ -1,11 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import dynamic from "next/dynamic";
+import Global3DBackground from "@/components/layout/Global3DBackground";
 import "./globals.css";
-
-const BasketballOrb = dynamic(() => import("@/components/3d/BasketballOrb"), {
-  ssr: false,
-});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,10 +37,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden bg-[#050816] text-[#f9fafb]`}
       >
-        <BasketballOrb />
+        <Global3DBackground />
         {children}
       </body>
     </html>
   );
 }
+
 
