@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="1200" height="340">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#0f0f1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="orangeGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fb923c;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#f1f5f9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fb923c;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="ballGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#f97316;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#f97316;stop-opacity:0.08" />
+      <stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0" />
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="340" fill="url(#bgGrad)"/>
+
+  <!-- Subtle center radial glow -->
+  <ellipse cx="600" cy="170" rx="500" ry="200" fill="url(#centerGlow)"/>
+
+  <!-- Grid lines - subtle court feel -->
+  <g opacity="0.04" stroke="#f97316" stroke-width="1">
+    <line x1="0" y1="85" x2="1200" y2="85"/>
+    <line x1="0" y1="170" x2="1200" y2="170"/>
+    <line x1="0" y1="255" x2="1200" y2="255"/>
+    <line x1="300" y1="0" x2="300" y2="340"/>
+    <line x1="600" y1="0" x2="600" y2="340"/>
+    <line x1="900" y1="0" x2="900" y2="340"/>
+  </g>
+
+  <!-- Left accent dots -->
+  <g opacity="0.15" fill="#f97316">
+    <circle cx="60" cy="80" r="2"/>
+    <circle cx="90" cy="60" r="1.5"/>
+    <circle cx="40" cy="110" r="1"/>
+    <circle cx="110" cy="90" r="2.5"/>
+    <circle cx="70" cy="140" r="1.5"/>
+    <circle cx="130" cy="130" r="1"/>
+    <circle cx="50" cy="200" r="2"/>
+    <circle cx="100" cy="220" r="1.5"/>
+    <circle cx="150" cy="180" r="1"/>
+    <circle cx="80" cy="260" r="2.5"/>
+    <circle cx="120" cy="280" r="1.5"/>
+  </g>
+
+  <!-- Right accent dots -->
+  <g opacity="0.15" fill="#f97316">
+    <circle cx="1140" cy="80" r="2"/>
+    <circle cx="1110" cy="60" r="1.5"/>
+    <circle cx="1160" cy="110" r="1"/>
+    <circle cx="1090" cy="90" r="2.5"/>
+    <circle cx="1130" cy="140" r="1.5"/>
+    <circle cx="1070" cy="130" r="1"/>
+    <circle cx="1150" cy="200" r="2"/>
+    <circle cx="1100" cy="220" r="1.5"/>
+    <circle cx="1050" cy="180" r="1"/>
+    <circle cx="1120" cy="260" r="2.5"/>
+    <circle cx="1080" cy="280" r="1.5"/>
+  </g>
+
+  <!-- Basketball SVG (left of center) -->
+  <g transform="translate(185, 90)" filter="url(#softGlow)">
+    <!-- Glow behind ball -->
+    <circle cx="75" cy="75" r="95" fill="url(#ballGlow)" opacity="0.6"/>
+    <!-- Ball body -->
+    <circle cx="75" cy="75" r="68" fill="#ea580c"/>
+    <circle cx="75" cy="75" r="68" fill="url(#orangeGlow)" opacity="0.4"/>
+    <!-- Ball seams -->
+    <g stroke="#1a0800" stroke-width="2.5" fill="none" opacity="0.7">
+      <!-- Vertical seam -->
+      <path d="M75 7 C75 7, 75 143, 75 143"/>
+      <!-- Horizontal seam -->
+      <path d="M7 75 C7 75, 143 75, 143 75"/>
+      <!-- Left curve -->
+      <path d="M75 7 C45 30, 30 55, 30 75 C30 95, 45 120, 75 143"/>
+      <!-- Right curve -->
+      <path d="M75 7 C105 30, 120 55, 120 75 C120 95, 105 120, 75 143"/>
+    </g>
+    <!-- Shine -->
+    <ellipse cx="52" cy="45" rx="18" ry="10" fill="white" opacity="0.12" transform="rotate(-30 52 45)"/>
+  </g>
+
+  <!-- Top orange accent bar -->
+  <rect x="380" y="68" width="440" height="2" fill="url(#orangeGlow)" opacity="0.6" rx="1"/>
+
+  <!-- Main Title -->
+  <text x="600" y="148" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif" font-size="72" font-weight="800" text-anchor="middle" fill="url(#titleGrad)" filter="url(#glow)" letter-spacing="-1">Coach Jake</text>
+
+  <!-- Subtitle -->
+  <text x="600" y="192" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif" font-size="22" font-weight="400" text-anchor="middle" fill="#94a3b8" letter-spacing="0.5">AI-Powered Basketball Fitness Coaching Platform</text>
+
+  <!-- Bottom tagline -->
+  <text x="600" y="232" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="300" text-anchor="middle" fill="#475569" letter-spacing="3">TRAIN SMARTER  ·  TRACK EVERYTHING  ·  LEVEL UP</text>
+
+  <!-- Bottom orange accent bar -->
+  <rect x="380" y="254" width="440" height="2" fill="url(#orangeGlow)" opacity="0.6" rx="1"/>
+
+  <!-- Tech pill badges -->
+  <g transform="translate(600, 290)" text-anchor="middle">
+    <!-- Next.js pill -->
+    <rect x="-290" y="-13" width="90" height="26" rx="13" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
+    <text x="-245" y="5" font-family="monospace" font-size="11" fill="#e2e8f0" font-weight="600">Next.js 16</text>
+    <!-- TypeScript pill -->
+    <rect x="-185" y="-13" width="100" height="26" rx="13" fill="#1a1a2e" stroke="#3178C6" stroke-width="1"/>
+    <text x="-135" y="5" font-family="monospace" font-size="11" fill="#3178C6" font-weight="600">TypeScript</text>
+    <!-- Supabase pill -->
+    <rect x="-70" y="-13" width="95" height="26" rx="13" fill="#1a1a2e" stroke="#3ECF8E" stroke-width="1"/>
+    <text x="-22" y="5" font-family="monospace" font-size="11" fill="#3ECF8E" font-weight="600">Supabase</text>
+    <!-- Tailwind pill -->
+    <rect x="40" y="-13" width="95" height="26" rx="13" fill="#1a1a2e" stroke="#06B6D4" stroke-width="1"/>
+    <text x="87" y="5" font-family="monospace" font-size="11" fill="#06B6D4" font-weight="600">Tailwind v4</text>
+    <!-- Vercel pill -->
+    <rect x="150" y="-13" width="75" height="26" rx="13" fill="#1a1a2e" stroke="#555" stroke-width="1"/>
+    <text x="187" y="5" font-family="monospace" font-size="11" fill="#e2e8f0" font-weight="600">Vercel</text>
+  </g>
+</svg>
