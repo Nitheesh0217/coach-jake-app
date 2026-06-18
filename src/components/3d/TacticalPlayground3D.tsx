@@ -73,9 +73,7 @@ function getPlayPositions(programId: number, t: number) {
       const pct = (loopTime - 1.8) / 2.0;
       // Curved drive path
       const p1 = guardStart;
-      const p2 = new THREE.Vector3(-0.9, 0, 0.2);
       const p3 = new THREE.Vector3(0.4, 0, 0.1);
-      pA.bezierCurveTo(p1.x, p1.z, p2.x, p2.z, p3.x, p3.z); // Math helper approximation:
       pA.x = THREE.MathUtils.lerp(p1.x, p3.x, pct);
       pA.z = Math.sin(pct * Math.PI) * 0.45 + THREE.MathUtils.lerp(p1.z, p3.z, pct);
       
