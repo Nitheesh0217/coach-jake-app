@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 
@@ -9,7 +9,33 @@ const Spline = dynamic(() => import("@splinetool/react-spline"), {
   loading: () => <div className="w-full h-full flex items-center justify-center"><div className="w-12 h-12 rounded-full border-2 border-t-emerald-500 border-white/5 animate-spin" /></div>
 });
 
-// A pure SVG/CSS fallback if Spline fails to load
+// Robust Error Boundary to catch WebGL / Canvas creation context failures at runtime
+class SplineErrorBoundary extends React.Component<
+  { fallback: React.ReactNode; onError: () => void; children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    this.props.onError();
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
+// A pure SVG/CSS fallback if Spline fails to load or WebGL fails
 function FallbackBall() {
   return (
     <div className="w-full h-full rounded-full bg-gradient-to-br from-[#10b981] via-[#06b6d4] to-[#7B2FFF] p-1 shadow-[0_0_50px_rgba(16,185,129,0.4)] animate-pulse">
@@ -107,13 +133,18 @@ export default function FloatingBall() {
             }}
           >
             {!hasError ? (
-              <Suspense fallback={<FallbackBall />}>
-                <Spline
-                  scene="https://prod.spline.design/kbKIxYhLg0wP268U/scene.splinecode"
-                  onLoad={() => setSplineLoaded(true)}
-                  onError={() => setHasError(true)}
-                />
-              </Suspense>
+              <SplineErrorBoundary
+                fallback={<FallbackBall />}
+                onError={() => setHasError(true)}
+              >
+                <Suspense fallback={<FallbackBall />}>
+                  <Spline
+                    scene="https://prod.spline.design/kbKIxYhLg0wP268U/scene.splinecode"
+                    onLoad={() => setSplineLoaded(true)}
+                    onError={() => setHasError(true)}
+                  />
+                </Suspense>
+              </SplineErrorBoundary>
             ) : (
               <FallbackBall />
             )}

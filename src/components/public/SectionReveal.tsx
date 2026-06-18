@@ -16,12 +16,13 @@ export function StatCounter({ value, duration = 1.8 }: StatCounterProps) {
   const [blurAmount, setBlurAmount] = useState(0);
 
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || value === undefined || value === null) return;
 
-    const cleanValue = value.replace(/,/g, "");
+    const valStr = String(value);
+    const cleanValue = valStr.replace(/,/g, "");
     const match = cleanValue.match(/[\d.]+/);
     if (!match) {
-      setDisplayValue(value);
+      setDisplayValue(valStr);
       return;
     }
     const targetNum = parseFloat(match[0]);
