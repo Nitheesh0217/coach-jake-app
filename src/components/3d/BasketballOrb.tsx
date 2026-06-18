@@ -323,17 +323,19 @@ function CyberBasketball({ pathname }: { pathname: string | null }) {
 }
 
 // ── FLOATING STARFIELD PARTICLES ──
+const STAR_COUNT = 350;
+const STAR_POSITIONS = (() => {
+  const arr = new Float32Array(STAR_COUNT * 3);
+  for (let i = 0; i < STAR_COUNT; i++) {
+    arr[i * 3] = (Math.random() - 0.5) * 22;
+    arr[i * 3 + 1] = (Math.random() - 0.5) * 22;
+    arr[i * 3 + 2] = (Math.random() - 0.5) * 22;
+  }
+  return arr;
+})();
+
 function Particles() {
-  const count = 350;
-  const positions = useMemo(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * 22;
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 22;
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 22;
-    }
-    return arr;
-  }, []);
+  const positions = STAR_POSITIONS;
 
   const pts = useRef<THREE.Points>(null);
   useFrame((s) => {
@@ -360,11 +362,7 @@ function Particles() {
 }
 
 export default function BasketballOrb() {
-  let pathname: string | null = null;
-  try {
-    pathname = usePathname();
-  } catch (e) {
-  }
+  const pathname = usePathname();
 
   return (
     <div className="fixed inset-0 w-full h-full pointer-events-none -z-10 bg-transparent">

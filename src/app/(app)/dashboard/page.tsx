@@ -5,7 +5,7 @@ import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboar
 import AthleteDashboard from "@/components/sections/dashboard/AthleteDashboard";
 import CoachDashboard from "@/components/sections/dashboard/CoachDashboard";
 import { getMeasurements } from "./measurements-actions";
-import type { Profile, Workout, Measurement, AthleteProfile } from "@/types";
+import type { Profile, Workout, Measurement, AthleteProfile, RecentSession } from "@/types";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +43,7 @@ function calculateStreaks(logs: { date: string }[]): {
   const today = new Date().toISOString().split("T")[0];
   const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
 
-  let streakStartDate = sortedDates[0];
+  const streakStartDate = sortedDates[0];
   if (streakStartDate !== today && streakStartDate !== yesterday) {
     // No recent activity, current streak is 0
     currentStreak = 0;
@@ -96,7 +96,7 @@ type DashboardResponse = {
     measurements: Measurement[];
     currentStreak: number;
     longestStreak: number;
-    recentSessions: any[];
+    recentSessions: RecentSession[];
     hasLoggedToday: boolean;
   };
   coachData?: {

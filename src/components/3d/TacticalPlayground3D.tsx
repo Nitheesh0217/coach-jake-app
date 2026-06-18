@@ -304,7 +304,7 @@ export default function TacticalPlayground3D({ activeProgram }: { activeProgram:
       </div>
 
       <div className="absolute top-3 right-4 z-10 text-[9px] text-zinc-600 font-semibold tracking-wider font-mono select-none pointer-events-none">
-        PLAY: #{activeProgram + 1} // FPS: 60
+        {`PLAY: #${activeProgram + 1} // FPS: 60`}
       </div>
 
       <Canvas
