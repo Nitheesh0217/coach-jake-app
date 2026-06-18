@@ -1,6 +1,4 @@
-<![CDATA[<div align="center">
-
-<img src="public/logo.png" alt="Coach Jake Logo" width="80" height="80" />
+<div align="center">
 
 # 🏀 Coach Jake
 
@@ -29,6 +27,55 @@
 **Coach Jake** (internally *Levrl*) is a full-stack basketball fitness coaching SaaS platform connecting athletes and coaches in one intelligent workspace. Athletes get personalized daily workouts, progress tracking, and a ranked leaderboard. Coaches get a full roster view with completion analytics and workout assignment tools.
 
 Built as a solo full-stack project — from database schema to deployed UI — in **Next.js 16 App Router**, **Supabase**, and **TypeScript**.
+
+---
+
+## 📸 Screenshots
+
+### Landing Page
+![Landing Page](images/Screenshot%202026-06-15%20014417.png)
+
+### Sign Up & Login
+<table>
+  <tr>
+    <td><img src="images/Screenshot%202026-06-15%20014500.png" alt="Sign Up" width="100%"/></td>
+    <td><img src="images/Screenshot%202026-06-15%20014601.png" alt="Login" width="100%"/></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Sign Up</em></td>
+    <td align="center"><em>Login</em></td>
+  </tr>
+</table>
+
+### Player Card Wizard — Onboarding
+<table>
+  <tr>
+    <td><img src="images/Screenshot%202026-06-15%20014649.png" alt="Onboarding Step 1" width="100%"/></td>
+    <td><img src="images/Screenshot%202026-06-15%20014730.png" alt="Onboarding Step 2" width="100%"/></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Step 1 — Profile Setup</em></td>
+    <td align="center"><em>Step 2 — Playstyle Sliders</em></td>
+  </tr>
+</table>
+
+### Athlete Dashboard
+![Athlete Dashboard](images/Screenshot%202026-06-15%20014814.png)
+
+### Coach Dashboard
+![Coach Dashboard](images/Screenshot%202026-06-15%20014849.png)
+
+### Workouts & Tracking
+<table>
+  <tr>
+    <td><img src="images/Screenshot%202026-06-15%20014918.png" alt="Workouts Page" width="100%"/></td>
+    <td><img src="images/Screenshot%202026-06-15%20014952.png" alt="Workout Logging" width="100%"/></td>
+  </tr>
+  <tr>
+    <td align="center"><em>Workout Feed</em></td>
+    <td align="center"><em>Session Logging</em></td>
+  </tr>
+</table>
 
 ---
 
@@ -64,7 +111,6 @@ Built as a solo full-stack project — from database schema to deployed UI — i
 | Database | Supabase (PostgreSQL) |
 | Auth | Supabase Auth |
 | Hosting | Vercel |
-| Dev Tools | ESLint, VS Code |
 
 ---
 
@@ -180,11 +226,10 @@ npm install
 cp .env.example .env.local
 # Fill in your Supabase URL and anon key
 
-# 4. Run database migrations (in order)
-# Execute in Supabase SQL editor:
-# → supabase-setup.sql
-# → supabase-migrations-player-card.sql
-# → supabase-migrations-workout-assignments.sql
+# 4. Run database migrations (in order via Supabase SQL editor)
+#  → supabase-setup.sql
+#  → supabase-migrations-player-card.sql
+#  → supabase-migrations-workout-assignments.sql
 
 # 5. Start the dev server
 npm run dev
@@ -261,4 +306,3 @@ Built with 🏀 by Nitheesh Donepudi
 *Coach Jake — Where Athletes Level Up*
 
 </div>
-]]>
