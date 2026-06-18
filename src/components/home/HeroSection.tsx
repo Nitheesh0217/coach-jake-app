@@ -1,245 +1,443 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { ArrowRight, Zap, Dumbbell, Target } from "lucide-react";
-import dynamic from "next/dynamic";
+import { ArrowRight, ChevronDown } from "lucide-react";
 
-const BasketballOrb = dynamic(() => import("@/components/3d/BasketballOrb"), {
-  ssr: false,
-  loading: () => <div className="w-full h-full bg-[#050816]" />,
-});
-
-const STATS = [
-  { value: "120+", label: "athletes trained",     color: "text-emerald-400" },
-  { value: '+3"',  label: "vertical in 12 weeks", color: "text-cyan-400"    },
-  { value: "5+",   label: "years coaching",        color: "text-amber-400"   },
-];
-
-const BENEFITS = [
-  { icon: Zap,      title: "EXPLOSIVE POWER",        desc: "Increase your vertical and first step quickness."  },
-  { icon: Dumbbell, title: "STRENGTH & ATHLETICISM", desc: "Build lean muscle and move with control."          },
-  { icon: Target,   title: "GAME-READY RESULTS",     desc: "Train with purpose. Perform with confidence."      },
-];
+/* ── Particle cloud ── */
+function Particles() {
+  const [dots] = useState(() =>
+    Array.from({ length: 80 }, (_, i) => ({
+      id: i,
+      top:  `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      size: 1 + Math.random() * 2,
+      delay: Math.random() * 6,
+      dur:   3 + Math.random() * 5,
+      color: i % 5 === 0 ? "#f59e0b" : i % 4 === 0 ? "#06b6d4" : "#10b981",
+    }))
+  );
+  return (
+    <>
+      {dots.map((d) => (
+        <motion.div
+          key={d.id}
+          className="absolute rounded-full pointer-events-none"
+          style={{ top: d.top, left: d.left, width: d.size, height: d.size, background: d.color }}
+          animate={{ opacity: [0, 0.7, 0], y: [0, -40, -80], scale: [0.5, 1, 0.3] }}
+          transition={{ duration: d.dur, repeat: Infinity, delay: d.delay, ease: "easeOut" }}
+        />
+      ))}
+    </>
+  );
+}
 
 export default function HeroSection() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const rawY   = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const rawOp  = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const y      = useSpring(rawY, { stiffness: 80, damping: 20 });
+  const rawY  = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const rawOp = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const y     = useSpring(rawY, { stiffness: 60, damping: 18 });
 
   return (
     <section
       ref={ref}
-      className="relative w-full bg-[#050816] overflow-hidden"
+      className="relative w-full overflow-hidden bg-[#050816]"
       style={{ minHeight: "100svh" }}
     >
-      {/* ── 3D Canvas — absolute fill ── */}
-      <div className="absolute inset-0 z-0">
-        <BasketballOrb />
+      {/* ════════════════════════════════════
+          BACKGROUND — pure CSS, no Three.js
+         ════════════════════════════════════ */}
+      <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+
+        {/* Fine grid */}
+        <div className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px)," +
+              "linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)",
+            backgroundSize: "80px 80px",
+          }}
+        />
+
+        {/* ── BASKETBALL GLOW CORE ── */}
+        {/* Outer ambient — huge orange haze */}
+        <motion.div
+          animate={{ scale: [1, 1.06, 1], opacity: [0.55, 0.75, 0.55] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute rounded-full"
+          style={{
+            top: "50%", left: "58%",
+            width: 900, height: 900,
+            transform: "translate(-50%,-52%)",
+            background: "radial-gradient(circle, rgba(234,88,12,0.28) 0%, rgba(245,158,11,0.12) 35%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+        {/* Mid glow — bright amber */}
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], opacity: [0.65, 0.9, 0.65] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute rounded-full"
+          style={{
+            top: "50%", left: "58%",
+            width: 500, height: 500,
+            transform: "translate(-50%,-52%)",
+            background: "radial-gradient(circle, rgba(251,146,60,0.55) 0%, rgba(234,88,12,0.3) 45%, transparent 75%)",
+            filter: "blur(30px)",
+          }}
+        />
+        {/* Core — hot white-orange center */}
+        <motion.div
+          animate={{ scale: [1, 1.15, 1], opacity: [0.75, 1, 0.75] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute rounded-full"
+          style={{
+            top: "50%", left: "58%",
+            width: 200, height: 200,
+            transform: "translate(-50%,-52%)",
+            background: "radial-gradient(circle, rgba(255,255,220,0.9) 0%, rgba(251,191,36,0.7) 30%, rgba(234,88,12,0.4) 65%, transparent 100%)",
+            filter: "blur(8px)",
+          }}
+        />
+
+        {/* ── LENS FLARES ── */}
+        {/* Horizontal streak */}
+        <motion.div
+          animate={{ opacity: [0.18, 0.38, 0.18], scaleX: [0.8, 1.1, 0.8] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute"
+          style={{
+            top: "calc(50% - 52%/2 - 1px)",
+            left: 0, right: 0,
+            height: 2,
+            background: "linear-gradient(90deg, transparent 0%, rgba(251,191,36,0.6) 40%, rgba(255,255,255,0.9) 58%, rgba(251,191,36,0.6) 70%, transparent 100%)",
+          }}
+        />
+        {/* Vertical streak */}
+        <motion.div
+          animate={{ opacity: [0.12, 0.28, 0.12], scaleY: [0.8, 1.1, 0.8] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+          className="absolute"
+          style={{
+            left: "58%",
+            top: 0, bottom: 0,
+            width: 2,
+            background: "linear-gradient(180deg, transparent 0%, rgba(251,191,36,0.4) 35%, rgba(255,255,255,0.8) 50%, rgba(251,191,36,0.4) 65%, transparent 100%)",
+          }}
+        />
+        {/* Diagonal flare 1 */}
+        <motion.div
+          animate={{ opacity: [0, 0.22, 0], rotate: [45, 45, 45] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute"
+          style={{
+            top: "50%", left: "58%",
+            width: 600, height: 1,
+            transform: "translate(-50%,-50%) rotate(45deg)",
+            background: "linear-gradient(90deg, transparent, rgba(251,191,36,0.5) 50%, transparent)",
+          }}
+        />
+        {/* Diagonal flare 2 */}
+        <motion.div
+          animate={{ opacity: [0, 0.18, 0], rotate: [-45, -45, -45] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+          className="absolute"
+          style={{
+            top: "50%", left: "58%",
+            width: 500, height: 1,
+            transform: "translate(-50%,-50%) rotate(-45deg)",
+            background: "linear-gradient(90deg, transparent, rgba(255,200,100,0.5) 50%, transparent)",
+          }}
+        />
+
+        {/* ── BASKETBALL SPHERE ── */}
+        {/* Shadow/reflection on floor */}
+        <div
+          className="absolute"
+          style={{
+            bottom: "15%", left: "58%",
+            width: 260, height: 40,
+            transform: "translateX(-50%)",
+            background: "radial-gradient(ellipse, rgba(234,88,12,0.35) 0%, transparent 70%)",
+            filter: "blur(14px)",
+          }}
+        />
+        {/* Hardwood floor reflection — subtle gradient */}
+        <div
+          className="absolute bottom-0 left-0 right-0"
+          style={{
+            height: "35%",
+            background: "linear-gradient(180deg, transparent 0%, rgba(180,100,20,0.04) 60%, rgba(120,60,10,0.08) 100%)",
+          }}
+        />
+        {/* Floor lines (hardwood) */}
+        {[20, 40, 60, 80].map((pct) => (
+          <div key={pct} className="absolute bottom-0 left-0 right-0"
+            style={{
+              height: 1,
+              bottom: `${pct * 0.35}%`,
+              background: "rgba(160,100,40,0.06)",
+            }}
+          />
+        ))}
+
+        {/* Basketball image */}
+        <motion.div
+          animate={{ y: [-8, 8, -8], rotate: [-3, 3, -3] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute"
+          style={{ top: "50%", left: "58%", transform: "translate(-50%,-55%)" }}
+        >
+          {/* Ball body */}
+          <div
+            className="relative"
+            style={{ width: 280, height: 280 }}
+          >
+            {/* Base sphere */}
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: "radial-gradient(circle at 35% 35%, #f97316 0%, #ea580c 40%, #c2410c 70%, #7c2d12 100%)",
+                boxShadow:
+                  "0 0 80px 30px rgba(234,88,12,0.6), 0 0 160px 60px rgba(234,88,12,0.3), inset -20px -20px 40px rgba(0,0,0,0.5), inset 10px 10px 30px rgba(255,160,80,0.4)",
+              }}
+            />
+            {/* Specular highlight */}
+            <div
+              className="absolute rounded-full"
+              style={{
+                top: "12%", left: "18%",
+                width: "35%", height: "28%",
+                background: "radial-gradient(ellipse, rgba(255,255,255,0.45) 0%, transparent 70%)",
+                filter: "blur(4px)",
+              }}
+            />
+            {/* Ball seam lines */}
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 280 280" fill="none">
+              {/* Vertical seam */}
+              <path d="M 140 5 Q 165 70 165 140 Q 165 210 140 275" stroke="rgba(100,30,0,0.6)" strokeWidth="2.5" fill="none" />
+              <path d="M 140 5 Q 115 70 115 140 Q 115 210 140 275" stroke="rgba(100,30,0,0.6)" strokeWidth="2.5" fill="none" />
+              {/* Horizontal seam */}
+              <path d="M 5 140 Q 70 115 140 115 Q 210 115 275 140" stroke="rgba(100,30,0,0.6)" strokeWidth="2.5" fill="none" />
+              <path d="M 5 140 Q 70 165 140 165 Q 210 165 275 140" stroke="rgba(100,30,0,0.6)" strokeWidth="2.5" fill="none" />
+            </svg>
+          </div>
+        </motion.div>
+
+        {/* ── ACCENT GLOWS ── */}
+        {/* Cyan/teal left accent */}
+        <div
+          className="absolute"
+          style={{
+            top: "30%", left: "5%",
+            width: 350, height: 350,
+            background: "radial-gradient(circle, rgba(6,182,212,0.09) 0%, transparent 70%)",
+            filter: "blur(50px)",
+          }}
+        />
+        {/* Emerald bottom accent */}
+        <div
+          className="absolute"
+          style={{
+            bottom: "-5%", left: "30%",
+            width: 400, height: 300,
+            background: "radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+
+        {/* ── CONCENTRIC RINGS around ball ── */}
+        {[350, 500, 680].map((size, i) => (
+          <motion.div
+            key={size}
+            animate={{ opacity: [0.06, 0.14, 0.06], scale: [0.97, 1.03, 0.97] }}
+            transition={{ duration: 3 + i, repeat: Infinity, ease: "easeInOut", delay: i * 0.8 }}
+            className="absolute rounded-full"
+            style={{
+              top: "50%", left: "58%",
+              width: size, height: size,
+              transform: "translate(-50%,-52%)",
+              border: `1px solid rgba(251,146,60,${0.12 - i * 0.03})`,
+            }}
+          />
+        ))}
+
+        {/* Particles */}
+        <Particles />
       </div>
 
-      {/* ── Gradient overlays to make text readable ── */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#050816]/50 via-[#050816]/10 to-[#050816]" />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#050816]/80 via-transparent to-transparent" />
-
-      {/* ── Animated grid lines ── */}
-      <div className="absolute inset-0 z-[1] opacity-[0.03]"
-        style={{
-          backgroundImage: "linear-gradient(rgba(16,185,129,1) 1px,transparent 1px),linear-gradient(90deg,rgba(16,185,129,1) 1px,transparent 1px)",
-          backgroundSize: "70px 70px",
-        }}
-      />
-
-      {/* ── Content ── */}
+      {/* ════════════════════════════════════
+          CINEMATIC TYPOGRAPHY — MAIN CONTENT
+         ════════════════════════════════════ */}
       <motion.div
         style={{ y, opacity: rawOp }}
-        className="relative z-[2] flex items-center min-h-[100svh] w-full"
+        className="relative z-10 flex items-center min-h-[100svh]"
       >
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 pt-28 pb-24">
+          <div className="max-w-3xl">
 
-            {/* ── LEFT: copy ── */}
-            <div className="space-y-8">
-              {/* Badge */}
-              <motion.span
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 backdrop-blur-sm px-4 py-2 text-[11px] font-black uppercase tracking-widest text-emerald-300"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]" />
-                Basketball Performance Coaching
-              </motion.span>
+            {/* Eyebrow */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="mb-8"
+            >
+              <span className="inline-flex items-center gap-2.5 text-[11px] font-black uppercase tracking-[0.25em] text-zinc-400">
+                <span
+                  className="inline-block w-8 h-px"
+                  style={{ background: "linear-gradient(90deg,#f59e0b,transparent)" }}
+                />
+                Coach Jake · AI-Powered Basketball Platform
+                <span
+                  className="inline-block w-8 h-px"
+                  style={{ background: "linear-gradient(90deg,transparent,#f59e0b)" }}
+                />
+              </span>
+            </motion.div>
 
-              {/* Headline */}
-              <div className="space-y-0">
-                {["Explosive", "Basketball", "Performance"].map((word, i) => (
-                  <motion.div
-                    key={word}
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7, delay: 0.1 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    <span className="block text-[clamp(2.8rem,7vw,5rem)] font-black leading-[1.05] tracking-tight bg-gradient-to-r from-emerald-300 via-cyan-200 to-emerald-400 bg-clip-text text-transparent">
-                      {word}
-                    </span>
-                  </motion.div>
-                ))}
-                <motion.span
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 0.46, ease: [0.22, 1, 0.36, 1] }}
-                  className="block text-[clamp(2.8rem,7vw,5rem)] font-black leading-[1.05] tracking-tight text-white"
-                >
-                  for Serious Hoopers
-                </motion.span>
-              </div>
-
-              {/* Sub */}
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.58 }}
-                className="text-zinc-400 text-lg leading-relaxed max-w-lg"
-              >
-                Elite training programs designed to increase your vertical, build strength, and elevate your game on every level.
-              </motion.p>
-
-              {/* CTAs */}
+            {/* ── STACKED HEADLINE ── */}
+            <div className="space-y-1 mb-8">
+              {/* LINE 1 — TRAIN SMARTER */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.68 }}
-                className="flex flex-wrap gap-4"
+                initial={{ opacity: 0, x: -60 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.75, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
               >
-                <motion.a
-                  href="/signup"
-                  whileHover={{ scale: 1.04, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="group inline-flex items-center gap-2 rounded-full bg-emerald-500 px-8 py-4 text-sm font-black text-black shadow-[0_0_30px_rgba(16,185,129,0.55)] hover:bg-emerald-400 hover:shadow-[0_0_50px_rgba(16,185,129,0.85)] transition-all duration-300"
+                <h1
+                  className="font-black text-white leading-none tracking-tight uppercase"
+                  style={{
+                    fontSize: "clamp(3.5rem, 10vw, 8rem)",
+                    textShadow: "0 0 80px rgba(255,255,255,0.08)",
+                  }}
                 >
-                  Start training free
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </motion.a>
-                <motion.a
-                  href="#programs"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="inline-flex items-center gap-3 rounded-full border border-zinc-700/80 bg-zinc-900/50 backdrop-blur-sm px-7 py-4 text-sm font-semibold text-zinc-200 hover:border-emerald-500/50 hover:text-white transition-all duration-300"
-                >
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-emerald-500/40 bg-emerald-500/10 text-[10px]">▶</span>
-                  Watch 60s overview
-                </motion.a>
+                  Train Smarter
+                </h1>
               </motion.div>
 
-              {/* Stats */}
+              {/* LINE 2 — TRACK EVERYTHING */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.78 }}
-                className="grid grid-cols-3 gap-3"
+                initial={{ opacity: 0, x: -60 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.75, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
               >
-                {STATS.map((s) => (
-                  <motion.div
-                    key={s.label}
-                    whileHover={{ y: -4, scale: 1.03 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="rounded-2xl border border-zinc-800/80 bg-zinc-900/70 backdrop-blur-sm px-3 py-3.5 hover:border-emerald-500/30 transition-colors cursor-default"
-                  >
-                    <p className={`text-2xl font-black tabular-nums ${s.color}`}>{s.value}</p>
-                    <p className="text-[11px] text-zinc-500 mt-0.5 leading-tight">{s.label}</p>
-                  </motion.div>
-                ))}
+                <h1
+                  className="font-black text-white leading-none tracking-tight uppercase"
+                  style={{
+                    fontSize: "clamp(3.5rem, 10vw, 8rem)",
+                    textShadow: "0 0 80px rgba(255,255,255,0.08)",
+                  }}
+                >
+                  Track Everything
+                </h1>
+              </motion.div>
+
+              {/* LINE 3 — LEVEL UP (orange) */}
+              <motion.div
+                initial={{ opacity: 0, x: -60 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.75, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <h1
+                  className="font-black leading-none tracking-tight uppercase"
+                  style={{
+                    fontSize: "clamp(3.5rem, 10vw, 8rem)",
+                    color: "#f97316",
+                    textShadow: "0 0 60px rgba(249,115,22,0.7), 0 0 120px rgba(234,88,12,0.4)",
+                  }}
+                >
+                  Level Up
+                </h1>
               </motion.div>
             </div>
 
-            {/* ── RIGHT: glass card ── */}
-            <motion.div
-              initial={{ opacity: 0, x: 60 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="hidden lg:block relative"
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.44 }}
+              className="text-zinc-400 mb-10 leading-relaxed"
+              style={{ fontSize: "clamp(1rem, 2vw, 1.2rem)", maxWidth: "38rem" }}
             >
-              <div className="absolute -inset-6 rounded-[3rem] bg-gradient-to-br from-emerald-500/15 via-transparent to-cyan-500/8 blur-3xl pointer-events-none" />
+              Coach Jake — AI-Powered Basketball Fitness Platform. Personalized
+              workouts, real-time tracking, and coach-assigned programs that
+              actually move the needle.
+            </motion.p>
 
-              <motion.div
-                whileHover={{ y: -8 }}
-                transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                className="relative rounded-[2rem] border border-white/10 bg-zinc-950/90 backdrop-blur-xl overflow-hidden shadow-[0_0_80px_rgba(16,185,129,0.12),inset_0_1px_0_rgba(255,255,255,0.06)]"
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.54 }}
+              className="flex flex-wrap gap-4 mb-16"
+            >
+              <motion.a
+                href="/signup"
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                className="group inline-flex items-center gap-2 rounded-none font-black uppercase tracking-widest text-sm text-black px-10 py-4 transition-all duration-300"
+                style={{
+                  background: "linear-gradient(135deg,#f97316,#ea580c)",
+                  boxShadow: "0 0 30px rgba(249,115,22,0.5), 0 0 60px rgba(234,88,12,0.2)",
+                  clipPath: "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))",
+                }}
               >
-                {/* Image */}
-                <div className="relative h-[340px] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-zinc-900 to-black" />
-                  <img
-                    src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&q=85&auto=format&fit=crop"
-                    alt="Basketball training"
-                    className="absolute inset-0 w-full h-full object-cover object-center opacity-80"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/30 to-transparent" />
-                  <div className="absolute top-4 left-4">
-                    <motion.span
-                      animate={{ opacity: [0.7, 1, 0.7] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-black/70 backdrop-blur-md px-3 py-1.5 text-[11px] font-bold text-emerald-300 uppercase tracking-wide"
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      Elite Training
-                    </motion.span>
-                  </div>
-                </div>
+                Start Training Free
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </motion.a>
 
-                {/* Feature list */}
-                <div className="bg-zinc-950/95 px-5 py-5 space-y-3.5">
-                  {BENEFITS.map((b, i) => (
-                    <motion.div
-                      key={b.title}
-                      initial={{ opacity: 0, x: -16 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.5 + i * 0.1 }}
-                      className="flex items-start gap-3 group"
-                    >
-                      <div className="flex-shrink-0 h-9 w-9 rounded-xl border border-emerald-500/25 bg-emerald-500/10 flex items-center justify-center group-hover:border-emerald-500/50 group-hover:bg-emerald-500/20 group-hover:shadow-[0_0_12px_rgba(16,185,129,0.3)] transition-all duration-300">
-                        <b.icon className="h-4 w-4 text-emerald-400" />
-                      </div>
-                      <div>
-                        <p className="text-[11px] font-black text-emerald-300 uppercase tracking-widest">{b.title}</p>
-                        <p className="text-xs text-zinc-400 mt-0.5">{b.desc}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                  <div className="pt-3 border-t border-zinc-800/60 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs font-black text-white">Coach Jake</p>
-                      <p className="text-[10px] text-zinc-600 uppercase tracking-widest mt-0.5">Basketball Performance Coach</p>
-                    </div>
-                    <div className="h-9 w-9 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-                      <span className="text-xs font-black text-emerald-300">CJ</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+              <motion.a
+                href="/login"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center gap-2 font-semibold text-sm text-zinc-300 hover:text-white transition-colors px-8 py-4 border border-zinc-700 hover:border-zinc-500"
+                style={{
+                  clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+                }}
+              >
+                Sign In
+              </motion.a>
             </motion.div>
 
+            {/* Stats strip */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.64 }}
+              className="flex items-center gap-8 flex-wrap"
+            >
+              {[
+                { val: "120+", lbl: "Athletes Trained" },
+                { val: '+3"',  lbl: "Avg Vertical Gain" },
+                { val: "98%",  lbl: "Completion Rate"   },
+                { val: "5+",   lbl: "Years Coaching"    },
+              ].map((s, i) => (
+                <div key={s.lbl} className="flex items-center gap-3">
+                  {i > 0 && <div className="w-px h-8 bg-zinc-800" />}
+                  <div>
+                    <p className="font-black text-white tabular-nums" style={{ fontSize: "clamp(1.3rem,2.5vw,1.75rem)", color: i === 0 ? "#f97316" : "white" }}>{s.val}</p>
+                    <p className="text-[11px] text-zinc-600 uppercase tracking-widest font-semibold">{s.lbl}</p>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </motion.div>
 
-      {/* ── Scroll indicator ── */}
+      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[2] flex flex-col items-center gap-2"
+        transition={{ delay: 1.8 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
-        <span className="text-[10px] text-zinc-600 uppercase tracking-widest font-semibold">Scroll</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-5 h-8 rounded-full border border-zinc-700 flex items-start justify-center pt-1.5"
+          transition={{ duration: 1.6, repeat: Infinity }}
         >
-          <div className="w-1 h-2 rounded-full bg-emerald-400" />
+          <ChevronDown className="w-5 h-5 text-zinc-600" />
         </motion.div>
       </motion.div>
     </section>
