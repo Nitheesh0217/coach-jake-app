@@ -38,12 +38,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} bg-[#050816]`}>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable}`}>
       <body
-        className="antialiased overflow-x-hidden bg-transparent text-[#f9fafb]"
+        className="antialiased overflow-x-hidden bg-[#050816] text-[#f9fafb]"
       >
         <Global3DBackground />
-        {children}
+        <div className="relative z-10 min-h-screen bg-transparent">
+          {children}
+        </div>
       </body>
     </html>
   );

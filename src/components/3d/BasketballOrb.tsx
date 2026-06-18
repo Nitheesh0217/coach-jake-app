@@ -463,7 +463,7 @@ export default function BasketballOrb() {
   }, [scrollSpeed]);
 
   return (
-    <div className="fixed inset-0 w-full h-full pointer-events-none -z-10 bg-transparent">
+    <div className="fixed inset-0 w-full h-full pointer-events-none z-0 bg-transparent">
       <Canvas
         gl={{ antialias: true, alpha: true }}
         dpr={[1, 1.5]}
