@@ -1,6 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-brand-emerald: #10b981;
+  --color-brand-amber: #f59e0b;
+  --color-brand-cyan: #06b6d4;
+  --color-space-900: #050816;
+  --color-space-800: #0a0f1e;
+
+  --shadow-emerald-glow-sm: 0 0 20px rgba(16, 185, 129, 0.35);
+  --shadow-emerald-glow-md: 0 0 32px rgba(16, 185, 129, 0.55);
+  --shadow-amber-glow-sm: 0 0 20px rgba(245, 158, 11, 0.35);
+  --shadow-card-default: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-card-hover: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(16, 185, 129, 0.08);
+}
 
 /* ─────────────────────────────────────────
    DESIGN TOKENS  (single source of truth)
