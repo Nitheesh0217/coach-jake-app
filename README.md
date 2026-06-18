@@ -1,10 +1,6 @@
 <div align="center">
 
-# 🏀 Coach Jake
-
-### AI-Powered Basketball Fitness Coaching Platform
-
-**Train smarter. Track everything. Level up.**
+![Coach Jake Banner](images/banner.svg)
 
 <br/>
 
@@ -14,13 +10,9 @@
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 
-<br/>
-
-[![Live](https://img.shields.io/badge/🚀_Live_Demo-coach--jake--app.vercel.app-brightgreen?style=flat-square)](https://coach-jake-app.vercel.app)
+[![Live](https://img.shields.io/badge/%F0%9F%9A%80_Live_Demo-coach--jake--app.vercel.app-brightgreen?style=flat-square)](https://coach-jake-app.vercel.app)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue?style=flat-square)](CONTRIBUTING.md)
-
-<br/>
 
 [🚀 Live Demo](https://coach-jake-app.vercel.app) &nbsp;·&nbsp; [🐛 Report Bug](https://github.com/Nitheesh0217/coach-jake-app/issues) &nbsp;·&nbsp; [✨ Request Feature](https://github.com/Nitheesh0217/coach-jake-app/issues)
 
@@ -41,7 +33,7 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 ## Screenshots
 
 ### Landing Page
-![Landing](images/Screenshot%202026-06-15%20014417.png)
+![Landing Page](images/Screenshot%202026-06-15%20014417.png)
 
 <br/>
 
