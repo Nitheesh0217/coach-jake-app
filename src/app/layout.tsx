@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Global3DBackground from "@/components/layout/Global3DBackground";
+import Global3DBackground from "@/components/sections/layout/Global3DBackground";
 import "./globals.css";
 
 const geistSans = Geist({

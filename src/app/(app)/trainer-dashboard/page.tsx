@@ -1,8 +1,8 @@
 import { supabaseServer } from "@/lib/supabaseClient";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
-import CoachDashboard from "@/components/dashboard/CoachDashboard";
+import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboardLayout";
+import CoachDashboard from "@/components/sections/dashboard/CoachDashboard";
 
 type AthleteRow = {
   user_id: string;

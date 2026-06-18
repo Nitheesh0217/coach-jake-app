@@ -155,7 +155,7 @@ export default function AboutPage() {
   return (
     <main className="relative text-zinc-50 bg-transparent min-h-screen">
       {/* Translucent background overlay to let WebGL show through */}
-      <div className="fixed inset-0 bg-[#050816]/75 backdrop-blur-[2px] pointer-events-none -z-10" />
+      <div className="fixed inset-0 bg-transparent/75 backdrop-blur-[2px] pointer-events-none -z-10" />
 
       {/* ===== SECTION 1: HERO + MISSION ===== */}
       <section className="relative py-16 lg:py-28">

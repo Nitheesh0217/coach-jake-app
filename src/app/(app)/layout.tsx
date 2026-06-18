@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import AppSidebarLayout from "@/components/layout/AppSidebarLayout";
+import AppSidebarLayout from "@/components/sections/layout/AppSidebarLayout";
 
 export const metadata: Metadata = {
   title: "Coach Jake — Basketball Performance Platform",

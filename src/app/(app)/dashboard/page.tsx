@@ -1,9 +1,9 @@
 import { supabaseServer } from "@/lib/supabaseClient";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
-import AthleteDashboard from "@/components/dashboard/AthleteDashboard";
-import CoachDashboard from "@/components/dashboard/CoachDashboard";
+import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboardLayout";
+import AthleteDashboard from "@/components/sections/dashboard/AthleteDashboard";
+import CoachDashboard from "@/components/sections/dashboard/CoachDashboard";
 import { getMeasurements } from "./measurements-actions";
 import type { Profile, Workout, Measurement, AthleteProfile } from "@/types";
 

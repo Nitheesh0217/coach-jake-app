@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import PublicHeader from "@/components/layout/PublicHeader";
-import PublicFooter from "@/components/layout/PublicFooter";
+import PublicHeader from "@/components/sections/layout/PublicHeader";
+import PublicFooter from "@/components/sections/layout/PublicFooter";
 
 export const metadata: Metadata = {
   title: "Coach Jake — Elite Basketball Performance Coaching",
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#050816] overflow-x-hidden">
+    <div className="min-h-screen bg-transparent overflow-x-hidden">
       <PublicHeader />
       <div>{children}</div>
       <PublicFooter />

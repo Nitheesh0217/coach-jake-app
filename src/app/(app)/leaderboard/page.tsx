@@ -1,8 +1,8 @@
 import { supabaseServer } from "@/lib/supabaseClient";
 import { cookies } from "next/headers";
 import { Trophy } from "lucide-react";
-import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
-import LeaderboardClient from "@/components/leaderboard/LeaderboardClient";
+import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboardLayout";
+import LeaderboardClient from "@/components/sections/leaderboard/LeaderboardClient";
 
 export const dynamic = "force-dynamic";
 

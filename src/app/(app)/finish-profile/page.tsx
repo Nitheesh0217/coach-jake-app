@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUserProfile } from "./actions";
 import { isProfileComplete } from "@/lib/profileUtils";
-import OnboardingWizardWrapper from "@/components/auth/OnboardingWizardWrapper";
+import OnboardingWizardWrapper from "@/components/sections/auth/OnboardingWizardWrapper";
 
 export const metadata = {
   title: "Build Your Player Card - Coach Jake",
@@ -23,11 +23,11 @@ export default async function FinishProfilePage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#050816]">
+    <div className="min-h-screen relative overflow-hidden bg-transparent">
       {/* Multi-layer background system */}
 
       {/* Layer 1: Base gradient background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-[#050816] via-[#0a1220] to-[#050816]"></div>
+      <div className="fixed inset-0 bg-gradient-to-br from-[#050816]/70 via-[#0a1220]/75 to-[#050816]/70"></div>
 
       {/* Layer 2: Radial gradients (premium glow effect) */}
       <div className="fixed inset-0 pointer-events-none">

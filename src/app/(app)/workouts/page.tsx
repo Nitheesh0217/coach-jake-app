@@ -1,8 +1,8 @@
 import { supabaseServer } from "@/lib/supabaseClient";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import TrainerDashboardLayout from "@/components/layout/TrainerDashboardLayout";
-import WorkoutsClient from "@/components/workouts/WorkoutsClient";
+import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboardLayout";
+import WorkoutsClient from "@/components/sections/workouts/WorkoutsClient";
 import { Dumbbell, Clock, CheckCircle2, ArrowRight } from "lucide-react";
 
 type AssignedWorkout = {

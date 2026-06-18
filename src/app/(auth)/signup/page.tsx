@@ -38,7 +38,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050816] text-white flex overflow-hidden relative">
+    <div className="min-h-screen bg-transparent text-white flex overflow-hidden relative">
       {/* Court BG */}
       <div className="absolute inset-0 z-0"
         style={{ backgroundImage:"url('https://images.pexels.com/photos/1752757/pexels-photo-1752757.jpeg?auto=compress&cs=tinysrgb&w=1600')", backgroundSize:"cover", backgroundPosition:"center" }} />
