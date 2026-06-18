@@ -183,11 +183,11 @@ export default function HeroSection() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full min-h-screen overflow-hidden bg-[#04030F]"
+      className="relative w-full min-h-screen overflow-hidden bg-transparent"
       style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
     >
-      {/* ── HUD Court Background ── */}
-      <HUDBackground mouseX={rawMouseX} mouseY={rawMouseY} />
+      {/* ── Dark overlay for text legibility ── */}
+      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#050816]/95 via-[#050816]/75 to-transparent" />
 
       {/* ── Scan lines ── */}
       <ScanLines />
