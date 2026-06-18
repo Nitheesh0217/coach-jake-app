@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { ArrowRight, Clock, BarChart2, Zap, Dumbbell, Target } from "lucide-react";
+import { Slide3DReveal } from "@/components/public/SectionReveal";
 
 const PROGRAMS = [
   {
@@ -61,40 +62,41 @@ export default function ProgramsSection() {
 
         <div className="grid md:grid-cols-3 gap-5">
           {PROGRAMS.map((p, i) => (
-            <motion.div key={p.title}
-              initial={{ opacity:0, y:40 }} animate={inView ? { opacity:1, y:0 } : {}} transition={{ duration:0.6, delay:i*0.12 }}
-              whileHover={{ y:-8, transition:{ type:"spring", stiffness:300, damping:25 } }}
-              className={`group flex flex-col rounded-2xl border overflow-hidden transition-all duration-400 cursor-pointer ${p.borderGlow}`}>
-              {/* Image */}
-              <div className="relative h-48 overflow-hidden bg-zinc-900">
-                <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-115 group-hover:rotate-1 group-hover:translate-y-[-2px] transition-all duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent" />
-                {/* Shimmer on hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
-                <div className="absolute top-3 left-3">
-                  <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${p.badgeColor}`}>
-                    <p.Icon className={`w-3 h-3 ${p.iconColor}`} />{p.badge}
-                  </span>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="flex flex-col flex-1 p-5 space-y-4">
-                <div className="space-y-2">
-                  <h3 className="text-lg font-black text-white leading-tight group-hover:text-emerald-100 transition-colors">{p.title}</h3>
-                  <p className="text-sm text-zinc-500 leading-relaxed">{p.desc}</p>
-                </div>
-                <div className="mt-auto pt-4 border-t border-zinc-800/60 flex items-center justify-between">
-                  <div className="flex gap-4 text-xs text-zinc-600">
-                    <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5"/><span className="font-semibold text-zinc-400">{p.duration}</span></span>
-                    <span className="flex items-center gap-1.5"><BarChart2 className="w-3.5 h-3.5"/><span className="font-semibold text-zinc-400">{p.level}</span></span>
+            <Slide3DReveal key={p.title} direction={i % 2 === 0 ? "left" : "right"} delay={i * 0.12}>
+              <motion.div
+                whileHover={{ y:-8, transition:{ type:"spring", stiffness:300, damping:25 } }}
+                className={`group flex flex-col rounded-2xl border overflow-hidden transition-all duration-400 cursor-pointer ${p.borderGlow}`}>
+                {/* Image */}
+                <div className="relative h-48 overflow-hidden bg-zinc-900">
+                  <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-115 group-hover:rotate-1 group-hover:translate-y-[-2px] transition-all duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent" />
+                  {/* Shimmer on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
+                  <div className="absolute top-3 left-3">
+                    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${p.badgeColor}`}>
+                      <p.Icon className={`w-3 h-3 ${p.iconColor}`} />{p.badge}
+                    </span>
                   </div>
-                  <motion.a href="/programs" whileHover={{ x:3 }} className="text-emerald-400 hover:text-emerald-300 font-bold text-xs flex items-center gap-1 transition-colors">
-                    View details <ArrowRight className="w-3.5 h-3.5"/>
-                  </motion.a>
                 </div>
-              </div>
-            </motion.div>
+
+                {/* Content */}
+                <div className="flex flex-col flex-1 p-5 space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-black text-white leading-tight group-hover:text-emerald-100 transition-colors">{p.title}</h3>
+                    <p className="text-sm text-zinc-500 leading-relaxed">{p.desc}</p>
+                  </div>
+                  <div className="mt-auto pt-4 border-t border-zinc-800/60 flex items-center justify-between">
+                    <div className="flex gap-4 text-xs text-zinc-600">
+                      <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5"/><span className="font-semibold text-zinc-400">{p.duration}</span></span>
+                      <span className="flex items-center gap-1.5"><BarChart2 className="w-3.5 h-3.5"/><span className="font-semibold text-zinc-400">{p.level}</span></span>
+                    </div>
+                    <motion.a href="/programs" whileHover={{ x:3 }} className="text-emerald-400 hover:text-emerald-300 font-bold text-xs flex items-center gap-1 transition-colors">
+                      View details <ArrowRight className="w-3.5 h-3.5"/>
+                    </motion.a>
+                  </div>
+                </div>
+              </motion.div>
+            </Slide3DReveal>
           ))}
         </div>
       </div>

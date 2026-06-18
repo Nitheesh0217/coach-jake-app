@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
+import { StatCounter } from "@/components/public/SectionReveal";
 
 // ── Stagger animation variants ────────────────────────────────
 const containerVariants = {
@@ -290,8 +291,8 @@ export default function HeroSection() {
                     />
                   ))}
                 </div>
-                <p className="text-sm text-zinc-400">
-                  <span className="text-white font-bold">2,400+</span> athletes training
+                <p className="text-sm text-zinc-400 font-bold">
+                  <StatCounter value="2,400+" /> athletes training
                 </p>
               </div>
 
@@ -304,7 +305,9 @@ export default function HeroSection() {
                 { value: "3.2×", label: "Faster Gains" },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <p className="text-xl font-black text-emerald-400">{stat.value}</p>
+                  <p className="text-xl font-black text-emerald-400">
+                    <StatCounter value={stat.value} />
+                  </p>
                   <p className="text-[10px] text-zinc-500 uppercase tracking-widest">{stat.label}</p>
                 </div>
               ))}
