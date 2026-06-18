@@ -40,6 +40,7 @@ import { getAvatarImage } from "@/lib/imageUtils";
 import { assignWorkout } from "@/app/(app)/trainer-dashboard/actions";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface AthleteRow {
   user_id: string;
@@ -87,6 +88,7 @@ export default function CoachDashboard({
   coachName = "Coach",
   recentActivity = []
 }: Props) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"all" | "active" | "rest" | "at-risk">("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAthlete, setSelectedAthlete] = useState("");
@@ -204,7 +206,10 @@ export default function CoachDashboard({
             <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Coach Dashboard</h1>
             <p className="text-zinc-500 text-sm mt-1 uppercase tracking-wider font-semibold">Welcome back, {coachName}</p>
           </div>
-          <button className="relative p-3 rounded-2xl border border-white/10 bg-zinc-900/40 hover:bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 transition-all">
+          <button 
+            onClick={() => router.replace("?notifications=true")}
+            className="relative p-3 rounded-2xl border border-white/10 bg-zinc-900/40 hover:bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 transition-all"
+          >
             <Bell className="w-5 h-5" />
             <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-emerald-500" />
           </button>

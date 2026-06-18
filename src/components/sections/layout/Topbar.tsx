@@ -5,6 +5,7 @@ import { Menu, Search, Bell, Settings, X, Save, Shield, User } from "lucide-reac
 import { motion, AnimatePresence } from "framer-motion";
 import { supabaseBrowser } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 interface TopbarProps {
   coachName: string;
@@ -38,6 +39,37 @@ export default function Topbar({ coachName, onMenuClick }: TopbarProps) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (searchParams.get("settings") === "true") {
+      setSettingsOpen(true);
+    } else {
+      setSettingsOpen(false);
+    }
+    if (searchParams.get("notifications") === "true") {
+      setNotificationsOpen(true);
+    } else {
+      setNotificationsOpen(false);
+    }
+  }, [searchParams]);
+
+  const closeSettings = () => {
+    setSettingsOpen(false);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("settings");
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
+  const closeNotifications = () => {
+    setNotificationsOpen(false);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("notifications");
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
   // Profile fields state
   const [userId, setUserId] = useState("");
@@ -204,8 +236,15 @@ export default function Topbar({ coachName, onMenuClick }: TopbarProps) {
           {/* Notifications bell */}
           <button
             onClick={() => {
-              setNotificationsOpen(!notificationsOpen);
-              setSettingsOpen(false);
+              const newVal = !notificationsOpen;
+              const params = new URLSearchParams(searchParams.toString());
+              if (newVal) {
+                params.set("notifications", "true");
+                params.delete("settings");
+              } else {
+                params.delete("notifications");
+              }
+              router.replace(`${pathname}?${params.toString()}`);
             }}
             className={`relative p-2.5 rounded-xl border transition-all duration-200 ${
               notificationsOpen 
@@ -223,8 +262,15 @@ export default function Topbar({ coachName, onMenuClick }: TopbarProps) {
           {/* Settings cog */}
           <button
             onClick={() => {
-              setSettingsOpen(!settingsOpen);
-              setNotificationsOpen(false);
+              const newVal = !settingsOpen;
+              const params = new URLSearchParams(searchParams.toString());
+              if (newVal) {
+                params.set("settings", "true");
+                params.delete("notifications");
+              } else {
+                params.delete("settings");
+              }
+              router.replace(`${pathname}?${params.toString()}`);
             }}
             className={`p-2.5 rounded-xl border transition-all duration-200 ${
               settingsOpen 
@@ -246,7 +292,7 @@ export default function Topbar({ coachName, onMenuClick }: TopbarProps) {
             {notificationsOpen && (
               <>
                 {/* Backdrop overlay to close */}
-                <div className="fixed inset-0 z-40" onClick={() => setNotificationsOpen(false)} />
+                <div className="fixed inset-0 z-40" onClick={closeNotifications} />
                 <motion.div
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -309,7 +355,7 @@ export default function Topbar({ coachName, onMenuClick }: TopbarProps) {
           <AnimatePresence>
             {settingsOpen && (
               <>
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setSettingsOpen(false)} />
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={closeSettings} />
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: -20 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -324,7 +370,7 @@ export default function Topbar({ coachName, onMenuClick }: TopbarProps) {
                       <h3 className="text-base font-black text-white uppercase tracking-widest">Profile Telemetry Config</h3>
                     </div>
                     <button
-                      onClick={() => setSettingsOpen(false)}
+                      onClick={closeSettings}
                       className="p-1.5 rounded-xl border border-white/5 bg-zinc-900/50 text-zinc-500 hover:text-white transition-all"
                     >
                       <X className="w-4.5 h-4.5" />
@@ -455,7 +501,7 @@ export default function Topbar({ coachName, onMenuClick }: TopbarProps) {
                   {/* Modal Footer */}
                   <div className="pt-6 border-t border-white/5 flex items-center justify-end gap-3 mt-6">
                     <button
-                      onClick={() => setSettingsOpen(false)}
+                      onClick={closeSettings}
                       className="px-5 py-3 rounded-2xl border border-white/5 bg-zinc-900/50 hover:bg-zinc-900 text-xs font-bold uppercase tracking-widest text-zinc-400 transition-all"
                     >
                       Cancel

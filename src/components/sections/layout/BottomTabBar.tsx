@@ -5,27 +5,28 @@ import { usePathname } from "next/navigation";
 import { Home, Dumbbell, Trophy, User } from "lucide-react";
 import { motion } from "framer-motion";
 
-const tabs = [
-  { href: "/dashboard", icon: Home, label: "Home" },
-  { href: "/workouts", icon: Dumbbell, label: "Workouts" },
-  { href: "/leaderboard", icon: Trophy, label: "Board" },
-  { href: "/dashboard", icon: User, label: "Profile" },
-];
-
 export default function BottomTabBar() {
   const pathname = usePathname();
+
+  const isTrainer = pathname.startsWith("/trainer-dashboard");
+  const tabs = [
+    { href: isTrainer ? "/trainer-dashboard" : "/dashboard", icon: Home, label: "Home" },
+    { href: "/workouts", icon: Dumbbell, label: "Workouts" },
+    { href: "/leaderboard", icon: Trophy, label: "Board" },
+    { href: isTrainer ? "/trainer-dashboard?settings=true" : "/dashboard?settings=true", icon: User, label: "Profile" },
+  ];
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 h-16 bg-[rgba(5,8,22,0.95)] backdrop-blur-xl border-t border-zinc-800/60 pb-safe flex items-center justify-around">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive =
-          (pathname.startsWith(tab.href) && tab.href !== "/") ||
-          (tab.href === "/" && pathname === "/");
+          (pathname.startsWith(tab.href.split("?")[0]) && tab.href.split("?")[0] !== "/") ||
+          (tab.href.split("?")[0] === "/" && pathname === "/");
 
         return (
           <Link
-            key={tab.href}
+            key={tab.label}
             href={tab.href}
             className="flex flex-col items-center justify-center flex-1 h-full gap-0.5 relative"
           >

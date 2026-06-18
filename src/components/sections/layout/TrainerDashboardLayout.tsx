@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import BottomTabBar from "./BottomTabBar";
@@ -47,10 +47,12 @@ export default function TrainerDashboardLayout({
       {/* Main content */}
       <div className="md:ml-60 flex flex-col min-h-screen">
         {/* Topbar */}
-        <Topbar
-          coachName={coachName}
-          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-        />
+        <Suspense fallback={<div className="h-16 bg-zinc-950 border-b border-zinc-800 animate-pulse" />}>
+          <Topbar
+            coachName={coachName}
+            onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+          />
+        </Suspense>
 
         {/* Content */}
         <main className="flex-1 pb-16 md:pb-0">{children}</main>

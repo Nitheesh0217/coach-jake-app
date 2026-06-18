@@ -149,8 +149,12 @@ async function getDashboardData(): Promise<DashboardResponse> {
     const profile = profileData as Profile;
 
 
+    // Redirect coaches to their dedicated dashboard
+    if (profile.role === "coach") {
+      redirect("/trainer-dashboard");
+    }
+
     // Gate athletes behind onboarding: redirect if not fully scouted
-    // Do NOT redirect coaches
     if (profile.is_fully_scouted === false && profile.role === "athlete") {
       redirect("/finish-profile");
     }
