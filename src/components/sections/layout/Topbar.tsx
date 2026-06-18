@@ -19,6 +19,19 @@ interface NotificationItem {
   type: "assignment" | "completion";
 }
 
+interface WorkoutLogNotification {
+  id: string;
+  created_at: string;
+  profiles: { full_name: string | null } | null;
+  workouts: { title: string | null } | null;
+}
+
+interface WorkoutAssignmentNotification {
+  id: string;
+  created_at: string;
+  workouts: { title: string | null } | null;
+}
+
 export default function Topbar({ coachName, onMenuClick }: TopbarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -76,7 +89,7 @@ export default function Topbar({ coachName, onMenuClick }: TopbarProps) {
             .limit(5);
 
           if (logs) {
-            const mapped: NotificationItem[] = logs.map((log: any) => ({
+            const mapped: NotificationItem[] = (logs as unknown as WorkoutLogNotification[]).map((log) => ({
               id: log.id,
               created_at: log.created_at,
               athleteName: log.profiles?.full_name || "An athlete",
@@ -96,7 +109,7 @@ export default function Topbar({ coachName, onMenuClick }: TopbarProps) {
             .limit(5);
 
           if (assignments) {
-            const mapped: NotificationItem[] = assignments.map((asgn: any) => ({
+            const mapped: NotificationItem[] = (assignments as unknown as WorkoutAssignmentNotification[]).map((asgn) => ({
               id: asgn.id,
               created_at: asgn.created_at,
               athleteName: "Coach Jake",

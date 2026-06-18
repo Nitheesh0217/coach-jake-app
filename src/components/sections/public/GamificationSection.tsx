@@ -65,20 +65,20 @@ export default function GamificationSection() {
         {/* Mini leaderboard */}
         <motion.div initial={{ opacity:0, x:30 }} animate={inView?{opacity:1,x:0}:{}} transition={{ duration:0.7, delay:0.15 }}
           className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-6">
-          <h3 className="text-lg font-black text-white mb-5 flex items-center gap-2"><Trophy className="w-5 h-5 text-amber-400"/>This Week's Leaders</h3>
+          <h3 className="text-lg font-black text-white mb-5 flex items-center gap-2"><Trophy className="w-5 h-5 text-amber-400"/>{"This Week's Leaders"}</h3>
           <div className="space-y-3">
             {LEADERBOARD.map((e, i) => (
               <motion.div key={e.rank}
                 initial={{ opacity:0, x:20 }} animate={inView?{opacity:1,x:0}:{}} transition={{ delay:0.3+i*0.08 }}
                 className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-                  (e as any).isYou ? "border-emerald-500/40 bg-emerald-500/8" : "border-zinc-800/60 bg-zinc-800/30 hover:bg-zinc-800/60"
+                  (e as { isYou?: boolean }).isYou ? "border-emerald-500/40 bg-emerald-500/8" : "border-zinc-800/60 bg-zinc-800/30 hover:bg-zinc-800/60"
                 }`}>
                 <span className={`text-lg font-black w-6 text-center ${e.color}`}>{e.rank}</span>
                 <div className="w-8 h-8 rounded-full bg-zinc-700 border border-zinc-600 flex items-center justify-center text-xs font-black text-zinc-300">
                   {e.name.split(" ").map(n=>n[0]).join("")}
                 </div>
                 <div className="flex-1">
-                  <p className={`text-sm font-bold ${e.color}`}>{e.name} {(e as any).isYou && <span className="text-[10px] text-emerald-400 bg-emerald-500/20 border border-emerald-500/30 px-1.5 py-0.5 rounded ml-1">YOU</span>}</p>
+                  <p className={`text-sm font-bold ${e.color}`}>{e.name} {(e as { isYou?: boolean }).isYou && <span className="text-[10px] text-emerald-400 bg-emerald-500/20 border border-emerald-500/30 px-1.5 py-0.5 rounded ml-1">YOU</span>}</p>
                 </div>
                 <span className="text-sm font-black text-white">{e.pts.toLocaleString()} <span className="text-xs text-zinc-600 font-normal">pts</span></span>
                 <span className="text-base">{e.badge}</span>
