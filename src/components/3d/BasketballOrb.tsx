@@ -359,9 +359,13 @@ function Particles() {
   );
 }
 
-// ── MAIN EXPORT CANVAS ──
 export default function BasketballOrb() {
-  const pathname = usePathname();
+  let pathname: string | null = null;
+  try {
+    pathname = usePathname();
+  } catch (e) {
+    console.warn("Global 3D canvas failed to fetch active route:", e);
+  }
 
   return (
     <div className="fixed inset-0 w-full h-full pointer-events-none -z-10 bg-transparent">
