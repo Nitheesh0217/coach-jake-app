@@ -2,143 +2,165 @@
 
 # 🏀 Coach Jake
 
-**AI-Powered Basketball Fitness Coaching Platform**
+### AI-Powered Basketball Fitness Coaching Platform
 
-*Train smarter. Track everything. Level up.*
+**Train smarter. Track everything. Level up.**
 
-[![Next.js](https://img.shields.io/badge/Next.js_16-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+<br/>
+
+[![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_v4-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Vercel](https://img.shields.io/badge/Vercel-black?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com/)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
-[![Deploy Status](https://img.shields.io/badge/Deploy-Live_on_Vercel-brightgreen?style=flat-square)](https://coach-jake-app.vercel.app)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue.svg?style=flat-square)](CONTRIBUTING.md)
+<br/>
 
-[🚀 Live Demo](https://coach-jake-app.vercel.app) · [📋 Report Bug](https://github.com/Nitheesh0217/coach-jake-app/issues) · [✨ Request Feature](https://github.com/Nitheesh0217/coach-jake-app/issues)
+[![Live](https://img.shields.io/badge/🚀_Live_Demo-coach--jake--app.vercel.app-brightgreen?style=flat-square)](https://coach-jake-app.vercel.app)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-blue?style=flat-square)](CONTRIBUTING.md)
 
----
+<br/>
+
+[🚀 Live Demo](https://coach-jake-app.vercel.app) &nbsp;·&nbsp; [🐛 Report Bug](https://github.com/Nitheesh0217/coach-jake-app/issues) &nbsp;·&nbsp; [✨ Request Feature](https://github.com/Nitheesh0217/coach-jake-app/issues)
 
 </div>
 
-## 📖 About
+---
 
-**Coach Jake** (internally *Levrl*) is a full-stack basketball fitness coaching SaaS platform connecting athletes and coaches in one intelligent workspace. Athletes get personalized daily workouts, progress tracking, and a ranked leaderboard. Coaches get a full roster view with completion analytics and workout assignment tools.
+## Overview
 
-Built as a solo full-stack project — from database schema to deployed UI — in **Next.js 16 App Router**, **Supabase**, and **TypeScript**.
+**Coach Jake** (codenamed *Levrl*) is a full-stack basketball fitness coaching SaaS platform built to connect athletes and coaches in one intelligent workspace.
+
+Athletes complete a personalized onboarding wizard that builds their **Player Card** — capturing archetype, playstyle, goals, and schedule — then get a daily workout, session streak tracking, and body measurement logging. Coaches get a full roster dashboard with per-athlete completion analytics and workout assignment tooling.
+
+Built end-to-end as a solo project: schema design → server actions → deployed UI.
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 ### Landing Page
-![Landing Page](images/Screenshot%202026-06-15%20014417.png)
+![Landing](images/Screenshot%202026-06-15%20014417.png)
 
-### Sign Up & Login
+<br/>
+
+### Auth — Sign Up & Login
 <table>
-  <tr>
-    <td><img src="images/Screenshot%202026-06-15%20014500.png" alt="Sign Up" width="100%"/></td>
-    <td><img src="images/Screenshot%202026-06-15%20014601.png" alt="Login" width="100%"/></td>
-  </tr>
-  <tr>
-    <td align="center"><em>Sign Up</em></td>
-    <td align="center"><em>Login</em></td>
-  </tr>
+<tr>
+<td width="50%"><img src="images/Screenshot%202026-06-15%20014500.png" alt="Sign Up"/></td>
+<td width="50%"><img src="images/Screenshot%202026-06-15%20014601.png" alt="Login"/></td>
+</tr>
+<tr>
+<td align="center"><sub>Sign Up</sub></td>
+<td align="center"><sub>Login</sub></td>
+</tr>
 </table>
 
-### Player Card Wizard — Onboarding
+<br/>
+
+### Onboarding — Player Card Wizard
 <table>
-  <tr>
-    <td><img src="images/Screenshot%202026-06-15%20014649.png" alt="Onboarding Step 1" width="100%"/></td>
-    <td><img src="images/Screenshot%202026-06-15%20014730.png" alt="Onboarding Step 2" width="100%"/></td>
-  </tr>
-  <tr>
-    <td align="center"><em>Step 1 — Profile Setup</em></td>
-    <td align="center"><em>Step 2 — Playstyle Sliders</em></td>
-  </tr>
+<tr>
+<td width="50%"><img src="images/Screenshot%202026-06-15%20014649.png" alt="Wizard Step 1"/></td>
+<td width="50%"><img src="images/Screenshot%202026-06-15%20014730.png" alt="Wizard Step 2"/></td>
+</tr>
+<tr>
+<td align="center"><sub>Step 1 — Profile & Archetype</sub></td>
+<td align="center"><sub>Step 2 — Playstyle Sliders</sub></td>
+</tr>
 </table>
 
-### Athlete Dashboard
-![Athlete Dashboard](images/Screenshot%202026-06-15%20014814.png)
+<br/>
 
-### Coach Dashboard
-![Coach Dashboard](images/Screenshot%202026-06-15%20014849.png)
-
-### Workouts & Tracking
+### Dashboards
 <table>
-  <tr>
-    <td><img src="images/Screenshot%202026-06-15%20014918.png" alt="Workouts Page" width="100%"/></td>
-    <td><img src="images/Screenshot%202026-06-15%20014952.png" alt="Workout Logging" width="100%"/></td>
-  </tr>
-  <tr>
-    <td align="center"><em>Workout Feed</em></td>
-    <td align="center"><em>Session Logging</em></td>
-  </tr>
+<tr>
+<td width="50%"><img src="images/Screenshot%202026-06-15%20014814.png" alt="Athlete Dashboard"/></td>
+<td width="50%"><img src="images/Screenshot%202026-06-15%20014849.png" alt="Coach Dashboard"/></td>
+</tr>
+<tr>
+<td align="center"><sub>Athlete Dashboard</sub></td>
+<td align="center"><sub>Coach Dashboard — Roster View</sub></td>
+</tr>
+</table>
+
+<br/>
+
+### Workouts & Session Logging
+<table>
+<tr>
+<td width="50%"><img src="images/Screenshot%202026-06-15%20014918.png" alt="Workouts Page"/></td>
+<td width="50%"><img src="images/Screenshot%202026-06-15%20014952.png" alt="Session Log"/></td>
+</tr>
+<tr>
+<td align="center"><sub>Workout Feed</sub></td>
+<td align="center"><sub>Session Logging</sub></td>
+</tr>
 </table>
 
 ---
 
-## ✨ Features
+## Features
 
-### For Athletes 🏃
-- **Smart Onboarding** — 4-step Player Card Wizard captures your archetype, playstyle sliders, goals, and schedule
-- **Daily Workout Feed** — Auto-assigned workout surfaced every day on the dashboard
-- **Session Tracking** — Log completions with one tap; 7-day and 30-day streak counters
-- **Body Measurements** — Weight history with date-stamped entries
-- **Player Card Profile** — Public-facing scouting card with highlight tagline, Instagram & YouTube links
+#### Athlete
+- **Player Card Wizard** — 4-step onboarding captures archetype, playstyle sliders (team/iso, shooter/slasher, finesse/power), goals, and weekly schedule
+- **Daily Workout** — today's assigned workout surfaced automatically on the dashboard
+- **Streak Tracking** — 7-day and 30-day session counters
+- **Body Measurements** — date-stamped weight history log
+- **Player Card Profile** — public scouting card with tagline, Instagram & YouTube links
 
-### For Coaches 🎯
-- **Athlete Roster** — Full roster view with completion %, sessions this week, last workout date
-- **Workout Assignment** — Assign specific workouts to individual athletes *(coming soon)*
-- **Trainer Dashboard** — Dedicated analytics view separate from athlete flow
+#### Coach
+- **Athlete Roster** — full list with completion %, sessions this week, last workout date
+- **Workout Assignment** — assign workouts to individual athletes *(v1.1)*
+- **Trainer Dashboard** — dedicated analytics view, isolated from athlete routing
 
-### Platform
-- **Role-based Auth** — Supabase Auth with athlete / coach routing at middleware level
-- **Row Level Security** — Every table scoped to `auth.uid()` — zero data bleed between users
-- **Leaderboard** — Ranked by total session count across all athletes *(coming soon)*
-- **Mobile-first UI** — Tailwind CSS v4 with dark-themed basketball aesthetic
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 16 (App Router, Turbopack) |
-| Language | TypeScript (strict mode) |
-| Styling | Tailwind CSS v4 |
-| Database | Supabase (PostgreSQL) |
-| Auth | Supabase Auth |
-| Hosting | Vercel |
+#### Platform
+- Role-based auth with Supabase — `athlete` and `coach` routing enforced at middleware
+- Row Level Security on every table — all queries scoped to `auth.uid()`
+- Server Components + Server Actions throughout — no client-side data fetching
+- Leaderboard ranked by total session count *(v1.1)*
 
 ---
 
-## 🗂️ Project Structure
+## Tech Stack
+
+| Layer | Choice | Notes |
+|---|---|---|
+| Framework | Next.js 16 | App Router, Turbopack, strict TS |
+| Language | TypeScript | Strict mode, shared `src/types/index.ts` |
+| Styling | Tailwind CSS v4 | Dark-first, mobile-first |
+| Database | Supabase PostgreSQL | RLS on all tables |
+| Auth | Supabase Auth | JWT, role stored in `profiles` |
+| Deployment | Vercel | Edge middleware, preview deploys |
+
+---
+
+## Project Structure
 
 ```
 coach-jake-app/
 ├── src/
 │   ├── app/
-│   │   ├── (auth)/             # /login  /signup
-│   │   ├── (app)/              # Protected routes
-│   │   │   ├── dashboard/      # Role-based dashboard hub
-│   │   │   ├── workouts/       # Browse & log workouts
-│   │   │   ├── leaderboard/    # Ranked session board
-│   │   │   ├── finish-profile/ # 4-step Player Card Wizard
-│   │   │   └── trainer-dashboard/
-│   │   └── (public)/           # Hero, About, Programs, Contact
+│   │   ├── (auth)/                 # /login  /signup
+│   │   ├── (app)/                  # Protected — requires session
+│   │   │   ├── dashboard/          # Role-based routing hub
+│   │   │   ├── workouts/           # Browse & log workouts
+│   │   │   ├── leaderboard/        # Session-count leaderboard
+│   │   │   ├── finish-profile/     # Player Card Wizard
+│   │   │   └── trainer-dashboard/  # Coach analytics
+│   │   └── (public)/               # Hero, About, Programs, Contact
 │   ├── components/
-│   │   ├── auth/               # Auth forms + Player Card Wizard
-│   │   ├── dashboard/          # AthleteDashboard, CoachDashboard
-│   │   ├── layout/             # Nav, TrainerDashboardLayout
-│   │   └── trainer/            # Coach-side components
+│   │   ├── auth/                   # AuthForm, PlayerCardWizard
+│   │   ├── dashboard/              # AthleteDashboard, CoachDashboard
+│   │   ├── layout/                 # Nav, TrainerDashboardLayout
+│   │   └── trainer/                # Coach-side components
 │   ├── lib/
 │   │   ├── supabaseClient.ts
 │   │   └── profileUtils.ts
 │   ├── types/
-│   │   └── index.ts            # Role, Profile, Workout, Measurement, AthleteProfile
-│   └── proxy.ts                # Auth + role-based middleware
+│   │   └── index.ts                # Role, Profile, Workout, Measurement, AthleteProfile
+│   └── proxy.ts                    # Auth + role middleware
 ├── supabase-setup.sql
 ├── supabase-migrations-player-card.sql
 ├── supabase-migrations-workout-assignments.sql
@@ -147,162 +169,163 @@ coach-jake-app/
 
 ---
 
-## 🗄️ Database Schema
+## Database Schema
 
 <details>
-<summary>Click to expand full schema</summary>
+<summary><strong>Expand schema</strong></summary>
+
+<br/>
 
 ```sql
--- profiles
-user_id         UUID  PK  FK → auth.users
-email           TEXT
-full_name       TEXT
-age             INT
-height_cm       FLOAT
-weight_kg       FLOAT
-role            TEXT  ("athlete" | "coach")
-player_archetype TEXT
-playstyle_team_vs_iso          INT  (0–100)
-playstyle_shooter_vs_slasher   INT  (0–100)
-playstyle_finesse_vs_power     INT  (0–100)
-training_context TEXT
-goals           JSONB
-weekly_sessions_target         INT
-typical_session_length_minutes INT
-sleep_hours_per_night          FLOAT
-schedule_blocks TEXT[]
-visibility      TEXT
-instagram_url   TEXT
-youtube_url     TEXT
-highlight_tagline TEXT
-is_fully_scouted  BOOLEAN
+-- profiles (extends auth.users)
+user_id                         UUID    PRIMARY KEY  REFERENCES auth.users
+email                           TEXT
+full_name                       TEXT
+age                             INT
+height_cm                       FLOAT
+weight_kg                       FLOAT
+role                            TEXT    -- 'athlete' | 'coach'
+player_archetype                TEXT
+playstyle_team_vs_iso           INT     -- 0–100
+playstyle_shooter_vs_slasher    INT     -- 0–100
+playstyle_finesse_vs_power      INT     -- 0–100
+training_context                TEXT
+goals                           JSONB
+weekly_sessions_target          INT
+typical_session_length_minutes  INT
+sleep_hours_per_night           FLOAT
+schedule_blocks                 TEXT[]
+visibility                      TEXT
+instagram_url                   TEXT
+youtube_url                     TEXT
+highlight_tagline               TEXT
+is_fully_scouted                BOOLEAN
 
 -- workouts
-id          UUID  PK
-title       TEXT
-description TEXT
-is_active   BOOLEAN
-created_at  TIMESTAMPTZ
+id            UUID    PRIMARY KEY
+title         TEXT
+description   TEXT
+is_active     BOOLEAN
+created_at    TIMESTAMPTZ
 
 -- workout_logs
-id          UUID  PK
-user_id     FK → profiles
-workout_id  FK → workouts
-completed   BOOLEAN
-created_at  TIMESTAMPTZ
+id            UUID    PRIMARY KEY
+user_id       UUID    REFERENCES profiles
+workout_id    UUID    REFERENCES workouts
+completed     BOOLEAN
+created_at    TIMESTAMPTZ
 
 -- measurements
-id          UUID  PK
-user_id     FK → profiles
-date        DATE
-weight_kg   FLOAT
-created_at  TIMESTAMPTZ
+id            UUID    PRIMARY KEY
+user_id       UUID    REFERENCES profiles
+date          DATE
+weight_kg     FLOAT
+created_at    TIMESTAMPTZ
 ```
 
-> ✅ Row Level Security (RLS) enabled on all tables — scoped to `auth.uid() = user_id`
+> Row Level Security is enabled on all tables. Every policy is scoped to `auth.uid() = user_id`.
 
 </details>
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-- Node.js 20+
-- A [Supabase](https://supabase.com) project
-- A [Vercel](https://vercel.com) account (for deployment)
 
-### Local Setup
+- Node.js 20+
+- Supabase project ([create one free](https://supabase.com))
+- Vercel account for deployment
+
+### Local Development
 
 ```bash
-# 1. Clone the repo
+# Clone
 git clone https://github.com/Nitheesh0217/coach-jake-app.git
 cd coach-jake-app
 
-# 2. Install dependencies
+# Install
 npm install
 
-# 3. Configure environment variables
+# Environment
 cp .env.example .env.local
-# Fill in your Supabase URL and anon key
+# → fill in NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-# 4. Run database migrations (in order via Supabase SQL editor)
-#  → supabase-setup.sql
-#  → supabase-migrations-player-card.sql
-#  → supabase-migrations-workout-assignments.sql
+# Database — run in order via Supabase SQL editor
+# 1. supabase-setup.sql
+# 2. supabase-migrations-player-card.sql
+# 3. supabase-migrations-workout-assignments.sql
 
-# 5. Start the dev server
+# Dev server
 npm run dev
+# → http://localhost:3000
 ```
-
-Open [http://localhost:3000](http://localhost:3000) — you're live.
 
 ### Environment Variables
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
-### ✅ v1.0 — Shipped
-- [x] Supabase Auth (signup / login / logout)
-- [x] Role-based middleware (athlete vs. coach routing)
+#### ✅ v1.0 — Shipped
+- [x] Supabase Auth — signup, login, logout
+- [x] Role-based middleware — athlete vs. coach route separation
 - [x] 4-step Player Card Wizard onboarding
-- [x] Athlete Dashboard (today's workout, 7-day streak, 30-day count, measurements)
-- [x] Coach Dashboard (athlete roster, completion %, sessions this week)
-- [x] Server actions for measurements
-- [x] 5 active seed workouts
+- [x] Athlete Dashboard — daily workout, 7-day streak, 30-day count, measurements
+- [x] Coach Dashboard — roster, completion %, sessions this week
+- [x] Server actions for measurement logging
+- [x] 5 seeded active workouts
 
-### 🔄 v1.1 — In Progress
-- [ ] Wire `logWorkout()` + Mark Complete button on Athlete Dashboard
-- [ ] `/workouts` page — browse & log any workout
-- [ ] `/leaderboard` page — ranked by session count
-- [ ] `/trainer-dashboard` — coach assigns workouts to athletes
+#### 🔄 v1.1 — In Progress
+- [ ] `logWorkout()` wired — Mark Complete button on dashboard
+- [ ] `/workouts` — browse & log any available workout
+- [ ] `/leaderboard` — athletes ranked by total sessions
+- [ ] `/trainer-dashboard` — coach assigns workouts per athlete
 
-### 🔮 v2.0 — Planned
-- [ ] Progress charts (weight trend, session frequency)
-- [ ] AI workout recommendations based on Player Card archetype
-- [ ] Push notifications for daily workout reminders
-- [ ] Public player profiles & social scouting feed
+#### 🔮 v2.0 — Planned
+- [ ] Progress charts — weight trend, session frequency over time
+- [ ] AI recommendations — workouts suggested by Player Card archetype
+- [ ] Push notifications — daily workout reminders
+- [ ] Public player profiles + social scouting feed
 - [ ] Mobile PWA
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-Contributions, issues, and feature requests are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Pull requests are welcome. For major changes, open an issue first to discuss the approach.
 
 ```bash
-# Fork → Branch → Commit → PR
-git checkout -b feature/your-feature-name
-git commit -m "feat: add your feature"
-git push origin feature/your-feature-name
+git checkout -b feature/your-feature
+git commit -m "feat: describe your change"
+git push origin feature/your-feature
+# → open a PR against main
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for code style and commit conventions.
 
 ---
 
-## 👤 Author
+## Author
 
-**Nitheesh Donepudi**
+**Nitheesh Donepudi** — Full-Stack Engineer (Java · React · Next.js · TypeScript · Python · SQL)
+
 - GitHub: [@Nitheesh0217](https://github.com/Nitheesh0217)
 - Location: Miramar, FL
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+[MIT](LICENSE) © 2026 Nitheesh Donepudi
 
 ---
 
 <div align="center">
-
-Built with 🏀 by Nitheesh Donepudi
-
-*Coach Jake — Where Athletes Level Up*
-
+<sub>Built with 🏀 by Nitheesh Donepudi &nbsp;·&nbsp; <em>Coach Jake — Where Athletes Level Up</em></sub>
 </div>
