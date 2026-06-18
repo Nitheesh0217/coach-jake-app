@@ -87,7 +87,7 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 </tr>
 <tr>
 <td align="center"><sub>Workout Feed</sub></td>
-<td align="center"><sub>Session Logging</sub></td>
+<td align="center"><sub>Session Log</sub></td>
 </tr>
 </table>
 
