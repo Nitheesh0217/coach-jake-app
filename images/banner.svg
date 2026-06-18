@@ -1,136 +1,232 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="1200" height="340">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360">
   <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0a0a0f;stop-opacity:1" />
-      <stop offset="60%" style="stop-color:#0f0f1a;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:1" />
+    <!-- Deep space background -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#010409"/>
+      <stop offset="50%" style="stop-color:#020810"/>
+      <stop offset="100%" style="stop-color:#010409"/>
     </linearGradient>
-    <linearGradient id="orangeGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#fb923c;stop-opacity:1" />
+    <!-- Orange neon glow -->
+    <linearGradient id="neonOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff6b00"/>
+      <stop offset="50%" style="stop-color:#ff9a3c"/>
+      <stop offset="100%" style="stop-color:#ff6b00"/>
     </linearGradient>
+    <!-- Cyan accent -->
+    <linearGradient id="neonCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#0099cc"/>
+    </linearGradient>
+    <!-- Title gradient -->
     <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-      <stop offset="60%" style="stop-color:#f1f5f9;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#fb923c;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="70%" style="stop-color:#f0f0f0"/>
+      <stop offset="100%" style="stop-color:#ff9a3c"/>
     </linearGradient>
-    <radialGradient id="ballGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" style="stop-color:#f97316;stop-opacity:0.3" />
-      <stop offset="100%" style="stop-color:#f97316;stop-opacity:0" />
+    <!-- Radial glow behind ball -->
+    <radialGradient id="ballHalo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ff6b00;stop-opacity:0.35"/>
+      <stop offset="60%" style="stop-color:#ff6b00;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:#ff6b00;stop-opacity:0"/>
     </radialGradient>
-    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" style="stop-color:#f97316;stop-opacity:0.08" />
-      <stop offset="100%" style="stop-color:#0a0a0f;stop-opacity:0" />
-    </radialGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    <!-- HUD scan line -->
+    <linearGradient id="scanLine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#00d4ff;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/>
+    </linearGradient>
+    <!-- Glow filters -->
+    <filter id="orangeGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
-    <filter id="softGlow">
-      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
-      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    <filter id="cyanGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
+    <filter id="bigGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="textGlow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="bannerClip">
+      <rect width="1200" height="360" rx="12"/>
+    </clipPath>
   </defs>
 
-  <!-- Background -->
-  <rect width="1200" height="340" fill="url(#bgGrad)"/>
+  <g clip-path="url(#bannerClip)">
+    <!-- Background -->
+    <rect width="1200" height="360" fill="url(#bg)" rx="12"/>
 
-  <!-- Subtle center radial glow -->
-  <ellipse cx="600" cy="170" rx="500" ry="200" fill="url(#centerGlow)"/>
-
-  <!-- Grid lines - subtle court feel -->
-  <g opacity="0.04" stroke="#f97316" stroke-width="1">
-    <line x1="0" y1="85" x2="1200" y2="85"/>
-    <line x1="0" y1="170" x2="1200" y2="170"/>
-    <line x1="0" y1="255" x2="1200" y2="255"/>
-    <line x1="300" y1="0" x2="300" y2="340"/>
-    <line x1="600" y1="0" x2="600" y2="340"/>
-    <line x1="900" y1="0" x2="900" y2="340"/>
-  </g>
-
-  <!-- Left accent dots -->
-  <g opacity="0.15" fill="#f97316">
-    <circle cx="60" cy="80" r="2"/>
-    <circle cx="90" cy="60" r="1.5"/>
-    <circle cx="40" cy="110" r="1"/>
-    <circle cx="110" cy="90" r="2.5"/>
-    <circle cx="70" cy="140" r="1.5"/>
-    <circle cx="130" cy="130" r="1"/>
-    <circle cx="50" cy="200" r="2"/>
-    <circle cx="100" cy="220" r="1.5"/>
-    <circle cx="150" cy="180" r="1"/>
-    <circle cx="80" cy="260" r="2.5"/>
-    <circle cx="120" cy="280" r="1.5"/>
-  </g>
-
-  <!-- Right accent dots -->
-  <g opacity="0.15" fill="#f97316">
-    <circle cx="1140" cy="80" r="2"/>
-    <circle cx="1110" cy="60" r="1.5"/>
-    <circle cx="1160" cy="110" r="1"/>
-    <circle cx="1090" cy="90" r="2.5"/>
-    <circle cx="1130" cy="140" r="1.5"/>
-    <circle cx="1070" cy="130" r="1"/>
-    <circle cx="1150" cy="200" r="2"/>
-    <circle cx="1100" cy="220" r="1.5"/>
-    <circle cx="1050" cy="180" r="1"/>
-    <circle cx="1120" cy="260" r="2.5"/>
-    <circle cx="1080" cy="280" r="1.5"/>
-  </g>
-
-  <!-- Basketball SVG (left of center) -->
-  <g transform="translate(185, 90)" filter="url(#softGlow)">
-    <!-- Glow behind ball -->
-    <circle cx="75" cy="75" r="95" fill="url(#ballGlow)" opacity="0.6"/>
-    <!-- Ball body -->
-    <circle cx="75" cy="75" r="68" fill="#ea580c"/>
-    <circle cx="75" cy="75" r="68" fill="url(#orangeGlow)" opacity="0.4"/>
-    <!-- Ball seams -->
-    <g stroke="#1a0800" stroke-width="2.5" fill="none" opacity="0.7">
-      <!-- Vertical seam -->
-      <path d="M75 7 C75 7, 75 143, 75 143"/>
-      <!-- Horizontal seam -->
-      <path d="M7 75 C7 75, 143 75, 143 75"/>
-      <!-- Left curve -->
-      <path d="M75 7 C45 30, 30 55, 30 75 C30 95, 45 120, 75 143"/>
-      <!-- Right curve -->
-      <path d="M75 7 C105 30, 120 55, 120 75 C120 95, 105 120, 75 143"/>
+    <!-- Perspective grid floor -->
+    <g opacity="0.12" stroke="#00d4ff" stroke-width="0.6">
+      <!-- Horizontal lines converging to center -->
+      <line x1="0" y1="360" x2="600" y2="220"/>
+      <line x1="120" y1="360" x2="600" y2="220"/>
+      <line x1="240" y1="360" x2="600" y2="220"/>
+      <line x1="360" y1="360" x2="600" y2="220"/>
+      <line x1="480" y1="360" x2="600" y2="220"/>
+      <line x1="600" y1="360" x2="600" y2="220"/>
+      <line x1="720" y1="360" x2="600" y2="220"/>
+      <line x1="840" y1="360" x2="600" y2="220"/>
+      <line x1="960" y1="360" x2="600" y2="220"/>
+      <line x1="1080" y1="360" x2="600" y2="220"/>
+      <line x1="1200" y1="360" x2="600" y2="220"/>
+      <!-- Cross lines -->
+      <line x1="0" y1="300" x2="1200" y2="270"/>
+      <line x1="0" y1="330" x2="1200" y2="295"/>
+      <line x1="0" y1="350" x2="1200" y2="320"/>
+      <line x1="0" y1="360" x2="1200" y2="345"/>
     </g>
-    <!-- Shine -->
-    <ellipse cx="52" cy="45" rx="18" ry="10" fill="white" opacity="0.12" transform="rotate(-30 52 45)"/>
-  </g>
 
-  <!-- Top orange accent bar -->
-  <rect x="380" y="68" width="440" height="2" fill="url(#orangeGlow)" opacity="0.6" rx="1"/>
+    <!-- Subtle star field -->
+    <g fill="white">
+      <circle cx="50" cy="20" r="0.8" opacity="0.6"/>
+      <circle cx="150" cy="45" r="0.5" opacity="0.4"/>
+      <circle cx="280" cy="15" r="1" opacity="0.5"/>
+      <circle cx="420" cy="35" r="0.6" opacity="0.3"/>
+      <circle cx="750" cy="18" r="0.8" opacity="0.6"/>
+      <circle cx="900" cy="40" r="0.5" opacity="0.4"/>
+      <circle cx="1050" cy="22" r="1" opacity="0.5"/>
+      <circle cx="1150" cy="50" r="0.7" opacity="0.3"/>
+      <circle cx="80" cy="80" r="0.6" opacity="0.3"/>
+      <circle cx="200" cy="100" r="0.8" opacity="0.5"/>
+      <circle cx="1100" cy="90" r="0.6" opacity="0.4"/>
+      <circle cx="970" cy="70" r="0.9" opacity="0.3"/>
+    </g>
 
-  <!-- Main Title -->
-  <text x="600" y="148" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif" font-size="72" font-weight="800" text-anchor="middle" fill="url(#titleGrad)" filter="url(#glow)" letter-spacing="-1">Coach Jake</text>
+    <!-- === LEFT HUD PANEL === -->
+    <!-- Corner bracket TL -->
+    <g stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.7" filter="url(#cyanGlow)">
+      <polyline points="30,20 20,20 20,50"/>
+      <polyline points="30,340 20,340 20,310"/>
+    </g>
+    <!-- Corner bracket TR -->
+    <g stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.7" filter="url(#cyanGlow)">
+      <polyline points="1170,20 1180,20 1180,50"/>
+      <polyline points="1170,340 1180,340 1180,310"/>
+    </g>
 
-  <!-- Subtitle -->
-  <text x="600" y="192" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif" font-size="22" font-weight="400" text-anchor="middle" fill="#94a3b8" letter-spacing="0.5">AI-Powered Basketball Fitness Coaching Platform</text>
+    <!-- Left data readout lines -->
+    <g opacity="0.5" filter="url(#cyanGlow)">
+      <rect x="30" y="60" width="140" height="1" fill="#00d4ff"/>
+      <rect x="30" y="70" width="90" height="1" fill="#00d4ff" opacity="0.5"/>
+      <rect x="30" y="80" width="110" height="1" fill="#00d4ff" opacity="0.3"/>
+      <text x="30" y="58" font-family="monospace" font-size="9" fill="#00d4ff" opacity="0.8">SYS.INIT ████████ 100%</text>
+      <text x="30" y="95" font-family="monospace" font-size="9" fill="#00d4ff" opacity="0.5">ATHLETE_DB: ONLINE</text>
+      <text x="30" y="108" font-family="monospace" font-size="9" fill="#00d4ff" opacity="0.4">SESSIONS: 1,247</text>
+      <text x="30" y="121" font-family="monospace" font-size="9" fill="#00d4ff" opacity="0.3">RLS: SECURED ✓</text>
+    </g>
 
-  <!-- Bottom tagline -->
-  <text x="600" y="232" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif" font-size="15" font-weight="300" text-anchor="middle" fill="#475569" letter-spacing="3">TRAIN SMARTER  ·  TRACK EVERYTHING  ·  LEVEL UP</text>
+    <!-- Right data readout lines -->
+    <g opacity="0.5" filter="url(#cyanGlow)">
+      <rect x="1030" y="60" width="140" height="1" fill="#00d4ff"/>
+      <rect x="1080" y="70" width="90" height="1" fill="#00d4ff" opacity="0.5"/>
+      <rect x="1060" y="80" width="110" height="1" fill="#00d4ff" opacity="0.3"/>
+      <text x="1030" y="58" font-family="monospace" font-size="9" fill="#00d4ff" opacity="0.8">v1.0.0 ■ LIVE</text>
+      <text x="1030" y="95" font-family="monospace" font-size="9" fill="#00d4ff" opacity="0.5">VERCEL: DEPLOYED</text>
+      <text x="1030" y="108" font-family="monospace" font-size="9" fill="#00d4ff" opacity="0.4">NEXT.JS: 16.0</text>
+      <text x="1030" y="121" font-family="monospace" font-size="9" fill="#00d4ff" opacity="0.3">SUPABASE: CONNECTED</text>
+    </g>
 
-  <!-- Bottom orange accent bar -->
-  <rect x="380" y="254" width="440" height="2" fill="url(#orangeGlow)" opacity="0.6" rx="1"/>
+    <!-- === BASKETBALL HUD ELEMENT === -->
+    <!-- Outer halo -->
+    <circle cx="230" cy="175" r="110" fill="url(#ballHalo)"/>
+    <!-- HUD orbit ring outer -->
+    <circle cx="230" cy="175" r="95" fill="none" stroke="#ff6b00" stroke-width="0.8" stroke-dasharray="8 4" opacity="0.4" filter="url(#orangeGlow)"/>
+    <!-- HUD orbit ring inner -->
+    <circle cx="230" cy="175" r="78" fill="none" stroke="#00d4ff" stroke-width="0.5" stroke-dasharray="4 8" opacity="0.3"/>
+    <!-- Tick marks on outer ring -->
+    <g stroke="#ff6b00" stroke-width="1.5" opacity="0.6">
+      <line x1="230" y1="80" x2="230" y2="92"/>
+      <line x1="230" y1="258" x2="230" y2="270"/>
+      <line x1="135" y1="175" x2="147" y2="175"/>
+      <line x1="313" y1="175" x2="325" y2="175"/>
+      <line x1="163" y1="108" x2="171" y2="116"/>
+      <line x1="289" y1="234" x2="297" y2="242"/>
+      <line x1="163" y1="242" x2="171" y2="234"/>
+      <line x1="289" y1="116" x2="297" y2="108"/>
+    </g>
+    <!-- Basketball body -->
+    <circle cx="230" cy="175" r="62" fill="#c95200"/>
+    <circle cx="230" cy="175" r="62" fill="url(#neonOrange)" opacity="0.6"/>
+    <!-- Ball seams -->
+    <g stroke="#1a0500" stroke-width="2" fill="none">
+      <line x1="230" y1="113" x2="230" y2="237"/>
+      <line x1="168" y1="175" x2="292" y2="175"/>
+      <path d="M230,113 C200,135 185,155 185,175 C185,195 200,215 230,237"/>
+      <path d="M230,113 C260,135 275,155 275,175 C275,195 260,215 230,237"/>
+    </g>
+    <!-- Ball shine -->
+    <ellipse cx="210" cy="148" rx="16" ry="9" fill="white" opacity="0.15" transform="rotate(-35 210 148)"/>
+    <!-- Scanning line effect -->
+    <rect x="168" y="163" width="124" height="24" fill="url(#scanLine)" opacity="0.6"/>
+    <!-- HUD crosshair on ball -->
+    <g stroke="#00d4ff" stroke-width="0.8" opacity="0.5">
+      <line x1="200" y1="175" x2="220" y2="175"/>
+      <line x1="240" y1="175" x2="260" y2="175"/>
+      <line x1="230" y1="155" x2="230" y2="165"/>
+      <line x1="230" y1="185" x2="230" y2="195"/>
+    </g>
+    <!-- Corner target brackets on ball -->
+    <g stroke="#ff9a3c" stroke-width="1.2" fill="none" opacity="0.8">
+      <polyline points="175,130 168,130 168,137"/>
+      <polyline points="285,130 292,130 292,137"/>
+      <polyline points="175,220 168,220 168,213"/>
+      <polyline points="285,220 292,220 292,213"/>
+    </g>
 
-  <!-- Tech pill badges -->
-  <g transform="translate(600, 290)" text-anchor="middle">
-    <!-- Next.js pill -->
-    <rect x="-290" y="-13" width="90" height="26" rx="13" fill="#1a1a2e" stroke="#333" stroke-width="1"/>
-    <text x="-245" y="5" font-family="monospace" font-size="11" fill="#e2e8f0" font-weight="600">Next.js 16</text>
-    <!-- TypeScript pill -->
-    <rect x="-185" y="-13" width="100" height="26" rx="13" fill="#1a1a2e" stroke="#3178C6" stroke-width="1"/>
-    <text x="-135" y="5" font-family="monospace" font-size="11" fill="#3178C6" font-weight="600">TypeScript</text>
-    <!-- Supabase pill -->
-    <rect x="-70" y="-13" width="95" height="26" rx="13" fill="#1a1a2e" stroke="#3ECF8E" stroke-width="1"/>
-    <text x="-22" y="5" font-family="monospace" font-size="11" fill="#3ECF8E" font-weight="600">Supabase</text>
-    <!-- Tailwind pill -->
-    <rect x="40" y="-13" width="95" height="26" rx="13" fill="#1a1a2e" stroke="#06B6D4" stroke-width="1"/>
-    <text x="87" y="5" font-family="monospace" font-size="11" fill="#06B6D4" font-weight="600">Tailwind v4</text>
-    <!-- Vercel pill -->
-    <rect x="150" y="-13" width="75" height="26" rx="13" fill="#1a1a2e" stroke="#555" stroke-width="1"/>
-    <text x="187" y="5" font-family="monospace" font-size="11" fill="#e2e8f0" font-weight="600">Vercel</text>
+    <!-- === MAIN TITLE AREA === -->
+    <!-- Glow layer -->
+    <text x="660" y="148" font-family="'Segoe UI', Arial Black, sans-serif" font-size="80" font-weight="900" text-anchor="middle" fill="#ff6b00" opacity="0.2" filter="url(#bigGlow)">Coach Jake</text>
+    <!-- Main title -->
+    <text x="660" y="148" font-family="'Segoe UI', Arial Black, sans-serif" font-size="80" font-weight="900" text-anchor="middle" fill="url(#titleGrad)" filter="url(#textGlow)">Coach Jake</text>
+
+    <!-- Horizontal rule lines flanking subtitle -->
+    <rect x="385" y="166" width="100" height="1.5" fill="url(#neonCyan)" opacity="0.7"/>
+    <rect x="835" y="166" width="100" height="1.5" fill="url(#neonCyan)" opacity="0.7"/>
+
+    <!-- Subtitle -->
+    <text x="660" y="194" font-family="'Segoe UI', Arial, sans-serif" font-size="19" font-weight="300" text-anchor="middle" fill="#94a3b8" letter-spacing="1">AI-Powered Basketball Fitness Coaching Platform</text>
+
+    <!-- Tagline -->
+    <text x="660" y="224" font-family="monospace" font-size="12" font-weight="400" text-anchor="middle" fill="#ff9a3c" letter-spacing="5" opacity="0.85">TRAIN SMARTER  ·  TRACK EVERYTHING  ·  LEVEL UP</text>
+
+    <!-- Divider -->
+    <rect x="460" y="242" width="400" height="1" fill="url(#neonOrange)" opacity="0.3"/>
+
+    <!-- === TECH PILL BADGES === -->
+    <g font-family="monospace" font-size="11" font-weight="700">
+      <!-- Next.js -->
+      <rect x="373" y="260" width="88" height="24" rx="4" fill="#0d0d0d" stroke="#333" stroke-width="1"/>
+      <text x="417" y="276" text-anchor="middle" fill="#e2e8f0">Next.js 16</text>
+      <!-- TypeScript -->
+      <rect x="471" y="260" width="98" height="24" rx="4" fill="#0d0d0d" stroke="#3178C6" stroke-width="1"/>
+      <text x="520" y="276" text-anchor="middle" fill="#3178C6">TypeScript</text>
+      <!-- Supabase -->
+      <rect x="579" y="260" width="84" height="24" rx="4" fill="#0d0d0d" stroke="#3ECF8E" stroke-width="1"/>
+      <text x="621" y="276" text-anchor="middle" fill="#3ECF8E">Supabase</text>
+      <!-- Tailwind -->
+      <rect x="673" y="260" width="98" height="24" rx="4" fill="#0d0d0d" stroke="#06B6D4" stroke-width="1"/>
+      <text x="722" y="276" text-anchor="middle" fill="#06B6D4">Tailwind v4</text>
+      <!-- Vercel -->
+      <rect x="781" y="260" width="68" height="24" rx="4" fill="#0d0d0d" stroke="#555" stroke-width="1"/>
+      <text x="815" y="276" text-anchor="middle" fill="#e2e8f0">Vercel</text>
+    </g>
+
+    <!-- === BOTTOM STATUS BAR === -->
+    <rect x="0" y="330" width="1200" height="30" fill="#00000066"/>
+    <rect x="0" y="330" width="1200" height="1" fill="#00d4ff" opacity="0.2"/>
+    <text x="40" y="350" font-family="monospace" font-size="10" fill="#00d4ff" opacity="0.5">● LIVE</text>
+    <text x="80" y="350" font-family="monospace" font-size="10" fill="#475569" opacity="0.6">coach-jake-app.vercel.app</text>
+    <text x="600" y="350" font-family="monospace" font-size="10" fill="#475569" text-anchor="middle" opacity="0.4">Built by Nitheesh Donepudi  ·  Miramar, FL</text>
+    <text x="1160" y="350" font-family="monospace" font-size="10" fill="#ff6b00" text-anchor="end" opacity="0.6">v1.0.0</text>
+
+    <!-- Border glow -->
+    <rect x="1" y="1" width="1198" height="358" fill="none" stroke="#ff6b00" stroke-width="1" opacity="0.15" rx="12"/>
+    <rect x="3" y="3" width="1194" height="354" fill="none" stroke="#00d4ff" stroke-width="0.5" opacity="0.08" rx="11"/>
   </g>
 </svg>
