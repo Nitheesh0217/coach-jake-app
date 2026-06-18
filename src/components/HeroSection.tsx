@@ -1,281 +1,339 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+import Image from "next/image";
+import { motion, useMotionValue, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 
-// Lazy load Spline — prevents SSR crash and splits the 3D bundle
-const Spline = dynamic(() => import("@splinetool/react-spline"), {
-  ssr: false,
-  loading: () => <SplineLoader />,
-});
+// ── Stagger animation variants ────────────────────────────────
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.14, delayChildren: 0.25 } },
+};
 
-// ── Loading Screen ──────────────────────────────────────────────
-function SplineLoader() {
-  return (
-    <div className="absolute inset-0 flex items-center justify-center bg-[#04030F] z-50">
-      <div className="flex flex-col items-center gap-4">
-        <motion.div
-          className="w-16 h-16 rounded-full border-2 border-[#00C8FF] border-t-transparent"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        />
-        <p className="text-[#00C8FF] text-sm tracking-widest uppercase font-mono mt-2 animate-pulse">
-          Initializing Coach Jake...
-        </p>
-      </div>
-    </div>
-  );
-}
+const itemVariants = {
+  hidden: { opacity: 0, y: 44, filter: "blur(10px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const },
+  },
+};
 
-// ── Floating Particle Orbs ──────────────────────────────────────
-function FloatingOrbs() {
-  const orbs = [
-    { size: 300, x: "10%", y: "20%", color: "#00C8FF", delay: 0 },
-    { size: 200, x: "80%", y: "60%", color: "#7B2FFF", delay: 1.5 },
-    { size: 150, x: "60%", y: "15%", color: "#FF4D6D", delay: 0.8 },
-  ];
-
+// ── Floating Orbs (ambient colour bleed) ─────────────────────
+function AmbientOrbs() {
   return (
     <>
-      {orbs.map((orb, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full pointer-events-none z-0"
-          style={{
-            width: orb.size,
-            height: orb.size,
-            left: orb.x,
-            top: orb.y,
-            background: `radial-gradient(circle, ${orb.color}18 0%, transparent 70%)`,
-            filter: "blur(40px)",
-          }}
-          animate={{
-            y: [0, -30, 0],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: orb.delay,
-          }}
-        />
-      ))}
+      <motion.div
+        className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(16,185,129,0.18) 0%, transparent 70%)", filter: "blur(60px)" }}
+        animate={{ scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(0,200,255,0.12) 0%, transparent 70%)", filter: "blur(80px)" }}
+        animate={{ scale: [1, 1.08, 1], opacity: [0.5, 0.9, 0.5] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+      />
     </>
   );
 }
 
-// ── Main Hero ───────────────────────────────────────────────────
+// ── Scan-line overlay (cinematic HUD feel) ────────────────────
+function ScanLines() {
+  return (
+    <div
+      className="absolute inset-0 z-[1] pointer-events-none"
+      style={{
+        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px)",
+      }}
+    />
+  );
+}
+
+// ── The Floating Athlete Image with 3-D tilt ─────────────────
+function AthleteCard({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
+  const rotateX = useTransform(mouseY, [-1, 1], [12, -12]);
+  const rotateY = useTransform(mouseX, [-1, 1], [-15, 15]);
+
+  const springRotX = useSpring(rotateX, { stiffness: 60, damping: 18 });
+  const springRotY = useSpring(rotateY, { stiffness: 60, damping: 18 });
+
+  return (
+    <motion.div
+      className="relative w-full max-w-[520px] mx-auto"
+      style={{ perspective: 900 }}
+      /* Floating bob animation */
+      animate={{ y: [0, -22, 0] }}
+      transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
+    >
+      {/* 3-D tilt wrapper */}
+      <motion.div
+        style={{
+          rotateX: springRotX,
+          rotateY: springRotY,
+          transformStyle: "preserve-3d",
+        }}
+        className="relative"
+      >
+        {/* Glow behind image */}
+        <motion.div
+          className="absolute -inset-6 rounded-3xl pointer-events-none"
+          style={{ background: "radial-gradient(ellipse, rgba(16,185,129,0.35) 0%, transparent 70%)", filter: "blur(30px)" }}
+          animate={{ opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        {/* Image frame */}
+        <div className="relative rounded-2xl overflow-hidden border border-emerald-500/20 shadow-[0_0_60px_rgba(16,185,129,0.3)]">
+          <Image
+            src="/hero-dunk.png"
+            alt="Athlete mid-dunk with neon green court lighting"
+            width={520}
+            height={680}
+            className="w-full object-cover"
+            priority
+          />
+
+          {/* Top-edge HUD line */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/80 to-transparent" />
+          {/* Bottom-edge HUD line */}
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-400/60 to-transparent" />
+
+          {/* Floating stat chip — top-left */}
+          <motion.div
+            className="absolute top-4 left-4 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-emerald-400"
+            style={{ background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.3)", backdropFilter: "blur(10px)" }}
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 2.5, repeat: Infinity }}
+          >
+            ● LIVE SESSION
+          </motion.div>
+
+          {/* Floating stat chip — bottom-right */}
+          <motion.div
+            className="absolute bottom-4 right-4 px-3 py-2 rounded-xl text-right"
+            style={{ background: "rgba(4,3,15,0.7)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(12px)" }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.4, duration: 0.6 }}
+          >
+            <p className="text-[10px] text-zinc-500 uppercase tracking-widest">VERTICAL</p>
+            <p className="text-lg font-black text-white">+<span className="text-emerald-400">3"</span></p>
+          </motion.div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ── Court HUD background with mouse parallax ─────────────────
+function HUDBackground({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
+  const bgX = useTransform(mouseX, [-1, 1], [-18, 18]);
+  const bgY = useTransform(mouseY, [-1, 1], [-10, 10]);
+  const springX = useSpring(bgX, { stiffness: 30, damping: 20 });
+  const springY = useSpring(bgY, { stiffness: 30, damping: 20 });
+
+  return (
+    <motion.div
+      className="absolute inset-[-4%] z-0"
+      style={{ x: springX, y: springY }}
+    >
+      <Image
+        src="/hero-court-hud.png"
+        alt="Futuristic HUD basketball court background"
+        fill
+        className="object-cover"
+        priority
+        quality={90}
+      />
+      {/* Dark overlay so text stays legible */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#04030F]/95 via-[#04030F]/75 to-[#04030F]/40" />
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#04030F] to-transparent" />
+    </motion.div>
+  );
+}
+
+// ── Main Hero ─────────────────────────────────────────────────
 export default function HeroSection() {
-  const [splineLoaded, setSplineLoaded] = useState(false);
-  const [useSpline, setUseSpline] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Mouse parallax tracking
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  // Spring-smoothed parallax values for text layer
-  const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
-  const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
-  const textX = useTransform(springX, [-1, 1], [-12, 12]);
-  const textY = useTransform(springY, [-1, 1], [-8, 8]);
-
-  // Fallback timeout: if Spline fails to load in 4.5s, fall back to procedural styling
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!splineLoaded) {
-        setUseSpline(false);
-      }
-    }, 4500);
-    return () => clearTimeout(timer);
-  }, [splineLoaded]);
+  const rawMouseX = useMotionValue(0);
+  const rawMouseY = useMotionValue(0);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const { innerWidth, innerHeight } = window;
-      mouseX.set((e.clientX / innerWidth - 0.5) * 2);
-      mouseY.set((e.clientY / innerHeight - 0.5) * 2);
+      rawMouseX.set((e.clientX / innerWidth - 0.5) * 2);
+      rawMouseY.set((e.clientY / innerHeight - 0.5) * 2);
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY]);
+  }, [rawMouseX, rawMouseY]);
 
-  // Stagger animation variants
-  const containerVariants = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 40, filter: "blur(8px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
-    },
-  };
+  // Smoothed parallax for text
+  const textSpringX = useSpring(rawMouseX, { stiffness: 40, damping: 20 });
+  const textSpringY = useSpring(rawMouseY, { stiffness: 40, damping: 20 });
+  const textX = useTransform(textSpringX, [-1, 1], [-10, 10]);
+  const textY = useTransform(textSpringY, [-1, 1], [-6, 6]);
 
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-screen overflow-hidden bg-[#04030F]"
+      className="relative w-full min-h-screen overflow-hidden bg-[#04030F]"
       style={{ fontFamily: "var(--font-space-grotesk), sans-serif" }}
     >
-      {/* ── Ambient Background Orbs ── */}
-      <FloatingOrbs />
+      {/* ── HUD Court Background ── */}
+      <HUDBackground mouseX={rawMouseX} mouseY={rawMouseY} />
 
-      {/* ── Spline 3D Scene (full-screen background layer) ── */}
-      {useSpline && (
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            opacity: splineLoaded ? 1 : 0,
-            transition: "opacity 1.2s ease",
-          }}
-        >
-          <Spline
-            scene="https://prod.spline.design/kbKIxYhLg0wP268U/scene.splinecode"
-            onLoad={() => setSplineLoaded(true)}
-            onError={() => setUseSpline(false)}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </div>
-      )}
+      {/* ── Scan lines ── */}
+      <ScanLines />
 
-      {/* ── Cyber fallback grid if spline is bypassed/failed ── */}
-      {(!splineLoaded || !useSpline) && (
-        <div className="absolute inset-0 z-0 bg-[#04030F]">
-          <div className="absolute inset-0 opacity-[0.06] cyber-grid pointer-events-none" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-[#00C8FF]/20 to-[#7B2FFF]/10 blur-[100px] animate-pulse" />
-        </div>
-      )}
+      {/* ── Ambient colour orbs ── */}
+      <AmbientOrbs />
 
-      {/* ── Dark gradient overlay so text stays readable over 3D ── */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#04030F] via-[#04030F]/70 to-transparent pointer-events-none" />
+      {/* ── Main layout grid ── */}
+      <div className="relative z-20 min-h-screen flex items-center px-6 md:px-16 lg:px-24 py-24">
+        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
 
-      {/* ── Hero Text Content (parallax layer) ── */}
-      <motion.div
-        className="absolute inset-0 z-20 flex flex-col justify-center px-8 md:px-20 lg:px-32 max-w-2xl"
-        style={{ x: textX, y: textY }}
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Badge */}
-        <motion.div variants={itemVariants} className="mb-6">
-          <span
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs tracking-widest uppercase text-[#00C8FF]"
-            style={{
-              background: "rgba(0, 200, 255, 0.08)",
-              border: "1px solid rgba(0, 200, 255, 0.2)",
-              backdropFilter: "blur(12px)",
-            }}
+          {/* ── LEFT: Text content ── */}
+          <motion.div
+            style={{ x: textX, y: textY }}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex flex-col"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00C8FF] animate-pulse" />
-            AI-Powered Coaching
-          </span>
-        </motion.div>
-
-        {/* Headline */}
-        <motion.h1
-          variants={itemVariants}
-          className="text-5xl md:text-7xl font-bold leading-none tracking-tight text-[#E8F0FF] mb-4"
-        >
-          Train Beyond
-          <br />
-          <span
-            className="text-transparent bg-clip-text"
-            style={{
-              backgroundImage: "linear-gradient(135deg, #00C8FF, #7B2FFF)",
-            }}
-          >
-            Gravity
-          </span>
-        </motion.h1>
-
-        {/* Subheadline */}
-        <motion.p
-          variants={itemVariants}
-          className="text-base md:text-lg text-[#E8F0FF]/60 leading-relaxed mb-10 max-w-md"
-        >
-          Coach Jake defies limits. Personalized programs, real-time AI
-          feedback, and zero excuses — your transformation starts in zero-G.
-        </motion.p>
-
-        {/* CTA Buttons */}
-        <motion.div variants={itemVariants} className="flex items-center gap-4 flex-wrap">
-          {/* Primary CTA */}
-          <motion.button
-            className="relative px-8 py-4 rounded-2xl text-sm font-semibold text-white tracking-wide overflow-hidden cursor-pointer"
-            style={{
-              background: "linear-gradient(135deg, #00C8FF, #7B2FFF)",
-              boxShadow: "0 0 30px rgba(0, 200, 255, 0.3)",
-            }}
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 0 50px rgba(0, 200, 255, 0.5)",
-            }}
-            whileTap={{ scale: 0.97 }}
-          >
-            Start Training Free
-          </motion.button>
-
-          {/* Secondary CTA */}
-          <motion.button
-            className="px-8 py-4 rounded-2xl text-sm font-semibold text-[#E8F0FF] tracking-wide cursor-pointer"
-            style={{
-              background: "rgba(255, 255, 255, 0.04)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              backdropFilter: "blur(12px)",
-            }}
-            whileHover={{
-              scale: 1.03,
-              background: "rgba(255, 255, 255, 0.08)",
-            }}
-            whileTap={{ scale: 0.97 }}
-          >
-            Watch Demo →
-          </motion.button>
-        </motion.div>
-
-        {/* Social Proof */}
-        <motion.div
-          variants={itemVariants}
-          className="mt-10 flex items-center gap-3"
-        >
-          <div className="flex -space-x-2">
-            {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="w-8 h-8 rounded-full border-2 border-[#04030F]"
+            {/* Live badge */}
+            <motion.div variants={itemVariants} className="mb-6">
+              <span
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] tracking-[0.2em] uppercase text-emerald-400 font-bold"
                 style={{
-                  background: `hsl(${i * 60 + 200}, 70%, 60%)`,
+                  background: "rgba(16, 185, 129, 0.08)",
+                  border: "1px solid rgba(16, 185, 129, 0.25)",
+                  backdropFilter: "blur(12px)",
                 }}
-              />
-            ))}
-          </div>
-          <p className="text-sm text-[#E8F0FF]/50">
-            <span className="text-[#E8F0FF] font-semibold">2,400+</span> athletes
-            already training
-          </p>
-        </motion.div>
-      </motion.div>
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                AI-Powered Basketball Coaching
+              </span>
+            </motion.div>
 
-      {/* ── Scroll Indicator ── */}
+            {/* Headline */}
+            <motion.h1
+              variants={itemVariants}
+              className="text-6xl md:text-7xl xl:text-8xl font-black leading-[0.9] tracking-tight text-white mb-5"
+            >
+              Train
+              <br />
+              <span
+                className="text-transparent bg-clip-text"
+                style={{ backgroundImage: "linear-gradient(135deg, #10b981, #00C8FF 60%, #7B2FFF)" }}
+              >
+                Beyond
+              </span>
+              <br />
+              <span className="text-white">Gravity.</span>
+            </motion.h1>
+
+            {/* Sub */}
+            <motion.p
+              variants={itemVariants}
+              className="text-base md:text-lg text-zinc-400 leading-relaxed mb-10 max-w-[440px]"
+            >
+              Coach Jake defies limits. Personalised programs, real-time AI
+              feedback, and zero excuses — your transformation starts in zero-G.
+            </motion.p>
+
+            {/* CTAs */}
+            <motion.div variants={itemVariants} className="flex items-center gap-4 flex-wrap mb-12">
+              <motion.a
+                href="/login"
+                className="relative px-8 py-4 rounded-2xl text-sm font-black text-black tracking-wide overflow-hidden cursor-pointer"
+                style={{
+                  background: "linear-gradient(135deg, #10b981, #00C8FF)",
+                  boxShadow: "0 0 40px rgba(16,185,129,0.4)",
+                }}
+                whileHover={{ scale: 1.06, boxShadow: "0 0 60px rgba(16,185,129,0.6)" }}
+                whileTap={{ scale: 0.96 }}
+              >
+                Start Training Free →
+              </motion.a>
+
+              <motion.a
+                href="#programs"
+                className="px-8 py-4 rounded-2xl text-sm font-bold text-white tracking-wide cursor-pointer"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  backdropFilter: "blur(12px)",
+                }}
+                whileHover={{ scale: 1.04, background: "rgba(255,255,255,0.08)" }}
+                whileTap={{ scale: 0.97 }}
+              >
+                View Programs
+              </motion.a>
+            </motion.div>
+
+            {/* Social proof + stats row */}
+            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-6">
+              {/* Avatars */}
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {[200, 260, 320, 380].map((hue, i) => (
+                    <div
+                      key={i}
+                      className="w-8 h-8 rounded-full border-2 border-[#04030F]"
+                      style={{ background: `hsl(${hue},60%,55%)` }}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm text-zinc-400">
+                  <span className="text-white font-bold">2,400+</span> athletes training
+                </p>
+              </div>
+
+              {/* Divider */}
+              <div className="w-px h-8 bg-zinc-700 hidden sm:block" />
+
+              {/* Stats */}
+              {[
+                { value: "94%", label: "Completion Rate" },
+                { value: "3.2×", label: "Faster Gains" },
+              ].map((stat) => (
+                <div key={stat.label}>
+                  <p className="text-xl font-black text-emerald-400">{stat.value}</p>
+                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest">{stat.label}</p>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* ── RIGHT: 3-D floating athlete card ── */}
+          <motion.div
+            initial={{ opacity: 0, x: 60, scale: 0.92 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            transition={{ duration: 1.1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="hidden lg:flex justify-center items-center"
+          >
+            <AthleteCard mouseX={rawMouseX} mouseY={rawMouseY} />
+          </motion.div>
+
+        </div>
+      </div>
+
+      {/* ── Scroll indicator ── */}
       <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
+        transition={{ delay: 2.2 }}
       >
-        <p className="text-[10px] tracking-widest uppercase text-[#E8F0FF]/30">
-          Scroll
-        </p>
+        <p className="text-[9px] tracking-[0.3em] uppercase text-zinc-600">Scroll</p>
         <motion.div
-          className="w-px h-10 bg-gradient-to-b from-[#00C8FF] to-transparent"
+          className="w-px h-10 bg-gradient-to-b from-emerald-400 to-transparent"
           animate={{ scaleY: [1, 0.3, 1], opacity: [1, 0.3, 1] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         />
