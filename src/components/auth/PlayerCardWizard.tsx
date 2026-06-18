@@ -10,6 +10,8 @@ import PlayerCardStep2 from "./steps/PlayerCardStep2";
 import PlayerCardStep3 from "./steps/PlayerCardStep3";
 import PlayerCardStep4 from "./steps/PlayerCardStep4";
 import PlayerCardSummary from "./summary/PlayerCardSummary";
+import { Dumbbell, Flame, Zap, Trophy } from "lucide-react";
+import TechCorners from "@/components/ui/TechCorners";
 
 interface PlayerCardWizardProps {
   currentProfile: Profile | null;
@@ -135,7 +137,8 @@ export default function PlayerCardWizard({
 
         {/* Wizard form */}
         {!completed && (
-          <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-zinc-900/80 to-zinc-950/80 backdrop-blur-xl p-8 shadow-2xl shadow-emerald-500/10 relative overflow-hidden">
+          <div className="glass-card relative border border-zinc-800/80 rounded-2xl bg-zinc-950/40 backdrop-blur-md p-8 shadow-2xl shadow-emerald-500/10 overflow-hidden group/card cyber-scanlines">
+            <TechCorners color="border-emerald-500/40" size="w-3 h-3" />
             {/* Premium glow background */}
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/0 via-emerald-500/5 to-emerald-500/0 pointer-events-none"></div>
 
@@ -273,11 +276,11 @@ export default function PlayerCardWizard({
         )}
 
         {/* Decorative elements inside card */}
-        <div className="mt-6 flex justify-center gap-4 text-2xl opacity-40">
-          <span>🏀</span>
-          <span>💪</span>
-          <span>🔥</span>
-          <span>⚡</span>
+        <div className="mt-6 flex justify-center gap-6 text-2xl opacity-40 text-emerald-400">
+          <Trophy className="w-6 h-6 animate-pulse" />
+          <Dumbbell className="w-6 h-6 animate-pulse" />
+          <Flame className="w-6 h-6 animate-pulse" />
+          <Zap className="w-6 h-6 animate-pulse" />
         </div>
       </div>
     </div>

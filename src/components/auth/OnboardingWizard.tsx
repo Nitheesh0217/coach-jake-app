@@ -8,6 +8,8 @@ import Step3TrainingHabits from "./wizard-steps/Step3TrainingHabits";
 import Step4Goals from "./wizard-steps/Step4Goals";
 import confetti from "canvas-confetti";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
+import TechCorners from "@/components/ui/TechCorners";
 
 export interface WizardData {
   fullName: string;
@@ -109,15 +111,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
       <div className="relative z-10 max-w-3xl mx-auto px-4 pt-8 pb-16 md:pt-12">
         {/* Logo + dots */}
         <div className="mb-10 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center">
-              <span className="text-sm font-black text-emerald-400">CJ</span>
-            </div>
-            <div>
-              <p className="text-base font-black text-white">Coach Jake</p>
-              <p className="text-[10px] text-zinc-500 uppercase tracking-wider">Build Different.</p>
-            </div>
-          </div>
+          <BrandLogo showSubtitle={true} logoSize="w-9 h-9" />
           <div className="flex items-center gap-2">
             {Array.from({ length: STEP_COUNT }).map((_, i) => (
               <div
@@ -181,7 +175,9 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.38 }}
+            className="glass-card relative p-6 md:p-8 border border-zinc-800/80 rounded-2xl bg-zinc-950/40 backdrop-blur-md overflow-hidden group/card cyber-scanlines"
           >
+            <TechCorners color="border-emerald-500/40" size="w-3 h-3" />
             {currentStep === 1 && <Step1Profile data={data} setData={setData} />}
             {currentStep === 2 && <Step2PlayingStyle data={data} setData={setData} />}
             {currentStep === 3 && <Step3TrainingHabits data={data} setData={setData} />}

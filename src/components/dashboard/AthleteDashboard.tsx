@@ -1,22 +1,50 @@
 "use client";
 
-import { Flame, Dumbbell, Calendar, TrendingUp, Target, CheckCircle2, ArrowRight, BarChart2 } from "lucide-react";
-import { motion } from "framer-motion";
-import { Workout } from "@/types";
-import TodaysWorkout from "./TodaysWorkout";
-import MeasurementsWidget from "./MeasurementsWidget";
+import { useState, useEffect } from "react";
+import { 
+  Flame, 
+  Dumbbell, 
+  Calendar, 
+  TrendingUp, 
+  Target, 
+  CheckCircle2, 
+  ArrowRight, 
+  BarChart2, 
+  Clock, 
+  Sparkles,
+  MessageSquare,
+  Check,
+  Plus
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  RadarChart, 
+  PolarGrid, 
+  PolarAngleAxis, 
+  PolarRadiusAxis, 
+  Radar, 
+  ResponsiveContainer 
+} from "recharts";
+import { Workout, Profile } from "@/types";
 import WeightChart from "./WeightChart";
+import MeasurementsWidget from "./MeasurementsWidget";
+import { markWorkoutComplete } from "@/app/(app)/dashboard/actions";
+import { toast } from "sonner";
 
-interface Measurement { id: string; date: string; weight_kg: number; }
+interface Measurement { 
+  id: string; 
+  date: string; 
+  weight_kg: number; 
+}
 
 interface Props {
+  profile: Profile;
   todayWorkout: Workout | null;
   weekLogsCount: number;
   last30DaysCount: number;
   measurements: Measurement[];
   currentStreak: number;
   longestStreak: number;
-  userName?: string;
   recentSessions?: any[];
   hasLoggedToday?: boolean;
 }
@@ -28,204 +56,424 @@ const fade = (delay = 0) => ({
 });
 
 export default function AthleteDashboard({
-  todayWorkout, weekLogsCount, last30DaysCount, measurements,
-  currentStreak, longestStreak, userName = "Athlete", recentSessions = [], hasLoggedToday = false,
+  profile,
+  todayWorkout,
+  weekLogsCount,
+  last30DaysCount,
+  measurements,
+  currentStreak,
+  longestStreak,
+  recentSessions = [],
+  hasLoggedToday = false,
 }: Props) {
-  const firstName = userName.split(" ")[0];
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  const [mounted, setMounted] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [alreadyLogged, setAlreadyLogged] = useState(hasLoggedToday);
+
+  // Set up local checklist states for interactive preview
+  const [checklist, setChecklist] = useState([
+    { id: 1, text: "Explosive Warmup: 10 mins", done: false },
+    { id: 2, text: "Active Plyos: Box jumps & bounds", done: false },
+    { id: 3, text: "Strength Series: Squat to press", done: false }
+  ]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleCheck = (id: number) => {
+    setChecklist(
+      checklist.map((item) =>
+        item.id === id ? { ...item, done: !item.done } : item
+      )
+    );
+  };
+
+  const allCompleted = checklist.every((item) => item.done);
+
+  const handleLogWorkout = async () => {
+    if (!todayWorkout) return;
+    setIsSubmitting(true);
+    try {
+      const res = await markWorkoutComplete({
+        workoutId: todayWorkout.id,
+        notes: notes || undefined
+      });
+      if (res.success) {
+        toast.success("Workout logged successfully! Keep building your stats.");
+        setAlreadyLogged(true);
+      } else {
+        toast.error(res.error || "Failed to log workout.");
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Build Radar Chart data dynamically from profile playstyle metrics
+  const playstyleTeam = profile?.playstyle_team_vs_iso ?? 50;
+  const playstyleShooter = profile?.playstyle_shooter_vs_slasher ?? 50;
+  const playstyleFinesse = profile?.playstyle_finesse_vs_power ?? 50;
+
+  const radarData = [
+    { subject: "Shooting", value: playstyleShooter, fullMark: 100 },
+    { subject: "Athleticism", value: 80, fullMark: 100 },
+    { subject: "Team Play", value: 100 - playstyleTeam, fullMark: 100 },
+    { subject: "Finesse", value: playstyleFinesse, fullMark: 100 },
+    { subject: "Playmaking", value: 75, fullMark: 100 },
+  ];
+
+  const archetype = profile?.player_archetype ?? "Prospect";
+  const firstName = profile?.full_name?.split(" ")[0] ?? "Athlete";
   const dateStr = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
-  const completion = last30DaysCount > 0 ? Math.min(Math.round((last30DaysCount / 30) * 100), 100) : 0;
+  const completion = last30DaysCount > 0 ? Math.min(Math.round((last30DaysCount / 12) * 100), 100) : 0;
 
   const kpis = [
-    { label: "SESSIONS THIS WEEK", value: weekLogsCount,    suffix: "",  icon: Calendar,    color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/30", trend: "+50% vs last week" },
-    { label: "THIS MONTH",         value: last30DaysCount,  suffix: "",  icon: TrendingUp,  color: "text-cyan-400",    bg: "bg-cyan-500/15 border-cyan-500/30",       trend: "+33% vs last month" },
-    { label: "COMPLETION %",       value: completion,       suffix: "%", icon: Target,      color: "text-violet-400",  bg: "bg-violet-500/15 border-violet-500/30",   trend: "+12% vs last month" },
-    { label: "STREAK",             value: currentStreak,    suffix: "",  icon: Flame,       color: "text-amber-400",   bg: "bg-amber-500/15 border-amber-500/30",     trend: "Days in a row" },
+    { label: "SESSIONS THIS WEEK", value: weekLogsCount, suffix: "", icon: Calendar, color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", trend: "Target: 4 sessions" },
+    { label: "THIS MONTH", value: last30DaysCount, suffix: "", icon: TrendingUp, color: "text-cyan-400", bg: "bg-cyan-500/10 border-cyan-500/20", trend: "+25% vs last month" },
+    { label: "COMPLETION RATE", value: completion, suffix: "%", icon: Target, color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20", trend: "Based on assignments" },
+    { label: "CURRENT STREAK", value: currentStreak, suffix: " Days", icon: Flame, color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20", trend: "Days in a row" },
   ];
 
   return (
     <div className="min-h-screen bg-[#050816] text-white">
-      {/* Ambient */}
-      <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute top-0 right-1/4 w-[600px] h-[600px] rounded-full bg-emerald-500/4 blur-[150px]" />
-        <div className="absolute bottom-1/4 left-0 w-[500px] h-[500px] rounded-full bg-cyan-500/3 blur-[150px]" />
+      {/* Background glow animations */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-[-10%] right-[10%] w-[600px] h-[600px] rounded-full bg-emerald-500/5 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-cyan-500/5 blur-[120px]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {/* Header */}
-        <motion.div {...fade(0)}>
-          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-            {greeting}, {firstName} 👋
-          </h1>
-          <p className="text-zinc-500 text-sm mt-1">{dateStr}</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8 relative z-10">
+        
+        {/* Header Section */}
+        <motion.div {...fade(0)} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight flex items-center gap-3">
+              Let's get to work, {firstName} <span className="animate-bounce">🏀</span>
+            </h1>
+            <p className="text-zinc-500 text-sm mt-1 uppercase tracking-wider font-semibold">{dateStr}</p>
+          </div>
+          
+          <div className="inline-flex items-center gap-3 bg-zinc-900/60 border border-white/10 rounded-2xl px-4 py-2 text-zinc-300">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+            <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">
+              Archetype: {profile?.player_archetype || "Prospect"}
+            </span>
+          </div>
         </motion.div>
 
-        {/* KPI row */}
+        {/* KPI Grid Section */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {kpis.map(({ label, value, suffix, icon: Icon, color, bg, trend }, i) => (
-            <motion.div key={label} {...fade(i * 0.07)}
-              className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-4 sm:p-5 hover:border-zinc-700 transition-all duration-300">
+            <motion.div 
+              key={label} 
+              {...fade(i * 0.05)}
+              className="rounded-2xl border border-white/5 bg-zinc-900/40 backdrop-blur-sm p-5 hover:border-emerald-500/20 transition-all duration-300 flex flex-col justify-between"
+            >
               <div className="flex items-center justify-between mb-3">
-                <p className="text-[10px] sm:text-[11px] uppercase tracking-widest text-zinc-500 font-semibold leading-tight">{label}</p>
-                <div className={`p-1.5 rounded-lg border ${bg}`}>
-                  <Icon className={`w-3.5 h-3.5 ${color}`} />
+                <span className="text-[9px] uppercase tracking-widest text-zinc-500 font-black leading-tight">{label}</span>
+                <div className={`p-2 rounded-xl border ${bg}`}>
+                  <Icon className={`w-4 h-4 ${color}`} />
                 </div>
               </div>
-              <p className={`text-3xl sm:text-4xl font-black ${color}`}>{value}{suffix}</p>
-              <p className="text-[11px] text-zinc-600 mt-1.5 flex items-center gap-1">
-                <span className="text-emerald-400">↑</span> {trend}
-              </p>
+              <div>
+                <p className={`text-2xl sm:text-3xl font-black ${color}`}>{value}{suffix}</p>
+                <p className="text-[10px] text-zinc-600 mt-1.5 font-bold uppercase tracking-wide">
+                  {trend}
+                </p>
+              </div>
             </motion.div>
           ))}
         </div>
 
-        {/* 3-col content */}
-        <div className="grid lg:grid-cols-5 gap-6">
-          {/* TODAY'S WORKOUT + WEIGHT (left 3 cols) */}
-          <motion.div {...fade(0.28)} className="lg:col-span-3 space-y-6">
-            {/* Today's Workout */}
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5 sm:p-6">
-              <div className="flex items-start justify-between mb-4">
+        {/* Main 12-Column Layout Grid */}
+        <div className="grid lg:grid-cols-12 gap-8">
+          
+          {/* Left Column (8 Columns): Today's workout & Weight trend */}
+          <div className="lg:col-span-8 space-y-8">
+            
+            {/* Today's Workout card */}
+            <motion.div 
+              {...fade(0.25)}
+              className="rounded-3xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6 sm:p-8"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 pb-6 border-b border-white/5">
                 <div>
-                  <p className="text-xs text-zinc-500 uppercase tracking-widest font-semibold mb-1">Today's Workout</p>
-                  <h2 className="text-xl font-black text-white">
-                    {todayWorkout?.title ?? "No workout assigned"}
+                  <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-black block mb-1">Today's Assigned training</span>
+                  <h2 className="text-xl sm:text-2xl font-black text-white">
+                    {todayWorkout?.title ?? "Rest & Recovery"}
                   </h2>
                 </div>
-                {todayWorkout?.duration && (
-                  <span className="flex items-center gap-1.5 text-xs text-zinc-400 bg-zinc-800/60 border border-zinc-700/50 rounded-lg px-3 py-1.5 flex-shrink-0">
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" strokeLinecap="round"/></svg>
-                    {todayWorkout.duration} MIN
+                {todayWorkout && (
+                  <span className="inline-flex items-center gap-1.5 text-xs text-zinc-300 bg-zinc-800/80 border border-white/5 rounded-xl px-4 py-2">
+                    <Clock className="w-4 h-4 text-emerald-400" />
+                    {todayWorkout.duration ?? 30} MIN
                   </span>
                 )}
               </div>
 
               {todayWorkout ? (
-                <>
-                  <TodaysWorkout workout={todayWorkout} />
-                  <div className="mt-5 pt-4 border-t border-zinc-800">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[11px] uppercase tracking-widest text-zinc-500 font-semibold">PROGRESS</span>
-                      <span className="text-sm font-black text-emerald-400">75%</span>
+                <div className="space-y-6">
+                  <p className="text-sm text-zinc-400 leading-relaxed">
+                    {todayWorkout.description}
+                  </p>
+
+                  {/* Checklist wrapper */}
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Interactive Checklist</p>
+                    
+                    <div className="grid gap-3">
+                      {checklist.map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() => toggleCheck(item.id)}
+                          className={`w-full flex items-center justify-between rounded-2xl p-4 border text-left transition-all duration-200 ${
+                            item.done
+                              ? "bg-emerald-500/10 border-emerald-500/30 text-white"
+                              : "bg-zinc-950/40 border-white/5 hover:border-white/10 text-zinc-300"
+                          }`}
+                        >
+                          <span className="text-sm font-bold">{item.text}</span>
+                          <div className={`w-5.5 h-5.5 rounded-full border flex items-center justify-center transition-all ${
+                            item.done ? "bg-emerald-500 border-emerald-500 text-black" : "border-zinc-700 bg-transparent"
+                          }`}>
+                            {item.done && <Check className="w-3.5 h-3.5 stroke-[3.5]" />}
+                          </div>
+                        </button>
+                      ))}
                     </div>
-                    <div className="h-1.5 rounded-full bg-zinc-800 overflow-hidden">
-                      <div className="h-full w-3/4 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400" />
-                    </div>
-                    <button className="mt-4 w-full flex items-center justify-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold text-sm py-3 transition-all">
-                      <CheckCircle2 className="w-4 h-4" /> Mark Session Complete
-                    </button>
                   </div>
-                </>
+
+                  {/* Logging Panel */}
+                  <div className="pt-6 border-t border-white/5 space-y-4">
+                    {!alreadyLogged ? (
+                      <>
+                        <div className="flex items-center gap-2 rounded-2xl border border-white/5 bg-zinc-950/40 p-3">
+                          <MessageSquare className="w-4 h-4 text-zinc-500 flex-shrink-0" />
+                          <input
+                            type="text"
+                            placeholder="Add optional notes (e.g. felt strong, box height 24 inches)"
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            className="bg-transparent text-sm w-full text-zinc-300 placeholder-zinc-600 focus:outline-none"
+                          />
+                        </div>
+
+                        {allCompleted ? (
+                          <motion.div
+                            initial={{ scale: 0.98 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                          >
+                            <button
+                              onClick={handleLogWorkout}
+                              disabled={isSubmitting}
+                              className="w-full flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-sm py-4 transition-all duration-300 shadow-[0_0_30px_rgba(16,185,129,0.4)]"
+                            >
+                              <CheckCircle2 className="w-4 h-4" /> 
+                              {isSubmitting ? "LOGGING..." : "LOG SESSION COMPLETE"}
+                            </button>
+                          </motion.div>
+                        ) : (
+                          <button
+                            disabled
+                            className="w-full flex items-center justify-center gap-2 rounded-2xl bg-zinc-800 text-zinc-500 font-black text-sm py-4 cursor-not-allowed border border-white/5"
+                          >
+                            Complete all checklist items to log
+                          </button>
+                        )}
+                      </>
+                    ) : (
+                      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-6 py-4 flex items-center gap-3 text-emerald-300">
+                        <Check className="w-5 h-5 flex-shrink-0" />
+                        <span className="text-sm font-bold">Good work! Today's session is successfully logged.</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               ) : (
-                <div className="text-center py-10">
-                  <Dumbbell className="w-10 h-10 text-zinc-700 mx-auto mb-3" />
-                  <p className="text-zinc-500 text-sm">No workout assigned for today.</p>
-                  <a href="/workouts" className="inline-flex items-center gap-1.5 text-emerald-400 text-sm mt-3 hover:text-emerald-300 transition-colors font-semibold">
-                    Browse workouts <ArrowRight className="w-4 h-4" />
+                <div className="text-center py-12">
+                  <Dumbbell className="w-12 h-12 text-zinc-700 mx-auto mb-4" />
+                  <p className="text-zinc-400 text-sm font-semibold">Today is a rest day. Focus on hydration & active recovery!</p>
+                  <a href="/workouts" className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 font-bold text-xs uppercase tracking-widest mt-4">
+                    Browse All Workouts <ArrowRight className="w-4 h-4" />
                   </a>
                 </div>
               )}
-            </div>
+            </motion.div>
 
-            {/* Weight Chart */}
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5 sm:p-6">
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-2.5">
-                  <div className="p-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30">
-                    <BarChart2 className="w-4 h-4 text-emerald-400" />
+            {/* Weight / Measurement trend */}
+            <motion.div 
+              {...fade(0.3)}
+              className="rounded-3xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6 sm:p-8"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-cyan-500/15 border border-cyan-500/30">
+                    <BarChart2 className="w-4 h-4 text-cyan-400" />
                   </div>
-                  <h3 className="text-base font-bold text-white">Weight / Measurements</h3>
+                  <h3 className="text-lg font-black text-white">Weight & Telemetry</h3>
                 </div>
-                <span className="text-[11px] text-zinc-400 bg-zinc-800/60 border border-zinc-700/50 rounded-lg px-3 py-1.5">Weight (lbs) ▾</span>
+                <span className="text-[10px] text-zinc-400 bg-zinc-800/80 border border-white/5 rounded-xl px-3 py-1.5 font-bold uppercase tracking-wider">
+                  Weight (kg)
+                </span>
               </div>
+              
               {measurements.length >= 2 ? (
-                <>
-                  <WeightChart measurements={measurements} />
-                  <div className="mt-4 pt-4 border-t border-zinc-800 flex items-center justify-between">
-                    <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">↓ Tracking progress</span>
-                    <button className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
-                      <BarChart2 className="w-3.5 h-3.5" /> View Full Progress
-                    </button>
+                <div className="space-y-4">
+                  <div className="h-[280px] w-full">
+                    <WeightChart measurements={measurements} />
                   </div>
-                </>
+                </div>
               ) : (
                 <MeasurementsWidget initialMeasurements={measurements} />
               )}
-            </div>
-          </motion.div>
+            </motion.div>
 
-          {/* STREAK + RECENT SESSIONS (right 2 cols) */}
-          <motion.div {...fade(0.38)} className="lg:col-span-2 space-y-6">
-            {/* Streak Badge */}
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5 sm:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-white">Streak Badge</h3>
-                <Flame className="w-5 h-5 text-amber-400" />
+          </div>
+
+          {/* Right Column (4 Columns): Streak, Radar, and logs */}
+          <div className="lg:col-span-4 space-y-8">
+            
+            {/* Streak card with custom SVG glow */}
+            <motion.div 
+              {...fade(0.35)}
+              className="rounded-3xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6 flex flex-col items-center text-center relative overflow-hidden"
+            >
+              {/* Animated glowing backdrop */}
+              <div className="absolute inset-0 bg-gradient-to-b from-amber-500/5 to-transparent pointer-events-none" />
+
+              <div className="w-full flex items-center justify-between border-b border-white/5 pb-4 mb-6">
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Streak Status</span>
+                <Flame className="w-5 h-5 text-amber-500" />
               </div>
-              <div className="flex flex-col items-center py-3">
-                {/* Ring */}
-                <div className="relative w-36 h-36 flex items-center justify-center">
-                  <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 144 144">
-                    <circle cx="72" cy="72" r="62" fill="none" stroke="#27272a" strokeWidth="8" />
-                    <circle cx="72" cy="72" r="62" fill="none"
-                      stroke="url(#streakGrad)" strokeWidth="8"
-                      strokeLinecap="round"
-                      strokeDasharray={`${Math.min(currentStreak / 30, 1) * 390} 390`} />
-                    <defs>
-                      <linearGradient id="streakGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#f59e0b" />
-                        <stop offset="100%" stopColor="#ef4444" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <div className="relative flex flex-col items-center">
-                    <span className="text-5xl font-black text-amber-400">{currentStreak}</span>
-                    <span className="text-[11px] font-black text-amber-400 uppercase tracking-widest">DAYS</span>
-                    <Flame className="w-5 h-5 text-amber-400 fill-amber-400 mt-0.5" />
-                  </div>
+
+              {/* Glowing Streak ring */}
+              <div className="relative w-40 h-40 flex items-center justify-center">
+                <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 144 144">
+                  <circle cx="72" cy="72" r="62" fill="none" stroke="#18181b" strokeWidth="8" />
+                  <circle 
+                    cx="72" 
+                    cy="72" 
+                    r="62" 
+                    fill="none"
+                    stroke="url(#streakGrad)" 
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeDasharray={`${Math.min(currentStreak / 15, 1) * 390} 390`} 
+                  />
+                  <defs>
+                    <linearGradient id="streakGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#ef4444" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div className="flex flex-col items-center">
+                  <span className="text-5xl font-black text-amber-400 tracking-tight">{currentStreak}</span>
+                  <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">DAYS ACTIVE</span>
                 </div>
-                <p className="text-zinc-500 text-sm mt-4 text-center">
-                  {currentStreak > 7 ? "Unstoppable! Keep it rolling." : currentStreak > 0 ? "Great momentum, keep going!" : "Start your streak today!"}
-                </p>
               </div>
-            </div>
 
-            {/* Recent Sessions */}
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-sm p-5 sm:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-white">Recent Sessions</h3>
-                <a href="/workouts" className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">View All →</a>
+              <p className="text-zinc-400 text-xs mt-6 leading-relaxed max-w-[200px]">
+                {currentStreak > 7 
+                  ? "Unstoppable streak! Coach Jake is watching." 
+                  : currentStreak > 0 
+                    ? "Great momentum. Keep completing workouts!" 
+                    : "No workout logged this week. Let's start a new streak!"}
+              </p>
+            </motion.div>
+
+            {/* Recharts Radar chart card */}
+            <motion.div 
+              {...fade(0.4)}
+              className="rounded-3xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6"
+            >
+              <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Player Card Attributes</span>
+                <Sparkles className="w-4 h-4 text-emerald-400 animate-pulse" />
               </div>
-              <div className="space-y-2.5">
-                {recentSessions.length > 0 ? recentSessions.slice(0, 4).map((log: any, i: number) => (
-                  <motion.div key={log.id ?? i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + i * 0.06 }}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-zinc-800/40 hover:bg-zinc-800/70 transition-colors border border-zinc-800/60">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
-                      <Dumbbell className="w-3.5 h-3.5 text-emerald-400" />
+
+              {mounted ? (
+                <div className="h-[220px] w-full flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height={220}>
+                    <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                      <PolarGrid stroke="#27272a" />
+                      <PolarAngleAxis 
+                        dataKey="subject" 
+                        stroke="#71717a" 
+                        tick={{ fontSize: 9, fontWeight: 700 }}
+                      />
+                      <PolarRadiusAxis 
+                        angle={30} 
+                        domain={[0, 100]} 
+                        tick={false} 
+                        axisLine={false} 
+                      />
+                      <Radar
+                        name="Athlete"
+                        dataKey="value"
+                        stroke="#10b981"
+                        fill="#10b981"
+                        fillOpacity={0.25}
+                      />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="h-[220px] flex items-center justify-center text-zinc-600 text-xs">Loading Radar Chart...</div>
+              )}
+
+              <div className="border-t border-white/5 pt-4 flex items-center justify-between text-xs mt-4">
+                <span className="font-bold text-zinc-500 uppercase tracking-widest">Archetype</span>
+                <span className="font-black text-emerald-400 uppercase tracking-wider">{archetype}</span>
+              </div>
+            </motion.div>
+
+            {/* Recent Sessions list */}
+            <motion.div 
+              {...fade(0.45)}
+              className="rounded-3xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-6"
+            >
+              <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Recent Sessions</span>
+                <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider">Last 3</span>
+              </div>
+
+              <div className="space-y-3">
+                {recentSessions.length > 0 ? (
+                  recentSessions.slice(0, 3).map((log: any, i: number) => (
+                    <div 
+                      key={log.id ?? i} 
+                      className="flex items-center gap-3 p-3 rounded-xl bg-zinc-950/40 border border-white/5 hover:border-white/10 transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                        <Dumbbell className="w-4 h-4 text-emerald-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-white truncate">{log.workouts?.title ?? "Logged Workout"}</p>
+                        <p className="text-[10px] text-zinc-500 mt-0.5">
+                          {new Date(log.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                          {log.notes ? ` • "${log.notes}"` : ""}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">{log.workouts?.title ?? "Workout Session"}</p>
-                      <p className="text-xs text-zinc-500">
-                        {new Date(log.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                        {log.duration ? ` • ${log.duration} min` : ""}
-                      </p>
-                    </div>
-                    <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-md px-2 py-0.5 uppercase tracking-wide flex-shrink-0">
-                      COMPLETED ✓
-                    </span>
-                  </motion.div>
-                )) : (
-                  <div className="text-center py-8">
-                    <Dumbbell className="w-8 h-8 text-zinc-700 mx-auto mb-2" />
-                    <p className="text-zinc-600 text-sm">No sessions logged yet.</p>
-                    <a href="/workouts" className="text-emerald-400 text-xs mt-2 inline-block hover:text-emerald-300 transition-colors">Go to Workouts →</a>
+                  ))
+                ) : (
+                  <div className="text-center py-6">
+                    <p className="text-xs text-zinc-600 font-medium">No sessions logged yet.</p>
                   </div>
                 )}
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+
+          </div>
+
         </div>
+
       </div>
     </div>
   );

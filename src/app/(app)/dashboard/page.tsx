@@ -401,13 +401,13 @@ export default async function DashboardPage() {
     return (
       <TrainerDashboardLayout coachName={coachName}>
         <AthleteDashboard
+          profile={profile}
           todayWorkout={athleteData.todayWorkout}
           weekLogsCount={athleteData.weekLogsCount}
           last30DaysCount={athleteData.last30DaysCount}
           measurements={athleteData.measurements}
           currentStreak={athleteData.currentStreak}
           longestStreak={athleteData.longestStreak}
-          userName={profile.full_name || "Athlete"}
           recentSessions={athleteData.recentSessions}
           hasLoggedToday={athleteData.hasLoggedToday}
         />

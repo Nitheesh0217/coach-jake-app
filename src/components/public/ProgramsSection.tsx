@@ -12,7 +12,7 @@ const PROGRAMS = [
     title:"Vertical Jump Transformation",
     desc:"12-week program to add serious bounce and explode off the floor. Science-backed plyometrics.",
     duration:"12 Weeks", level:"Intermediate",
-    image:"https://images.unsplash.com/photo-1574623452334-1e0ac2b3ccb4?w=600&q=80&auto=format&fit=crop",
+    image:"/programs/in-season.jpg.png",
     accent:"emerald",
   },
   {
@@ -22,7 +22,7 @@ const PROGRAMS = [
     title:"Strength & Power Builder",
     desc:"Build foundational strength, explosiveness, and on-court power in 10 focused weeks.",
     duration:"10 Weeks", level:"All Levels",
-    image:"https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=80&auto=format&fit=crop",
+    image:"/programs/off-season.jpg.png",
     accent:"cyan",
   },
   {
@@ -32,7 +32,7 @@ const PROGRAMS = [
     title:"Hoop IQ & Skills Development",
     desc:"Sharpen your handle, decision-making, and court vision. 8 weeks to a smarter game.",
     duration:"8 Weeks", level:"All Levels",
-    image:"https://images.unsplash.com/photo-1608245449230-4ac19066d2d0?w=600&q=80&auto=format&fit=crop",
+    image:"/programs/youth.jpg.png",
     accent:"violet",
   },
 ];
