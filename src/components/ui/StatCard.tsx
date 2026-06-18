@@ -60,14 +60,11 @@ export default function StatCard({
   loading = false,
 }: StatCardProps) {
   const colors = accentMap[iconColor];
-  const [displayValue, setDisplayValue] = useState<number | string>(
-    typeof value === "string" ? value : 0,
-  );
+  const [displayValue, setDisplayValue] = useState<number>(0);
   const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (loading || typeof value === "string" || !countUp) {
-      setDisplayValue(value);
       return;
     }
 
@@ -96,6 +93,8 @@ export default function StatCard({
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
   }, [value, countUp, loading]);
+
+  const displayValueToRender = (typeof value === "string" || !countUp) ? value : displayValue;
 
   if (loading) {
     return (
@@ -151,7 +150,7 @@ export default function StatCard({
 
       <div className="mb-3 border-t border-zinc-800 pt-3">
         <p className="stat-value font-black text-3xl bg-gradient-to-r from-emerald-400 to-emerald-300 bg-clip-text text-transparent">
-          {displayValue}
+          {displayValueToRender}
         </p>
       </div>
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 
 const Spline = dynamic(() => import("@splinetool/react-spline"), {
   ssr: false,
@@ -27,7 +28,6 @@ class SplineErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: any, errorInfo: any) {
-    console.error("Spline render crash caught by boundary:", error, errorInfo);
     this.props.onError();
   }
 
@@ -42,6 +42,12 @@ class SplineErrorBoundary extends React.Component<
 export default function Global3DBackground() {
   const [splineLoaded, setSplineLoaded] = useState(false);
   const [useSpline, setUseSpline] = useState(true);
+  const pathname = usePathname();
+
+  // Disable global background on homepage to avoid resource conflict with Hero spline
+  if (pathname === "/") {
+    return null;
+  }
 
   // Fallback timeout: if Spline fails to load in 4 seconds, fallback
   useEffect(() => {

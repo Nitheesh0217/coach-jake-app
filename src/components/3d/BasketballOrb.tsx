@@ -364,7 +364,6 @@ export default function BasketballOrb() {
   try {
     pathname = usePathname();
   } catch (e) {
-    console.warn("Global 3D canvas failed to fetch active route:", e);
   }
 
   return (

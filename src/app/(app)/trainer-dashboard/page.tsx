@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboardLayout";
 import CoachDashboard from "@/components/sections/dashboard/CoachDashboard";
 
+export const dynamic = "force-dynamic";
+
 type AthleteRow = {
   user_id: string;
   email: string;
@@ -196,7 +198,6 @@ async function getCoachData(): Promise<{
       error: null,
     };
   } catch (err) {
-    console.error("Error loading coach data:", err);
     return {
       coachName: "Coach",
       athletes: [],

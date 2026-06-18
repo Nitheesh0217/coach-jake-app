@@ -7,6 +7,8 @@ import CoachDashboard from "@/components/sections/dashboard/CoachDashboard";
 import { getMeasurements } from "./measurements-actions";
 import type { Profile, Workout, Measurement, AthleteProfile } from "@/types";
 
+export const dynamic = "force-dynamic";
+
 /**
  * Calculate workout streaks from an array of workout log timestamps
  */
@@ -124,7 +126,6 @@ async function getDashboardData(): Promise<DashboardResponse> {
     const { data: auth } = await supabase.auth.getUser();
     const user = auth.user;
 
-    console.log("[DASH] AUTH USER:", { userId: user?.id, email: user?.email });
 
     if (!user) {
       return { profile: null, error: "Not logged in." };
@@ -147,12 +148,6 @@ async function getDashboardData(): Promise<DashboardResponse> {
 
     const profile = profileData as Profile;
 
-    console.log("[DASH] FETCHED PROFILE:", {
-      user_id: profile.user_id,
-      email: profile.email,
-      role: profile.role,
-      full_name: profile.full_name,
-    });
 
     // Gate athletes behind onboarding: redirect if not fully scouted
     // Do NOT redirect coaches
@@ -161,7 +156,6 @@ async function getDashboardData(): Promise<DashboardResponse> {
     }
 
     if (profile.role === "athlete") {
-      console.log("[DASH] BRANCH: ATHLETE selected (role='athlete')");
       // Fetch active workouts
       const { data: workouts } = await supabase
         .from("workouts")
@@ -242,7 +236,6 @@ async function getDashboardData(): Promise<DashboardResponse> {
         },
       };
     } else if (profile.role === "coach") {
-      console.log("[DASH] BRANCH: COACH selected (role='coach')");
       // Fetch all athlete profiles with Player Card fields
       const { data: athletes } = await supabase
         .from("profiles")

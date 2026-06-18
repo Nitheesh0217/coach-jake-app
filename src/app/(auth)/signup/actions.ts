@@ -53,7 +53,6 @@ export async function createProfileAfterSignup(
     });
 
     if (error) {
-      console.error("Profile insertion error:", error);
       return {
         success: false,
         error: `Failed to create profile: ${error.message}`,
@@ -63,7 +62,6 @@ export async function createProfileAfterSignup(
     return { success: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Profile creation exception:", message);
     return {
       success: false,
       error: `Profile creation failed: ${message}`,

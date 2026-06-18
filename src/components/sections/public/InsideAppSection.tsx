@@ -50,7 +50,7 @@ export default function InsideAppSection() {
       preview: (
         <div className="space-y-2 mt-3">
           {[{r:1,n:"Mason C.",pts:7,c:"text-amber-400"},{r:2,n:"Liam J.",pts:5,c:"text-zinc-300"},{r:3,n:"You",pts:4,c:"text-emerald-400",isYou:true}].map(e=>(
-            <div key={e.r} className={`flex items-center gap-2.5 p-2 rounded-lg ${(e as any).isYou?"bg-emerald-500/10 border border-emerald-500/20":""}`}>
+            <div key={e.r} className={`flex items-center gap-2.5 p-2 rounded-lg ${(e as { isYou?: boolean }).isYou?"bg-emerald-500/10 border border-emerald-500/20":""}`}>
               <span className={`text-sm font-black w-4 ${e.c}`}>{e.r}</span>
               <span className={`flex-1 text-xs font-semibold ${e.c}`}>{e.n}</span>
               <span className="text-xs font-black text-white">{e.pts} <span className="text-zinc-600 font-normal">sess</span></span>

@@ -61,7 +61,6 @@ export async function markWorkoutComplete(
       .maybeSingle();
 
     if (checkError) {
-      console.error("Error checking for existing log:", checkError);
       return {
         success: false,
         error: `Failed to check workout logs: ${checkError.message}`,
@@ -84,7 +83,6 @@ export async function markWorkoutComplete(
     });
 
     if (error) {
-      console.error("Workout log insertion error:", error);
 
       // Handle unique constraint violation (backup safety net for duplicate logs)
       if (error.code === "23505") {
@@ -104,7 +102,6 @@ export async function markWorkoutComplete(
     return { success: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Workout completion exception:", message);
     return {
       success: false,
       error: `Workout logging failed: ${message}`,

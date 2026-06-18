@@ -33,10 +33,6 @@ async function getLeaderboard(): Promise<{
 
     const { data: auth } = await supabase.auth.getUser();
     const user = auth.user;
-    console.log("[LEADERBOARD] AUTH USER:", {
-      userId: user?.id,
-      email: user?.email,
-    });
     if (!user)
       return {
         entries: [],
@@ -67,15 +63,6 @@ async function getLeaderboard(): Promise<{
 
     const currentProfile = (profileRes.data ?? []).find(
       (p) => p.user_id === user.id,
-    );
-    console.log(
-      "[LEADERBOARD] CURRENT PROFILE LOOKUP:",
-      currentProfile
-        ? {
-            user_id: currentProfile.user_id,
-            full_name: currentProfile.full_name,
-          }
-        : "NOT FOUND",
     );
 
     const count7d = (logs7dRes.data ?? []).reduce<Record<string, number>>(
@@ -109,10 +96,6 @@ async function getLeaderboard(): Promise<{
 
     const computedUserName =
       currentProfile?.full_name?.split(" ")[0] ?? "Athlete";
-    console.log("[LEADERBOARD] COMPUTED USERNAME:", {
-      userName: computedUserName,
-      usedFallback: !currentProfile,
-    });
     return {
       entries,
       currentUserId: user.id,

@@ -39,10 +39,6 @@ export async function addMeasurement(
     // Get current user
     const { data: auth } = await supabase.auth.getUser();
     const user = auth.user;
-    console.log("[MEASUREMENT] AUTH USER:", {
-      userId: user?.id,
-      email: user?.email,
-    });
 
     if (!user) {
       return { success: false, error: "Not authenticated" };
@@ -54,17 +50,9 @@ export async function addMeasurement(
       date: data.date,
       weight_kg: data.weight_kg,
     };
-    console.log("[MEASUREMENT] INSERT PAYLOAD:", insertPayload);
     const { error } = await supabase.from("measurements").insert(insertPayload);
 
     if (error) {
-      console.error("[MEASUREMENT] INSERT ERROR:", {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        fullError: JSON.stringify(error),
-      });
       return {
         success: false,
         error: `Failed to log measurement: ${error.message}`,
@@ -77,7 +65,6 @@ export async function addMeasurement(
     return { success: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Measurement exception:", message);
     return {
       success: false,
       error: `Measurement failed: ${message}`,

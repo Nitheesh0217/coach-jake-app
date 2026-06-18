@@ -62,7 +62,6 @@ export async function submitContact(
     });
 
     if (error) {
-      console.error("Contact form insertion error:", error);
       return {
         success: false,
         error: `Failed to send message: ${error.message}`,
@@ -75,7 +74,6 @@ export async function submitContact(
     };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Contact form exception:", message);
     return {
       success: false,
       error: `Failed to send message: ${message}`,

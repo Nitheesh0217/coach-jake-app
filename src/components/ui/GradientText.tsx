@@ -19,8 +19,9 @@ export default function GradientText({
 }: GradientTextProps) {
   const colorClass = `from-${from} to-${to}`;
 
-  return createElement(as, {
-    className: `gradient-text ${colorClass} ${className}`,
-    children,
-  });
+  return createElement(
+    as,
+    { className: `gradient-text ${colorClass} ${className}` },
+    children
+  );
 }

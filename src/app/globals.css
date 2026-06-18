@@ -12,11 +12,13 @@
   --shadow-amber-glow-sm: 0 0 20px rgba(245, 158, 11, 0.35);
   --shadow-card-default: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   --shadow-card-hover: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 24px rgba(16, 185, 129, 0.08);
+
+  --font-space-grotesk: var(--font-space-grotesk);
 }
 
 /* ─────────────────────────────────────────
    DESIGN TOKENS  (single source of truth)
-───────────────────────────────────────── */
+   ───────────────────────────────────────── */
 :root {
   --bg-primary:        #050816;
   --bg-secondary:      #0a0f1e;
@@ -34,7 +36,7 @@
 
 /* ─────────────────────────────────────────
    BASE RESETS
-───────────────────────────────────────── */
+   ───────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
 }
@@ -42,6 +44,7 @@ html {
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
+  font-family: var(--font-space-grotesk), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -123,7 +123,6 @@ export default function CoachDashboard({
           setWeightData(formatted);
         }
       } catch (err) {
-        console.error("Failed to load weight metrics:", err);
       } finally {
         setLoadingWeight(false);
       }

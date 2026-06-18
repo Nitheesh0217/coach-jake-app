@@ -5,6 +5,8 @@ import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboar
 import WorkoutsClient from "@/components/sections/workouts/WorkoutsClient";
 import { Dumbbell, Clock, CheckCircle2, ArrowRight } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 type AssignedWorkout = {
   id: string;
   title: string;

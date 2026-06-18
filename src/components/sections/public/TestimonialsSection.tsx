@@ -67,12 +67,12 @@ export default function TestimonialsSection() {
               Featured Case Study
             </span>
             <div className="space-y-1">
-              <h3 className="text-xl font-black text-white">Noah's Vertical Lab</h3>
+              <h3 className="text-xl font-black text-white">{"Noah's Vertical Lab"}</h3>
               <p className="text-xs text-zinc-500 font-semibold">12 Weeks Plyometrics Program</p>
             </div>
             
             <p className="text-sm text-zinc-300 italic leading-relaxed">
-              "The jump mechanics and strength progressions were insane. I went from barely touching the rim to flushing it consistently in games."
+              {"\"The jump mechanics and strength progressions were insane. I went from barely touching the rim to flushing it consistently in games.\""}
             </p>
 
             <div className="pt-2 border-t border-zinc-800/80 flex items-center justify-between">
@@ -81,7 +81,7 @@ export default function TestimonialsSection() {
                 <p className="text-[10px] text-zinc-500">HS Guard · Varsity Starter</p>
               </div>
               <span className="text-xs font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full">
-                +4" Vertical
+                {"+4\" Vertical"}
               </span>
             </div>
           </div>

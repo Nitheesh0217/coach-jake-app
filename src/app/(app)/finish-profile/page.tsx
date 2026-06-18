@@ -8,6 +8,8 @@ export const metadata = {
   description: "Set up your complete player profile",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function FinishProfilePage() {
   // Get the current user's profile
   const { profile, error: fetchError } = await getCurrentUserProfile();
