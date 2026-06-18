@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -147,17 +147,7 @@ export default function ContactPage() {
 
   return (
     <main className="relative text-zinc-50">
-      {/* Background */}
-      <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
-        style={{ backgroundImage: "url('/hero.jpg')" }}
-        aria-hidden
-      />
-      <div
-        className="fixed inset-0 bg-black pointer-events-none -z-10"
-        style={{ opacity: 0.65 }}
-        aria-hidden
-      />
+      {/* Background — Using Global WebGL 3D Canvas */}
 
       {/* ===== HERO ===== */}
       <section className="relative py-16 lg:py-24">

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 const NAV = [
   { href: "/",         label: "Home"     },
@@ -36,17 +37,8 @@ export default function PublicHeader() {
         <div className="flex items-center justify-between h-16">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <motion.div
-              whileHover={{ rotate: 15, scale: 1.1 }}
-              transition={{ type: "spring", stiffness: 400 }}
-              className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center group-hover:shadow-[0_0_16px_rgba(16,185,129,0.5)] transition-shadow"
-            >
-              <Zap className="w-4 h-4 text-emerald-400 fill-emerald-400" />
-            </motion.div>
-            <span className="font-black text-white tracking-tight">
-              Coach <span className="text-emerald-400">Jake</span>
-            </span>
+          <Link href="/" className="group">
+            <BrandLogo />
           </Link>
 
           {/* Desktop nav */}

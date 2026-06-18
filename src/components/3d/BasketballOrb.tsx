@@ -3,6 +3,7 @@
 import React, { useRef, useMemo, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, Stars, PerspectiveCamera } from "@react-three/drei";
+import { usePathname } from "next/navigation";
 import * as THREE from "three";
 
 // ── PROCEDURAL TEXTURE GENERATORS ──
@@ -153,6 +154,7 @@ function CyberBasketball() {
   const mouse = useRef({ x: 0, y: 0 });
   const scroll = useRef(0);
   const { viewport, size } = useThree();
+  const pathname = usePathname();
 
   // Mouse Listener
   useEffect(() => {
@@ -194,14 +196,9 @@ function CyberBasketball() {
     meshRef.current.rotation.x += (targetTiltX - meshRef.current.rotation.x) * 0.08;
     meshRef.current.rotation.y += (targetTiltY - meshRef.current.rotation.y) * 0.08;
 
-    // 3. Responsive Coordinates & Scroll Interpolations
+    // 3. Responsive Coordinates & Route-Specific Positions
     const isMobile = size.width < 768;
     
-    // Position/Scale coordinates mapped to scroll position:
-    // Scroll = 0 (Hero): Right side, prominent.
-    // Scroll = 0.3 (Programs): Left side, slightly smaller background.
-    // Scroll = 0.6 (Inside App): Right side, fading, mid-scale.
-    // Scroll = 1.0 (End): Centered, rotating fast, deep.
     let targetX = 1.6;
     let targetY = 0;
     let targetZ = 0;
@@ -210,30 +207,60 @@ function CyberBasketball() {
     if (isMobile) {
       targetX = 0;
       targetY = 0.8;
-      targetZ = -1;
-      targetScale = 0.95;
+      targetZ = -1.2;
+      targetScale = 0.85;
     } else {
-      if (s < 0.3) {
-        // Hero -> Programs transition
-        const p = s / 0.3;
-        targetX = THREE.MathUtils.lerp(1.6, -1.9, p);
-        targetY = THREE.MathUtils.lerp(0, -0.6, p);
-        targetZ = THREE.MathUtils.lerp(0, -1.5, p);
-        targetScale = THREE.MathUtils.lerp(1.25, 0.85, p);
-      } else if (s < 0.6) {
-        // Programs -> Inside App transition
-        const p = (s - 0.3) / 0.3;
-        targetX = THREE.MathUtils.lerp(-1.9, 1.7, p);
-        targetY = THREE.MathUtils.lerp(-0.6, 0.1, p);
-        targetZ = THREE.MathUtils.lerp(-1.5, -0.8, p);
-        targetScale = THREE.MathUtils.lerp(0.85, 1.1, p);
+      // route-specific positions
+      if (pathname === "/") {
+        // Apply scroll-mapping for homepage
+        if (s < 0.3) {
+          const p = s / 0.3;
+          targetX = THREE.MathUtils.lerp(1.6, -1.9, p);
+          targetY = THREE.MathUtils.lerp(0, -0.6, p);
+          targetZ = THREE.MathUtils.lerp(0, -1.5, p);
+          targetScale = THREE.MathUtils.lerp(1.25, 0.85, p);
+        } else if (s < 0.6) {
+          const p = (s - 0.3) / 0.3;
+          targetX = THREE.MathUtils.lerp(-1.9, 1.7, p);
+          targetY = THREE.MathUtils.lerp(-0.6, 0.1, p);
+          targetZ = THREE.MathUtils.lerp(-1.5, -0.8, p);
+          targetScale = THREE.MathUtils.lerp(0.85, 1.1, p);
+        } else {
+          const p = (s - 0.6) / 0.4;
+          targetX = THREE.MathUtils.lerp(1.7, 0, p);
+          targetY = THREE.MathUtils.lerp(0.1, -1.5, p);
+          targetZ = THREE.MathUtils.lerp(-0.8, -3.0, p);
+          targetScale = THREE.MathUtils.lerp(1.1, 0.65, p);
+        }
+      } else if (pathname === "/programs") {
+        // Floating at top right of programs
+        targetX = 2.0;
+        targetY = 0.4;
+        targetZ = -1.5;
+        targetScale = 0.95;
+      } else if (pathname === "/login" || pathname === "/signup" || pathname === "/finish-profile") {
+        // Large background moon on left
+        targetX = -1.9;
+        targetY = 0.1;
+        targetZ = -1.2;
+        targetScale = 1.15;
+      } else if (
+        pathname?.startsWith("/dashboard") ||
+        pathname?.startsWith("/workouts") ||
+        pathname?.startsWith("/leaderboard") ||
+        pathname?.startsWith("/trainer-dashboard")
+      ) {
+        // Deep background icon for dashboard
+        targetX = 2.2;
+        targetY = -0.8;
+        targetZ = -2.2;
+        targetScale = 0.7;
       } else {
-        // Inside App -> Footer transition
-        const p = (s - 0.6) / 0.4;
-        targetX = THREE.MathUtils.lerp(1.7, 0, p);
-        targetY = THREE.MathUtils.lerp(0.1, -1.5, p);
-        targetZ = THREE.MathUtils.lerp(-0.8, -3.0, p);
-        targetScale = THREE.MathUtils.lerp(1.1, 0.65, p);
+        // Fallback default
+        targetX = 1.8;
+        targetY = 0;
+        targetZ = -1.0;
+        targetScale = 1.0;
       }
     }
 
@@ -336,7 +363,7 @@ function Particles() {
 // ── MAIN EXPORT CANVAS ──
 export default function BasketballOrb() {
   return (
-    <div className="absolute inset-0 w-full h-full pointer-events-none -z-10 bg-transparent">
+    <div className="fixed inset-0 w-full h-full pointer-events-none -z-10 bg-transparent">
       <Canvas
         gl={{ antialias: true, alpha: true }}
         dpr={[1, 1.5]}

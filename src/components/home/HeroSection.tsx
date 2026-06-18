@@ -6,10 +6,6 @@ import { ArrowRight } from "lucide-react";
 import dynamic from "next/dynamic";
 
 // ── DYNAMIC 3D IMPORTS (Prevents SSR execution errors) ──
-const BasketballOrb = dynamic(() => import("@/components/3d/BasketballOrb"), {
-  ssr: false,
-  loading: () => <div className="w-full h-full bg-[#050816]" />,
-});
 
 const PlayerCard3D = dynamic(() => import("@/components/3d/PlayerCard3D"), {
   ssr: false,
@@ -53,10 +49,7 @@ export default function HeroSection() {
       className="relative w-full bg-[#050816] overflow-hidden"
       style={{ minHeight: "100svh" }}
     >
-      {/* ── LAYER 1 (Z-index: 10): 3D Canvas World ── */}
-      <div className="absolute inset-0 z-10 pointer-events-none">
-        <BasketballOrb />
-      </div>
+      {/* ── LAYER 1 (Z-index: 10): 3D Canvas World — Mounted Globally at Root Layout ── */}
 
       {/* ── LAYER 2 (Z-index: 20): Interface Grid Overlay & Scanlines ── */}
       <div className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-b from-[#050816]/40 via-[#050816]/10 to-[#050816]" />

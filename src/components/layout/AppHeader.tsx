@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabaseClient";
-import { LayoutDashboard, Dumbbell, Trophy, BarChart2, LogOut, Zap } from "lucide-react";
+import { LayoutDashboard, Dumbbell, Trophy, BarChart2, LogOut } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -28,14 +29,8 @@ export default function AppHeader() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center gap-2.5 group no-underline">
-            <div className="h-8 w-8 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center group-hover:border-emerald-400/70 group-hover:bg-emerald-500/30 transition-all duration-200">
-              <Zap className="w-4 h-4 text-emerald-400 fill-emerald-400" />
-            </div>
-            <span className="text-base font-bold tracking-tight">
-              <span className="text-emerald-400">Coach</span>
-              <span className="text-white"> Jake</span>
-            </span>
+          <Link href="/dashboard" className="group no-underline">
+            <BrandLogo />
           </Link>
 
           {/* Desktop nav */}

@@ -312,17 +312,7 @@ export default function ProgramsPage() {
 
   return (
     <main className="relative text-zinc-50">
-      {/* Background */}
-      <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-20"
-        style={{ backgroundImage: "url('/hero.jpg')" }}
-        aria-hidden
-      />
-      <div
-        className="fixed inset-0 bg-black pointer-events-none -z-10"
-        style={{ opacity: 0.6 }}
-        aria-hidden
-      />
+      {/* Background — Using Global WebGL 3D Canvas */}
 
       {/* ===== HERO / SEASON PICKER ===== */}
       <section className="relative py-16 lg:py-24">

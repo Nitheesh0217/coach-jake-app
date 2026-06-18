@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, BookOpen, X } from "lucide-react";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 interface SidebarProps {
   open: boolean;
@@ -23,14 +24,8 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       {/* Desktop sidebar */}
       <div className="hidden md:flex md:fixed md:left-0 md:top-0 md:h-screen md:w-60 md:flex-col md:border-r md:border-zinc-800 md:bg-black/90 md:backdrop-blur-sm z-40">
         {/* Logo */}
-        <div className="flex items-center gap-3 border-b border-zinc-800 px-4 py-6">
-          <div className="w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-            <span className="text-sm font-bold text-emerald-400">CJ</span>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-zinc-50">Coach Jake</p>
-            <p className="text-xs text-zinc-500">Admin</p>
-          </div>
+        <div className="border-b border-zinc-800 px-4 py-6">
+          <BrandLogo showSubtitle={false} />
         </div>
 
         {/* Navigation */}
@@ -67,12 +62,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
         <div className="fixed left-0 top-0 h-screen w-60 flex flex-col border-r border-zinc-800 bg-black z-50 md:hidden">
           {/* Close button */}
           <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
-                <span className="text-sm font-bold text-emerald-400">CJ</span>
-              </div>
-              <p className="text-sm font-semibold text-zinc-50">Coach Jake</p>
-            </div>
+            <BrandLogo showSubtitle={false} />
             <button onClick={onClose} className="p-1.5 hover:bg-zinc-900 rounded-lg">
               <X className="w-5 h-5 text-zinc-400" />
             </button>
