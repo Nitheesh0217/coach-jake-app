@@ -146,7 +146,7 @@ function generateTextures() {
 }
 
 // ── THE BASKETBALL MESH & INTERACTIVE LOGIC ──
-function CyberBasketball() {
+function CyberBasketball({ pathname }: { pathname: string | null }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const outerRingRef = useRef<THREE.Mesh>(null);
@@ -154,7 +154,6 @@ function CyberBasketball() {
   const mouse = useRef({ x: 0, y: 0 });
   const scroll = useRef(0);
   const { viewport, size } = useThree();
-  const pathname = usePathname();
 
   // Mouse Listener
   useEffect(() => {
@@ -362,6 +361,8 @@ function Particles() {
 
 // ── MAIN EXPORT CANVAS ──
 export default function BasketballOrb() {
+  const pathname = usePathname();
+
   return (
     <div className="fixed inset-0 w-full h-full pointer-events-none -z-10 bg-transparent">
       <Canvas
@@ -381,7 +382,7 @@ export default function BasketballOrb() {
         <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={0.5} />
         <Particles />
         
-        <CyberBasketball />
+        <CyberBasketball pathname={pathname} />
       </Canvas>
     </div>
   );
