@@ -19,7 +19,7 @@ const ROLES = [
     stats: { TeamPlay: 75, Shooter: 85, Finesse: 80 },
     color: "from-cyan-500/20 to-cyan-400/5",
     themeColor: "#06b6d4",
-    img: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&auto=format&fit=crop&q=80",
+    img: "/images/athlete-darius.jpg",
   },
   {
     name: "Forward",
@@ -121,13 +121,25 @@ export default function PlayerCard3D() {
       >
         <div
           ref={cardRef}
-          className="relative w-full rounded-[2rem] border border-white/10 bg-zinc-950/90 backdrop-blur-xl overflow-hidden shadow-2xl transition-all duration-300 ease-out"
+          className="relative w-full rounded-[2rem] border border-white/10 bg-zinc-950/80 backdrop-blur-xl overflow-hidden shadow-2xl transition-all duration-300 ease-out"
           style={{ transformStyle: "preserve-3d" }}
         >
           {/* Glass Reflection Layer */}
           <div
             ref={reflectionRef}
             className="absolute inset-0 z-20 pointer-events-none transition-opacity duration-300 opacity-0 group-hover/card:opacity-100"
+          />
+
+          {/* Parallax Background HUD Grid Layer */}
+          <div
+            data-depth="-0.12"
+            className="absolute inset-0 z-0 parallax-el pointer-events-none opacity-[0.18] group-hover/card:opacity-[0.3] transition-opacity duration-500 ease-out"
+            style={{
+              backgroundImage: "url('/images/player-card-bg.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              transformStyle: "preserve-3d",
+            }}
           />
 
           {/* Futuristic Corner Brackets */}

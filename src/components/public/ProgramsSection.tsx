@@ -12,7 +12,7 @@ const PROGRAMS = [
     title:"Vertical Jump Transformation",
     desc:"12-week program to add serious bounce and explode off the floor. Science-backed plyometrics.",
     duration:"12 Weeks", level:"Intermediate",
-    image:"/programs/in-season.jpg.png",
+    image:"/images/program-vertical.jpg",
     accent:"emerald",
   },
   {
@@ -22,7 +22,7 @@ const PROGRAMS = [
     title:"Strength & Power Builder",
     desc:"Build foundational strength, explosiveness, and on-court power in 10 focused weeks.",
     duration:"10 Weeks", level:"All Levels",
-    image:"/programs/off-season.jpg.png",
+    image:"/images/program-strength.jpg",
     accent:"cyan",
   },
   {
@@ -32,7 +32,7 @@ const PROGRAMS = [
     title:"Hoop IQ & Skills Development",
     desc:"Sharpen your handle, decision-making, and court vision. 8 weeks to a smarter game.",
     duration:"8 Weeks", level:"All Levels",
-    image:"/programs/youth.jpg.png",
+    image:"/images/program-handles.jpg",
     accent:"violet",
   },
 ];
@@ -67,7 +67,7 @@ export default function ProgramsSection() {
               className={`group flex flex-col rounded-2xl border overflow-hidden transition-all duration-400 cursor-pointer ${p.borderGlow}`}>
               {/* Image */}
               <div className="relative h-48 overflow-hidden bg-zinc-900">
-                <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-115 group-hover:rotate-1 group-hover:translate-y-[-2px] transition-all duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/90 via-zinc-950/20 to-transparent" />
                 {/* Shimmer on hover */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />

@@ -254,9 +254,9 @@ export default function AboutPage() {
               <TechCorners color="border-emerald-500/40" size="w-3.5 h-3.5" />
               <div className="rounded-xl overflow-hidden aspect-[4/3] bg-zinc-900 flex items-center justify-center relative">
                 <img
-                  src="/images/hero-panel.jpg"
+                  src="/images/coach-jake.jpg"
                   alt="Coach Jake coaching"
-                  className="w-full h-full object-cover opacity-75 group-hover:scale-105 group-hover:opacity-90 transition-all duration-700"
+                  className="w-full h-full object-cover opacity-75 group-hover:scale-110 group-hover:rotate-[-0.5deg] group-hover:translate-x-1 transition-all duration-700"
                 />
                 <div className="absolute inset-0 cyber-grid opacity-[0.08] pointer-events-none" />
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-65" />

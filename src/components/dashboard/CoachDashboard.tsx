@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Users, 
   Target, 
@@ -16,11 +16,29 @@ import {
   Sparkles,
   Flame,
   CheckCircle2,
-  Trash2
+  Trash2,
+  X,
+  TrendingUp,
+  Dumbbell
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { 
+  RadarChart, 
+  PolarGrid, 
+  PolarAngleAxis, 
+  PolarRadiusAxis, 
+  Radar, 
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip
+} from "recharts";
 import { getAvatarImage } from "@/lib/imageUtils";
 import { assignWorkout } from "@/app/(app)/trainer-dashboard/actions";
+import { supabaseBrowser } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 
 interface AthleteRow {
@@ -33,6 +51,9 @@ interface AthleteRow {
   sessions_30d?: number;
   last_workout_date?: string | null;
   completion_percentage?: number;
+  playstyle_team_vs_iso?: number | null;
+  playstyle_shooter_vs_slasher?: number | null;
+  playstyle_finesse_vs_power?: number | null;
 }
 
 interface SimpleWorkout {
@@ -72,6 +93,43 @@ export default function CoachDashboard({
   const [selectedWorkout, setSelectedWorkout] = useState("");
   const [assignNotes, setAssignNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Telemetry Profiler Modal states
+  const [profilerAthlete, setProfilerAthlete] = useState<AthleteRow | null>(null);
+  const [weightData, setWeightData] = useState<{ date: string; weight: number }[]>([]);
+  const [loadingWeight, setLoadingWeight] = useState(false);
+
+  const supabase = supabaseBrowser();
+
+  useEffect(() => {
+    if (!profilerAthlete) {
+      setWeightData([]);
+      return;
+    }
+    const athleteId = profilerAthlete.user_id;
+    async function loadWeightData() {
+      setLoadingWeight(true);
+      try {
+        const { data, error } = await supabase
+          .from("measurements")
+          .select("date, weight_kg")
+          .eq("user_id", athleteId)
+          .order("date", { ascending: true });
+        if (!error && data) {
+          const formatted = data.map((d: any) => ({
+            date: new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+            weight: Number(d.weight_kg),
+          }));
+          setWeightData(formatted);
+        }
+      } catch (err) {
+        console.error("Failed to load weight metrics:", err);
+      } finally {
+        setLoadingWeight(false);
+      }
+    }
+    loadWeightData();
+  }, [profilerAthlete]);
 
   // Status helper mapping
   const getAthleteStatus = (athlete: AthleteRow) => {
@@ -241,7 +299,8 @@ export default function CoachDashboard({
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.25 }}
-                        className={`rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-5 hover:border-emerald-500/30 transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                        onClick={() => setProfilerAthlete(athlete)}
+                        className={`rounded-2xl border border-white/10 bg-zinc-900/40 backdrop-blur-sm p-5 hover:border-emerald-500/30 cursor-pointer transition-all duration-300 flex flex-col md:flex-row md:items-center justify-between gap-4 ${
                           isAtRisk ? "shadow-[inset_0_0_15px_rgba(239,68,68,0.02)]" : ""
                         }`}
                       >
@@ -284,7 +343,8 @@ export default function CoachDashboard({
                           </span>
                           
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setSelectedAthlete(athlete.user_id);
                               // Smooth scroll to Quick Assign panel on mobile
                               const el = document.getElementById("quick-assign-panel");
@@ -431,6 +491,189 @@ export default function CoachDashboard({
         </div>
 
       </div>
+
+      {/* Athlete Telemetry Profiler Modal */}
+      <AnimatePresence>
+        {profilerAthlete && (
+          <>
+            <div 
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" 
+              onClick={() => setProfilerAthlete(null)} 
+            />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl rounded-3xl border border-white/10 bg-zinc-950/95 backdrop-blur-2xl p-6 sm:p-8 shadow-2xl z-50 max-h-[90vh] overflow-y-auto"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between border-b border-white/5 pb-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full border border-emerald-500/30 overflow-hidden flex-shrink-0">
+                    <img
+                      src={getAvatarImage(profilerAthlete.full_name ?? "Athlete")}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-white">{profilerAthlete.full_name ?? "Athlete"}</h3>
+                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
+                      {profilerAthlete.player_archetype ?? "Prospect"} • {profilerAthlete.email}
+                    </p>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={() => setProfilerAthlete(null)}
+                  className="p-1.5 rounded-xl border border-white/5 bg-zinc-900/50 text-zinc-500 hover:text-white transition-all"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Grid Content */}
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Left Side: Attributes Radar Chart */}
+                <div className="rounded-2xl border border-white/5 bg-zinc-900/20 p-5 space-y-4">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                    <span className="text-xs font-black uppercase tracking-wider text-emerald-400">Playstyle Attributes</span>
+                    <Sparkles className="w-4 h-4 text-emerald-400 animate-pulse" />
+                  </div>
+                  
+                  <div className="h-[250px] w-full flex items-center justify-center">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadarChart cx="50%" cy="50%" outerRadius="80%" data={[
+                        { subject: "Shooting", value: profilerAthlete.playstyle_shooter_vs_slasher ?? 50, fullMark: 100 },
+                        { subject: "Athleticism", value: 80, fullMark: 100 },
+                        { subject: "Team Play", value: 100 - (profilerAthlete.playstyle_team_vs_iso ?? 50), fullMark: 100 },
+                        { subject: "Finesse", value: profilerAthlete.playstyle_finesse_vs_power ?? 50, fullMark: 100 },
+                        { subject: "Playmaking", value: 75, fullMark: 100 },
+                      ]}>
+                        <PolarGrid stroke="#27272a" />
+                        <PolarAngleAxis 
+                          dataKey="subject" 
+                          stroke="#71717a" 
+                          tick={{ fontSize: 10, fontWeight: 700 }}
+                        />
+                        <PolarRadiusAxis 
+                          angle={30} 
+                          domain={[0, 100]} 
+                          tick={false} 
+                          axisLine={false} 
+                        />
+                        <Radar
+                          name="Athlete"
+                          dataKey="value"
+                          stroke="#10b981"
+                          fill="#10b981"
+                          fillOpacity={0.25}
+                        />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2 pt-2 text-center">
+                    <div className="p-2.5 rounded-xl bg-zinc-950/40 border border-white/5">
+                      <span className="block text-[8px] uppercase font-bold text-zinc-500">ISO vs Team</span>
+                      <span className="block text-xs font-black text-white mt-1">
+                        {profilerAthlete.playstyle_team_vs_iso ?? 50}% Team
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-zinc-950/40 border border-white/5">
+                      <span className="block text-[8px] uppercase font-bold text-zinc-500">Shooter/Slasher</span>
+                      <span className="block text-xs font-black text-white mt-1">
+                        {profilerAthlete.playstyle_shooter_vs_slasher ?? 50}% Slasher
+                      </span>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-zinc-950/40 border border-white/5">
+                      <span className="block text-[8px] uppercase font-bold text-zinc-500">Finesse/Power</span>
+                      <span className="block text-xs font-black text-white mt-1">
+                        {profilerAthlete.playstyle_finesse_vs_power ?? 50}% Power
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side: Weight & Training Logs */}
+                <div className="space-y-6">
+                  {/* Weight Trend Line Chart */}
+                  <div className="rounded-2xl border border-white/5 bg-zinc-900/20 p-5">
+                    <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-4">
+                      <span className="text-xs font-black uppercase tracking-wider text-cyan-400">Weight Tracking Trend</span>
+                      <TrendingUp className="w-4 h-4 text-cyan-400" />
+                    </div>
+
+                    {loadingWeight ? (
+                      <div className="h-[180px] flex items-center justify-center text-zinc-500 text-xs">
+                        Loading weight records...
+                      </div>
+                    ) : weightData.length >= 2 ? (
+                      <div className="h-[180px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={weightData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                            <XAxis dataKey="date" stroke="#71717a" style={{ fontSize: "10px" }} tickLine={false} />
+                            <YAxis stroke="#71717a" style={{ fontSize: "10px" }} tickLine={false} domain={["auto", "auto"]} />
+                            <Tooltip
+                              contentStyle={{ backgroundColor: "#090d16", border: "1px solid #27272a", borderRadius: "8px" }}
+                              labelStyle={{ color: "#71717a", fontSize: "10px" }}
+                              itemStyle={{ color: "#06b6d4", fontSize: "11px", fontWeight: "bold" }}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="weight"
+                              stroke="#06b6d4"
+                              strokeWidth={2}
+                              dot={{ fill: "#06b6d4", r: 3 }}
+                              activeDot={{ r: 5 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : (
+                      <div className="h-[180px] flex flex-col items-center justify-center text-center p-4">
+                        <Dumbbell className="w-8 h-8 text-zinc-700 mb-2" />
+                        <p className="text-zinc-500 text-xs font-semibold">No telemetry measurements recorded yet.</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Summary Telemetry KPI Stats */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-2xl border border-white/5 bg-zinc-900/20 p-4">
+                      <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Last Workout</span>
+                      <span className="text-xs font-black text-white">
+                        {profilerAthlete.last_workout_date
+                          ? new Date(profilerAthlete.last_workout_date).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+                          : "None recorded"}
+                      </span>
+                    </div>
+                    <div className="rounded-2xl border border-white/5 bg-zinc-900/20 p-4">
+                      <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Completion (30d)</span>
+                      <span className="text-xs font-black text-white">
+                        {profilerAthlete.completion_percentage ?? 0}% rate ({profilerAthlete.sessions_30d ?? 0} sessions)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <div className="pt-6 border-t border-white/5 flex items-center justify-end mt-6">
+                <button
+                  onClick={() => setProfilerAthlete(null)}
+                  className="px-6 py-3 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-xs font-black uppercase tracking-widest text-zinc-300 transition-all border border-white/5"
+                >
+                  Close Profile
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

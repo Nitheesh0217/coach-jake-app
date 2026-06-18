@@ -14,6 +14,9 @@ type AthleteRow = {
   sessions_30d: number;
   last_workout_date: string | null;
   completion_percentage?: number;
+  playstyle_team_vs_iso?: number | null;
+  playstyle_shooter_vs_slasher?: number | null;
+  playstyle_finesse_vs_power?: number | null;
 };
 
 type SimpleWorkout = {
@@ -101,7 +104,7 @@ async function getCoachData(): Promise<{
       await Promise.all([
         supabase
           .from("profiles")
-          .select("user_id, email, full_name, age, player_archetype")
+          .select("user_id, email, full_name, age, player_archetype, playstyle_team_vs_iso, playstyle_shooter_vs_slasher, playstyle_finesse_vs_power")
           .eq("role", "athlete"),
         supabase
           .from("workout_logs")
@@ -167,6 +170,9 @@ async function getCoachData(): Promise<{
         sessions_30d: count30d[a.user_id] ?? 0,
         last_workout_date: lastWorkout[a.user_id] ?? null,
         completion_percentage: completionPercent,
+        playstyle_team_vs_iso: a.playstyle_team_vs_iso,
+        playstyle_shooter_vs_slasher: a.playstyle_shooter_vs_slasher,
+        playstyle_finesse_vs_power: a.playstyle_finesse_vs_power,
       };
     });
 
