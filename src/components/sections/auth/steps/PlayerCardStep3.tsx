@@ -204,7 +204,7 @@ export default function PlayerCardStep3({
         {/* At Max Warning */}
         {goalsCount >= 5 && (
           <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
-            <p className="text-emerald-400 text-xs">✅ You've added the maximum 5 goals</p>
+            <p className="text-emerald-400 text-xs">{"✅ You've added the maximum 5 goals"}</p>
           </div>
         )}
       </div>

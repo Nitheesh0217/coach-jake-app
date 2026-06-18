@@ -27,6 +27,20 @@ type WorkoutLog = {
   } | null;
 };
 
+interface WorkoutDataRow {
+  id: string;
+  title: string;
+  description: string | null;
+  duration: number | null;
+  focus_area: string | null;
+}
+
+interface LogDataRow {
+  workout_id: string;
+  date: string;
+  user_id: string;
+}
+
 async function getWorkoutsData() {
   try {
     const cookieStore = await cookies();
@@ -66,8 +80,8 @@ async function getWorkoutsData() {
       .order("date", { ascending: false });
 
     // Combine into unified workout list
-    const workoutsList = (workoutsData || []).map((w: any) => {
-      const log = logsData?.find((l: any) => l.workout_id === w.id);
+    const workoutsList = (workoutsData as unknown as WorkoutDataRow[] || []).map((w) => {
+      const log = (logsData as unknown as LogDataRow[])?.find((l) => l.workout_id === w.id);
       return {
         id: w.id,
         title: w.title,

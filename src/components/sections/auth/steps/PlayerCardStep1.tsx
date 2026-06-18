@@ -24,7 +24,7 @@ export default function PlayerCardStep1({
 }: PlayerCardStep1Props) {
   return (
     <div className="space-y-6">
-      <p className="text-zinc-400 text-sm">Let's start with your basics</p>
+      <p className="text-zinc-400 text-sm">{"Let's start with your basics"}</p>
 
       {/* Full Name */}
       <div>

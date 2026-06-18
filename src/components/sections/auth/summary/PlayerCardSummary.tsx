@@ -56,7 +56,7 @@ export default function PlayerCardSummary({
           <h1 className="text-3xl font-bold text-white mb-2">
             Your Player Card is Ready
           </h1>
-          <p className="text-zinc-400">Welcome to Coach Jake's exclusive athlete network</p>
+          <p className="text-zinc-400">{"Welcome to Coach Jake's exclusive athlete network"}</p>
         </div>
 
         {/* Player Card Display */}
@@ -72,7 +72,7 @@ export default function PlayerCardSummary({
                 {archetypeEmojis[profile.playerArchetype || ""]} {archetypeNames[profile.playerArchetype || ""]}
               </p>
               {profile.highlight_tagline && (
-                <p className="text-sm text-zinc-400 italic mt-1">"{profile.highlight_tagline}"</p>
+                <p className="text-sm text-zinc-400 italic mt-1">{"\""}{profile.highlight_tagline}{"\""}</p>
               )}
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function PlayerCardSummary({
           {allComplete && (
             <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
               <p className="text-sm font-semibold text-emerald-400">✨ Fully Scouted Profile</p>
-              <p className="text-xs text-emerald-300 mt-1">You've completed your entire Player Card!</p>
+              <p className="text-xs text-emerald-300 mt-1">{"You've completed your entire Player Card!"}</p>
             </div>
           )}
         </div>

@@ -194,7 +194,7 @@ async function getCoachData(): Promise<{
       avgCompletion,
       activeAthletesCount,
       totalSessions7d,
-      recentActivity: (activityRes.data as any) ?? [],
+      recentActivity: (activityRes.data as unknown as ActivityItem[]) ?? [],
       error: null,
     };
   } catch (err) {

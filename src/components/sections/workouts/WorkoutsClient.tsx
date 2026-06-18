@@ -6,7 +6,7 @@ import { Dumbbell, Clock, Search, SlidersHorizontal, Calendar, Check } from "luc
 import { getWorkoutImage } from "@/lib/imageUtils";
 
 interface WorkoutSession {
-  id: string; title: string; description: string; duration: number;
+  id: string; title: string; description: string | null; duration: number;
   focusArea: string; completed: boolean; date: string;
   exercises?: number; assignedByCoach?: boolean; dueDate?: string;
 }

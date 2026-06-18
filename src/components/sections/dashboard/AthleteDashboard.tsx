@@ -27,7 +27,7 @@ import {
   Radar, 
   ResponsiveContainer 
 } from "recharts";
-import { Workout, Profile } from "@/types";
+import { Workout, Profile, RecentSession } from "@/types";
 import WeightChart from "@/components/charts/WeightChart";
 import MeasurementsWidget from "./MeasurementsWidget";
 import { markWorkoutComplete } from "@/app/(app)/dashboard/actions";
@@ -40,15 +40,6 @@ interface Measurement {
   id: string; 
   date: string; 
   weight_kg: number; 
-}
-
-export interface RecentSession {
-  id?: string;
-  date: string;
-  notes?: string | null;
-  workouts: {
-    title: string;
-  } | null;
 }
 
 interface Props {

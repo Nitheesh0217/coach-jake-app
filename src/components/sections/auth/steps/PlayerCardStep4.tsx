@@ -180,7 +180,7 @@ export default function PlayerCardStep4({
           Highlight Tagline <span className="text-red-400">*</span>
         </label>
         <p className="text-xs text-zinc-400 mb-3">
-          A short phrase that describes your game (e.g., "Explosive PG with court vision")
+          {"A short phrase that describes your game (e.g., \"Explosive PG with court vision\")"}
         </p>
         <input
           id="tagline"

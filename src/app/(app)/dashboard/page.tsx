@@ -199,12 +199,22 @@ async function getDashboardData(): Promise<DashboardResponse> {
       const { currentStreak, longestStreak } = calculateStreaks(logs60d ?? []);
 
       // Fetch recent sessions (last 3)
-      const { data: recentSessions } = await supabase
+      const { data: recentLogs } = await supabase
         .from("workout_logs")
         .select("id, date, notes, workouts(title)")
         .eq("user_id", user.id)
         .order("date", { ascending: false })
         .limit(3);
+
+      const recentSessions: RecentSession[] = (recentLogs || []).map((log: any) => {
+        const w = Array.isArray(log.workouts) ? log.workouts[0] : log.workouts;
+        return {
+          id: log.id,
+          date: log.date,
+          notes: log.notes,
+          workouts: w ? { title: w.title } : null,
+        };
+      });
 
       // Check if logged today
       const today = new Date().toISOString().split("T")[0];

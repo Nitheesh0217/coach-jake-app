@@ -44,20 +44,25 @@ export default function Global3DBackground() {
   const [useSpline, setUseSpline] = useState(true);
   const pathname = usePathname();
 
-  // Disable global background on homepage to avoid resource conflict with Hero spline
-  if (pathname === "/") {
-    return null;
-  }
-
   // Fallback timeout: if Spline fails to load in 4 seconds, fallback
+  // NOTE: hooks must always run — the early return happens AFTER all hooks
   useEffect(() => {
+    // Don't start the timer on homepage (where this component renders null)
+    if (pathname === "/") return;
+
     const timer = setTimeout(() => {
       if (!splineLoaded) {
         setUseSpline(false);
       }
     }, 4000);
     return () => clearTimeout(timer);
-  }, [splineLoaded]);
+  }, [splineLoaded, pathname]);
+
+  // Disable global background on homepage to avoid resource conflict with Hero Spline
+  // This return MUST come after all hook calls above
+  if (pathname === "/") {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 w-full h-full pointer-events-none -z-10 bg-transparent">
