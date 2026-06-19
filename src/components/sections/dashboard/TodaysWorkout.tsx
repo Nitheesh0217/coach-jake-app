@@ -20,7 +20,60 @@ interface TodaysWorkoutProps {
   selectedDate?: Date;
 }
 
-export default function TodaysWorkout({ workout, selectedDate = new Date() }: TodaysWorkoutProps) {
+/**
+ * Parse workout description into drill items
+ * Supports bullet-point format (- item) or newline-separated items
+ */
+function parseDrillsFromDescription(
+  description: string | null | undefined,
+): Drill[] {
+  if (!description) return getDefaultDrills();
+
+  // Try to parse bullet points (- item) or numbered items (1. item)
+  const lines = description
+    .split(/[\n•]/gi)
+    .map((line) =>
+      line
+        .trim()
+        .replace(/^[-*\d.]\s*/, "")
+        .trim(),
+    )
+    .filter((line) => line.length > 0);
+
+  if (lines.length > 0 && lines.length <= 10) {
+    return lines.map((line, idx) => ({
+      id: `${idx}`,
+      name: line,
+      details: `Step ${idx + 1}`,
+    }));
+  }
+
+  return getDefaultDrills();
+}
+
+function getDefaultDrills(): Drill[] {
+  return [
+    { id: "1", name: "Warm-up: Dynamic stretching", details: "10 min" },
+    { id: "2", name: "Barbell trap-bar deadlifts", details: "4x5, 90% effort" },
+    { id: "3", name: "Bulgarian split squats", details: "3x8 each leg" },
+    {
+      id: "4",
+      name: "Lateral quickness ladder",
+      details: "6 rounds, 2 min rest",
+    },
+    {
+      id: "5",
+      name: "3PT shooting: Game spots",
+      details: "30 makes, 60 total",
+    },
+    { id: "6", name: "Cool down + mobility", details: "5-10 min" },
+  ];
+}
+
+export default function TodaysWorkout({
+  workout,
+  selectedDate = new Date(),
+}: TodaysWorkoutProps) {
   const [completedDrills, setCompletedDrills] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,24 +84,20 @@ export default function TodaysWorkout({ workout, selectedDate = new Date() }: To
     selectedDate.getMonth() === today.getMonth() &&
     selectedDate.getFullYear() === today.getFullYear();
 
-  // Default drills if none provided
-  const drills = workout?.drills || [
-    { id: "1", name: "Warm-up: Dynamic stretching", details: "10 min" },
-    { id: "2", name: "Barbell trap-bar deadlifts", details: "4x5, 90% effort" },
-    { id: "3", name: "Bulgarian split squats", details: "3x8 each leg" },
-    { id: "4", name: "Lateral quickness ladder", details: "6 rounds, 2 min rest" },
-    { id: "5", name: "3PT shooting: Game spots", details: "30 makes, 60 total" },
-    { id: "6", name: "Cool down + mobility", details: "5-10 min" },
-  ];
+  // Parse drills from description or use default
+  const drills =
+    workout?.drills || parseDrillsFromDescription(workout?.description);
 
   const toggleDrill = (id: string) => {
     setCompletedDrills((prev) =>
-      prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((d) => d !== id) : [...prev, id],
     );
   };
 
   const allCompleted = completedDrills.length === drills.length;
-  const completionPercent = Math.round((completedDrills.length / drills.length) * 100);
+  const completionPercent = Math.round(
+    (completedDrills.length / drills.length) * 100,
+  );
 
   const handleMarkComplete = async () => {
     if (!workout?.id) {
@@ -62,7 +111,10 @@ export default function TodaysWorkout({ workout, selectedDate = new Date() }: To
     try {
       const result = await markWorkoutComplete({
         workoutId: workout.id,
-        notes: completedDrills.length > 0 ? `Completed ${completedDrills.length}/${drills.length} drills` : undefined,
+        notes:
+          completedDrills.length > 0
+            ? `Completed ${completedDrills.length}/${drills.length} drills`
+            : undefined,
       });
 
       if (!result.success) {
@@ -90,7 +142,8 @@ export default function TodaysWorkout({ workout, selectedDate = new Date() }: To
             {workout?.title || "Today's workout"}
           </h3>
           <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-            {workout?.description || "Knock out these drills to keep your streak alive."}
+            {workout?.description ||
+              "Knock out these drills to keep your streak alive."}
           </p>
         </div>
         <div className="inline-flex items-center rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3 py-1.5 text-xs font-semibold text-emerald-300 uppercase tracking-wide">
@@ -101,15 +154,21 @@ export default function TodaysWorkout({ workout, selectedDate = new Date() }: To
       {/* Quick info */}
       <div className="grid grid-cols-3 gap-2 mb-6 pb-6 border-b border-zinc-800">
         <div>
-          <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold">Duration</p>
+          <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold">
+            Duration
+          </p>
           <p className="text-sm font-medium text-zinc-200 mt-1">~70 min</p>
         </div>
         <div>
-          <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold">Difficulty</p>
+          <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold">
+            Difficulty
+          </p>
           <p className="text-sm font-medium text-zinc-200 mt-1">Medium</p>
         </div>
         <div>
-          <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold">Location</p>
+          <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold">
+            Location
+          </p>
           <p className="text-sm font-medium text-zinc-200 mt-1">Gym</p>
         </div>
       </div>

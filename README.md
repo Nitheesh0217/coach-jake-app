@@ -93,25 +93,53 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 
 ---
 
+## Latest Updates (Build Verified)
+
+### Core Loop Improvements ✨
+- **Smart Drill Parsing** — Workout descriptions are now parsed into interactive drill checklists. No more hardcoded drills.
+- **Completed-Today Status** — Workouts show three states: "Completed Today ✓", "Done Before", or "Log This Workout"
+- **All-Time Leaderboard** — Finally backed by data! Leaderboard's "All Time" tab now queries actual session history
+- **Real Archetype Display** — Leaderboard position badges show athlete's actual archetype instead of hardcoded labels
+- **Pagination Ready** — Workouts limited to 200 records, leaderboard to 100, for production scalability
+- **Error Boundaries** — Graceful error states on `/workouts` and `/leaderboard` with retry buttons
+- **Fixed Loading Skeletons** — Dashboard loading state now matches final 2x2 KPI card layout
+
+### Build Status 
+✅ **Production build passing**  
+✅ **All TypeScript errors resolved**  
+✅ **No hardcoded demo data remaining**  
+✅ **All imports and queries validated**  
+
+---
+
 ## Features
 
 #### Athlete
 - **Player Card Wizard** — 4-step onboarding captures archetype, playstyle sliders (team/iso, shooter/slasher, finesse/power), goals, and weekly schedule
-- **Daily Workout** — today's assigned workout surfaced automatically on the dashboard
-- **Streak Tracking** — 7-day and 30-day session counters
-- **Body Measurements** — date-stamped weight history log
+- **Daily Workout** — today's assigned workout surfaced automatically on the dashboard with drill checklist
+- **Workout Logging** — Mark Complete button with loading states and error handling
+- **Streak Tracking** — 7-day and 30-day session counters with trend indicators
+- **Body Measurements** — date-stamped weight history with progress charts
 - **Player Card Profile** — public scouting card with tagline, Instagram & YouTube links
+- **Workouts Browse** — full library with filters (All, Assigned, Completed); shows "Completed Today" vs "Completed Before" status
+- **Leaderboard** — real-time ranking by sessions completed (This Week, This Month, All Time)
+- **Progress Tracking** — weight trends and weekly consistency charts
 
 #### Coach
 - **Athlete Roster** — full list with completion %, sessions this week, last workout date
-- **Workout Assignment** — assign workouts to individual athletes *(v1.1)*
+- **Workout Assignment** — assign workouts to individual athletes with optional notes
 - **Trainer Dashboard** — dedicated analytics view, isolated from athlete routing
+- **Athlete Performance Insights** — KPIs, consistency tracking, measurement history
 
 #### Platform
 - Role-based auth with Supabase — `athlete` and `coach` routing enforced at middleware
 - Row Level Security on every table — all queries scoped to `auth.uid()`
 - Server Components + Server Actions throughout — no client-side data fetching
-- Leaderboard ranked by total session count *(v1.1)*
+- Leaderboard ranked by total session count — with date-filtered weekly/monthly views and all-time rankings
+- Smart drill parsing — workout descriptions auto-converted to drill checklists
+- Completed-today status — accurate workout completion state per date
+- Error boundaries — graceful error handling on all major pages
+- Pagination support — workouts (200 limit), leaderboard (100 limit)
 
 ---
 
@@ -271,20 +299,26 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 - [x] Athlete Dashboard — daily workout, 7-day streak, 30-day count, measurements
 - [x] Coach Dashboard — roster, completion %, sessions this week
 - [x] Server actions for measurement logging
-- [x] 5 seeded active workouts
 
-#### 🔄 v1.1 — In Progress
-- [ ] `logWorkout()` wired — Mark Complete button on dashboard
-- [ ] `/workouts` — browse & log any available workout
-- [ ] `/leaderboard` — athletes ranked by total sessions
-- [ ] `/trainer-dashboard` — coach assigns workouts per athlete
+#### ✅ v1.1 — Completed
+- [x] `markWorkoutComplete()` wired — Mark Complete button with loading states
+- [x] `/workouts` — browse & log workouts with Completed Today/Before status
+- [x] `/leaderboard` — athletes ranked by sessions (7d, 30d, all-time)
+- [x] `/trainer-dashboard` — coach assigns workouts per athlete
+- [x] Smart drill parsing from workout descriptions
+- [x] Error boundaries on workouts and leaderboard pages
+- [x] Fixed loading skeletons to match final layout
+- [x] Pagination support (workouts: 200, leaderboard: 100)
+- [x] Player archetype display on leaderboard
 
 #### 🔮 v2.0 — Planned
-- [ ] Progress charts — weight trend, session frequency over time
+- [ ] Advanced progress charts — more detailed trend analysis
 - [ ] AI recommendations — workouts suggested by Player Card archetype
 - [ ] Push notifications — daily workout reminders
 - [ ] Public player profiles + social scouting feed
-- [ ] Mobile PWA
+- [ ] Mobile PWA with offline support
+- [ ] Video tutorials + coaching notes on workouts
+- [ ] Advanced filtering — by focus area, difficulty, duration
 
 ---
 

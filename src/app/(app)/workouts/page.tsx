@@ -14,6 +14,8 @@ type AssignedWorkout = {
   duration: number;
   focusArea: string;
   completed: boolean;
+  completedToday: boolean;
+  lastLogDate?: string;
   date: string;
 };
 
@@ -67,10 +69,11 @@ async function getWorkoutsData() {
       .eq("user_id", user.id)
       .single();
 
-    // Fetch all workouts
+    // Fetch all workouts (limit to 200 for pagination support)
     const { data: workoutsData } = await supabase
       .from("workouts")
-      .select("id, title, description, duration, focus_area");
+      .select("id, title, description, duration, focus_area")
+      .limit(200);
 
     // Fetch workout logs to determine completion
     const { data: logsData } = await supabase
@@ -80,16 +83,27 @@ async function getWorkoutsData() {
       .order("date", { ascending: false });
 
     // Combine into unified workout list
-    const workoutsList = (workoutsData as unknown as WorkoutDataRow[] || []).map((w) => {
-      const log = (logsData as unknown as LogDataRow[])?.find((l) => l.workout_id === w.id);
+    const today = new Date().toISOString().split("T")[0];
+    const workoutsList = (
+      (workoutsData as unknown as WorkoutDataRow[]) || []
+    ).map((w) => {
+      const allLogs =
+        (logsData as unknown as LogDataRow[])?.filter(
+          (l) => l.workout_id === w.id,
+        ) || [];
+      const latestLog = allLogs[0]; // Already ordered by date descending
+      const todayLog = allLogs.find((l) => l.date === today);
+
       return {
         id: w.id,
         title: w.title,
         description: w.description,
         duration: w.duration || 45,
         focusArea: w.focus_area || "Strength",
-        completed: !!log,
-        date: log?.date || new Date().toISOString().split("T")[0],
+        completed: allLogs.length > 0,
+        completedToday: !!todayLog,
+        lastLogDate: latestLog?.date,
+        date: latestLog?.date || today,
       };
     });
 

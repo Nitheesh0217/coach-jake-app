@@ -21,32 +21,49 @@ export default function AppLoading() {
           <div className="h-4 bg-zinc-800/50 rounded-lg w-1/4 animate-pulse"></div>
         </div>
 
-        {/* Dashboard grid skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Card 1 */}
-          <div className="bg-zinc-900/50 backdrop-blur rounded-2xl border border-zinc-800 p-6 space-y-4 animate-pulse">
-            <div className="h-6 bg-zinc-800/50 rounded w-1/3"></div>
-            <div className="h-12 bg-zinc-800/50 rounded"></div>
-            <div className="h-4 bg-zinc-800/50 rounded w-1/2"></div>
+        {/* KPI Cards - 2x2 grid to match final layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          {/* KPI Card 1 */}
+          <div className="bg-zinc-900/50 backdrop-blur rounded-2xl border border-zinc-800 p-6 space-y-3 animate-pulse">
+            <div className="h-4 bg-zinc-800/50 rounded w-2/5"></div>
+            <div className="h-10 bg-zinc-800/50 rounded"></div>
+            <div className="h-3 bg-zinc-800/50 rounded w-1/3"></div>
           </div>
 
-          {/* Card 2 */}
-          <div className="bg-zinc-900/50 backdrop-blur rounded-2xl border border-zinc-800 p-6 space-y-4 animate-pulse">
-            <div className="h-6 bg-zinc-800/50 rounded w-1/3"></div>
-            <div className="h-12 bg-zinc-800/50 rounded"></div>
-            <div className="h-4 bg-zinc-800/50 rounded w-1/2"></div>
+          {/* KPI Card 2 */}
+          <div className="bg-zinc-900/50 backdrop-blur rounded-2xl border border-zinc-800 p-6 space-y-3 animate-pulse">
+            <div className="h-4 bg-zinc-800/50 rounded w-2/5"></div>
+            <div className="h-10 bg-zinc-800/50 rounded"></div>
+            <div className="h-3 bg-zinc-800/50 rounded w-1/3"></div>
           </div>
 
-          {/* Card 3 */}
-          <div className="bg-zinc-900/50 backdrop-blur rounded-2xl border border-zinc-800 p-6 space-y-4 animate-pulse">
-            <div className="h-6 bg-zinc-800/50 rounded w-1/3"></div>
-            <div className="h-12 bg-zinc-800/50 rounded"></div>
+          {/* KPI Card 3 */}
+          <div className="bg-zinc-900/50 backdrop-blur rounded-2xl border border-zinc-800 p-6 space-y-3 animate-pulse">
+            <div className="h-4 bg-zinc-800/50 rounded w-2/5"></div>
+            <div className="h-10 bg-zinc-800/50 rounded"></div>
+            <div className="h-3 bg-zinc-800/50 rounded w-1/3"></div>
+          </div>
+
+          {/* KPI Card 4 */}
+          <div className="bg-zinc-900/50 backdrop-blur rounded-2xl border border-zinc-800 p-6 space-y-3 animate-pulse">
+            <div className="h-4 bg-zinc-800/50 rounded w-2/5"></div>
+            <div className="h-10 bg-zinc-800/50 rounded"></div>
+            <div className="h-3 bg-zinc-800/50 rounded w-1/3"></div>
+          </div>
+        </div>
+
+        {/* Today's Workout skeleton */}
+        <div className="mb-8 bg-zinc-900/50 backdrop-blur rounded-2xl border border-zinc-800 p-6 space-y-4 animate-pulse">
+          <div className="h-6 bg-zinc-800/50 rounded w-1/4"></div>
+          <div className="space-y-3">
+            <div className="h-4 bg-zinc-800/50 rounded"></div>
+            <div className="h-4 bg-zinc-800/50 rounded"></div>
             <div className="h-4 bg-zinc-800/50 rounded w-1/2"></div>
           </div>
         </div>
 
         {/* Bottom section skeleton */}
-        <div className="mt-8 bg-zinc-900/50 backdrop-blur rounded-2xl border border-zinc-800 p-6 space-y-4 animate-pulse">
+        <div className="bg-zinc-900/50 backdrop-blur rounded-2xl border border-zinc-800 p-6 space-y-4 animate-pulse">
           <div className="h-6 bg-zinc-800/50 rounded w-1/4"></div>
           <div className="space-y-2">
             <div className="h-4 bg-zinc-800/50 rounded"></div>

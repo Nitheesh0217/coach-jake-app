@@ -5,7 +5,13 @@ import TrainerDashboardLayout from "@/components/sections/layout/TrainerDashboar
 import AthleteDashboard from "@/components/sections/dashboard/AthleteDashboard";
 import CoachDashboard from "@/components/sections/dashboard/CoachDashboard";
 import { getMeasurements } from "./measurements-actions";
-import type { Profile, Workout, Measurement, AthleteProfile, RecentSession } from "@/types";
+import type {
+  Profile,
+  Workout,
+  Measurement,
+  AthleteProfile,
+  RecentSession,
+} from "@/types";
 
 export const dynamic = "force-dynamic";
 
@@ -108,47 +114,45 @@ type DashboardResponse = {
 };
 
 async function getDashboardData(): Promise<DashboardResponse> {
+  const cookieStore = await cookies();
+  const supabase = supabaseServer({
+    get: (name) => {
+      const val = cookieStore.get(name);
+      return val ? { value: val.value } : undefined;
+    },
+    set: (name, value, options) => {
+      // Read-only in Server Components - no-op
+    },
+    remove: (name, options) => {
+      // Read-only in Server Components - no-op
+    },
+  });
+
+  const { data: auth } = await supabase.auth.getUser();
+  const user = auth.user;
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  // Fetch full profile including Player Card fields
+  const { data: profileData, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (profileError) {
+    return { profile: null, error: profileError.message };
+  }
+
+  if (!profileData) {
+    redirect("/finish-profile");
+  }
+
+  const profile = profileData as Profile;
+
   try {
-    const cookieStore = await cookies();
-    const supabase = supabaseServer({
-      get: (name) => {
-        const val = cookieStore.get(name);
-        return val ? { value: val.value } : undefined;
-      },
-      set: (name, value, options) => {
-        // Read-only in Server Components - no-op
-      },
-      remove: (name, options) => {
-        // Read-only in Server Components - no-op
-      },
-    });
-
-    const { data: auth } = await supabase.auth.getUser();
-    const user = auth.user;
-
-
-    if (!user) {
-      return { profile: null, error: "Not logged in." };
-    }
-
-    // Fetch full profile including Player Card fields
-    const { data: profileData, error: profileError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle();
-
-    if (profileError) {
-      return { profile: null, error: profileError.message };
-    }
-
-    if (!profileData) {
-      return { profile: null, error: "Profile not found." };
-    }
-
-    const profile = profileData as Profile;
-
-
     // Redirect coaches to their dedicated dashboard
     if (profile.role === "coach") {
       redirect("/trainer-dashboard");
@@ -210,15 +214,19 @@ async function getDashboardData(): Promise<DashboardResponse> {
         .order("date", { ascending: false })
         .limit(3);
 
-      const recentSessions: RecentSession[] = (recentLogs || []).map((log: any) => {
-        const w = Array.isArray(log.workouts) ? log.workouts[0] : log.workouts;
-        return {
-          id: log.id,
-          date: log.date,
-          notes: log.notes,
-          workouts: w ? { title: w.title } : null,
-        };
-      });
+      const recentSessions: RecentSession[] = (recentLogs || []).map(
+        (log: any) => {
+          const w = Array.isArray(log.workouts)
+            ? log.workouts[0]
+            : log.workouts;
+          return {
+            id: log.id,
+            date: log.date,
+            notes: log.notes,
+            workouts: w ? { title: w.title } : null,
+          };
+        },
+      );
 
       // Check if logged today
       const today = new Date().toISOString().split("T")[0];
@@ -351,8 +359,12 @@ async function getDashboardData(): Promise<DashboardResponse> {
 
     return { profile, error: null };
   } catch (err) {
+    // Re-throw redirect errors
+    if (err instanceof Error && err.message.includes("NEXT_REDIRECT")) {
+      throw err;
+    }
     const message = err instanceof Error ? err.message : "Unknown error";
-    return { profile: null, error: `Dashboard error: ${message}` };
+    return { profile, error: message };
   }
 }
 
