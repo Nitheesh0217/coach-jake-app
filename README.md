@@ -22,7 +22,7 @@
 
 ## Overview
 
-**Coach Jake** (codenamed *Levrl*) is a full-stack basketball fitness coaching SaaS platform built to connect athletes and coaches in one intelligent workspace.
+**Coach Jake** (codenamed _Levrl_) is a full-stack basketball fitness coaching SaaS platform built to connect athletes and coaches in one intelligent workspace.
 
 Athletes complete a personalized onboarding wizard that builds their **Player Card** — capturing archetype, playstyle, goals, and schedule — then get a daily workout, session streak tracking, and body measurement logging. Coaches get a full roster dashboard with per-athlete completion analytics and workout assignment tooling.
 
@@ -33,11 +33,13 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 ## Screenshots
 
 ### Landing Page
+
 ![Landing Page](images/Screenshot%202026-06-15%20014417.png)
 
 <br/>
 
 ### Auth — Sign Up & Login
+
 <table>
 <tr>
 <td width="50%"><img src="images/Screenshot%202026-06-15%20014500.png" alt="Sign Up"/></td>
@@ -52,6 +54,7 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 <br/>
 
 ### Onboarding — Player Card Wizard
+
 <table>
 <tr>
 <td width="50%"><img src="images/Screenshot%202026-06-15%20014649.png" alt="Wizard Step 1"/></td>
@@ -66,6 +69,7 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 <br/>
 
 ### Dashboards
+
 <table>
 <tr>
 <td width="50%"><img src="images/Screenshot%202026-06-15%20014814.png" alt="Athlete Dashboard"/></td>
@@ -80,6 +84,7 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 <br/>
 
 ### Workouts & Session Logging
+
 <table>
 <tr>
 <td width="50%"><img src="images/Screenshot%202026-06-15%20014918.png" alt="Workouts Page"/></td>
@@ -96,6 +101,7 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 ## Latest Updates (Build Verified)
 
 ### Core Loop Improvements ✨
+
 - **Smart Drill Parsing** — Workout descriptions are now parsed into interactive drill checklists. No more hardcoded drills.
 - **Completed-Today Status** — Workouts show three states: "Completed Today ✓", "Done Before", or "Log This Workout"
 - **All-Time Leaderboard** — Finally backed by data! Leaderboard's "All Time" tab now queries actual session history
@@ -104,17 +110,19 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 - **Error Boundaries** — Graceful error states on `/workouts` and `/leaderboard` with retry buttons
 - **Fixed Loading Skeletons** — Dashboard loading state now matches final 2x2 KPI card layout
 
-### Build Status 
+### Build Status
+
 ✅ **Production build passing**  
 ✅ **All TypeScript errors resolved**  
 ✅ **No hardcoded demo data remaining**  
-✅ **All imports and queries validated**  
+✅ **All imports and queries validated**
 
 ---
 
 ## Features
 
 #### Athlete
+
 - **Player Card Wizard** — 4-step onboarding captures archetype, playstyle sliders (team/iso, shooter/slasher, finesse/power), goals, and weekly schedule
 - **Daily Workout** — today's assigned workout surfaced automatically on the dashboard with drill checklist
 - **Workout Logging** — Mark Complete button with loading states and error handling
@@ -126,12 +134,14 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 - **Progress Tracking** — weight trends and weekly consistency charts
 
 #### Coach
+
 - **Athlete Roster** — full list with completion %, sessions this week, last workout date
 - **Workout Assignment** — assign workouts to individual athletes with optional notes
 - **Trainer Dashboard** — dedicated analytics view, isolated from athlete routing
 - **Athlete Performance Insights** — KPIs, consistency tracking, measurement history
 
 #### Platform
+
 - Role-based auth with Supabase — `athlete` and `coach` routing enforced at middleware
 - Row Level Security on every table — all queries scoped to `auth.uid()`
 - Server Components + Server Actions throughout — no client-side data fetching
@@ -145,14 +155,14 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 
 ## Tech Stack
 
-| Layer | Choice | Notes |
-|---|---|---|
-| Framework | Next.js 16 | App Router, Turbopack, strict TS |
-| Language | TypeScript | Strict mode, shared `src/types/index.ts` |
-| Styling | Tailwind CSS v4 | Dark-first, mobile-first |
-| Database | Supabase PostgreSQL | RLS on all tables |
-| Auth | Supabase Auth | JWT, role stored in `profiles` |
-| Deployment | Vercel | Edge middleware, preview deploys |
+| Layer      | Choice              | Notes                                    |
+| ---------- | ------------------- | ---------------------------------------- |
+| Framework  | Next.js 16          | App Router, Turbopack, strict TS         |
+| Language   | TypeScript          | Strict mode, shared `src/types/index.ts` |
+| Styling    | Tailwind CSS v4     | Dark-first, mobile-first                 |
+| Database   | Supabase PostgreSQL | RLS on all tables                        |
+| Auth       | Supabase Auth       | JWT, role stored in `profiles`           |
+| Deployment | Vercel              | Edge middleware, preview deploys         |
 
 ---
 
@@ -293,6 +303,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ## Roadmap
 
 #### ✅ v1.0 — Shipped
+
 - [x] Supabase Auth — signup, login, logout
 - [x] Role-based middleware — athlete vs. coach route separation
 - [x] 4-step Player Card Wizard onboarding
@@ -301,6 +312,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 - [x] Server actions for measurement logging
 
 #### ✅ v1.1 — Completed
+
 - [x] `markWorkoutComplete()` wired — Mark Complete button with loading states
 - [x] `/workouts` — browse & log workouts with Completed Today/Before status
 - [x] `/leaderboard` — athletes ranked by sessions (7d, 30d, all-time)
@@ -312,6 +324,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 - [x] Player archetype display on leaderboard
 
 #### 🔮 v2.0 — Planned
+
 - [ ] Advanced progress charts — more detailed trend analysis
 - [ ] AI recommendations — workouts suggested by Player Card archetype
 - [ ] Push notifications — daily workout reminders
