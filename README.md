@@ -32,69 +32,60 @@ Built end-to-end as a solo project: schema design → server actions → deploye
 
 ## Screenshots
 
-### Landing Page
+### 🏠 Landing Page
 
-![Landing Page](images/Screenshot%202026-06-15%20014417.png)
+![Landing Page](screenshots/screenshot-landing.png)
 
 <br/>
 
-### Auth — Sign Up & Login
+### 🔐 Auth — Login & Sign Up
 
 <table>
 <tr>
-<td width="50%"><img src="images/Screenshot%202026-06-15%20014500.png" alt="Sign Up"/></td>
-<td width="50%"><img src="images/Screenshot%202026-06-15%20014601.png" alt="Login"/></td>
+<td width="50%"><img src="screenshots/screenshot-login.png" alt="Login"/></td>
+<td width="50%"><img src="screenshots/screenshot-signup.png" alt="Sign Up / Onboarding Wizard"/></td>
 </tr>
 <tr>
-<td align="center"><sub>Sign Up</sub></td>
 <td align="center"><sub>Login</sub></td>
+<td align="center"><sub>Sign Up & Player Card Wizard</sub></td>
 </tr>
 </table>
 
 <br/>
 
-### Onboarding — Player Card Wizard
+### 🏀 Athlete Dashboard
 
-<table>
-<tr>
-<td width="50%"><img src="images/Screenshot%202026-06-15%20014649.png" alt="Wizard Step 1"/></td>
-<td width="50%"><img src="images/Screenshot%202026-06-15%20014730.png" alt="Wizard Step 2"/></td>
-</tr>
-<tr>
-<td align="center"><sub>Step 1 — Profile & Archetype</sub></td>
-<td align="center"><sub>Step 2 — Playstyle Sliders</sub></td>
-</tr>
-</table>
+![Athlete Dashboard](screenshots/screenshot-dashboard.png)
 
 <br/>
 
-### Dashboards
+### 💪 Workouts
 
-<table>
-<tr>
-<td width="50%"><img src="images/Screenshot%202026-06-15%20014814.png" alt="Athlete Dashboard"/></td>
-<td width="50%"><img src="images/Screenshot%202026-06-15%20014849.png" alt="Coach Dashboard"/></td>
-</tr>
-<tr>
-<td align="center"><sub>Athlete Dashboard</sub></td>
-<td align="center"><sub>Coach Dashboard — Roster View</sub></td>
-</tr>
-</table>
+![Workouts Page](screenshots/screenshot-workouts.png)
 
 <br/>
 
-### Workouts & Session Logging
+### 🏆 Leaderboard
 
-<table>
-<tr>
-<td width="50%"><img src="images/Screenshot%202026-06-15%20014918.png" alt="Workouts Page"/></td>
-<td width="50%"><img src="images/Screenshot%202026-06-15%20014952.png" alt="Session Log"/></td>
-</tr>
-<tr>
-<td align="center"><sub>Workout Feed</sub></td>
-<td align="center"><sub>Session Log</sub></td>
-</tr>
-</table>
+![Leaderboard](screenshots/screenshot-leaderboard.png)
+
+<br/>
+
+### 📈 Progress Charts
+
+![Progress Charts](screenshots/screenshot-progress.png)
+
+<br/>
+
+### 🎯 Coach / Trainer Dashboard
+
+![Coach Dashboard](screenshots/screenshot-coach.png)
+
+<br/>
+
+### ⚙️ Settings
+
+![Settings](screenshots/screenshot-settings.png)
 
 ---
 
@@ -191,6 +182,16 @@ coach-jake-app/
 │   ├── types/
 │   │   └── index.ts                # Role, Profile, Workout, Measurement, AthleteProfile
 │   └── proxy.ts                    # Auth + role middleware
+├── screenshots/                    # App screenshots for README
+│   ├── screenshot-landing.png
+│   ├── screenshot-login.png
+│   ├── screenshot-signup.png
+│   ├── screenshot-dashboard.png
+│   ├── screenshot-workouts.png
+│   ├── screenshot-leaderboard.png
+│   ├── screenshot-progress.png
+│   ├── screenshot-coach.png
+│   └── screenshot-settings.png
 ├── supabase-setup.sql
 ├── supabase-migrations-player-card.sql
 ├── supabase-migrations-workout-assignments.sql
